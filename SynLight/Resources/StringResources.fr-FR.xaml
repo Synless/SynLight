@@ -1,0 +1,17 @@
+﻿<ResourceDictionary 
+    xmlns ="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="tittle">SynLight</system:String>
+    <system:String x:Key="x">X :</system:String>
+    <system:String x:Key="y">Y :</system:String>
+    <system:String x:Key="corners">Coins :</system:String>
+    <system:String x:Key="shifting">Décalage :</system:String>
+    <system:String x:Key="ratio">Ratio :</system:String>
+    <system:String x:Key="first">LED n°1 :</system:String>
+    <system:String x:Key="direction">Sens :</system:String>
+    <system:String x:Key="clockwise">Horaire</system:String>
+    <system:String x:Key="cclockwise">Anti-Horaire</system:String>
+    <!-- All StringResources Goes Here -->
+</ResourceDictionary> 
