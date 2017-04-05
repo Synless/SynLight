@@ -13,6 +13,7 @@ namespace SynLight.View
     {
         public MainWindow()
         {
+
             Model.Startup.StartOrKill();
             Model.Startup.CleanFiles();
             if (Model.Startup.ShowOrHide())

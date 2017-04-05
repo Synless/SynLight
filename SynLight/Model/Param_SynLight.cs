@@ -39,6 +39,7 @@ namespace SynLight.Model
                 if ((value > 0) && (value < 50))
                 {
                     width = value;
+                    edgesComp();
                 }
                 OnPropertyChanged("Width");
             }
@@ -63,7 +64,7 @@ namespace SynLight.Model
                     height = value;
                     Shifting = Math.Max((value/2)-1,0);
                 }
-
+                edgesComp();
                 OnPropertyChanged("Height");
             }
         }
@@ -218,31 +219,59 @@ namespace SynLight.Model
                 OnPropertyChanged("BGF");
             }
         }
+
+        protected bool edges = true;
+        public bool Edges
+        {
+            get
+            {
+                return edges;
+            }
+            set
+            {
+                edges = value;
+                OnPropertyChanged("Edges");
+            }
+        }
         #endregion
 
-        protected double A = 1.32;
-        protected double B = 1;
-        protected int blankCounter = 0;
-        protected int maxBlankCounter = 5;
-        protected int sleepTime = 5;
-        protected int currentSleepTime = 5;
-        protected int moreTime = 0;
-        protected int difference = 0;
+        protected double A              = 1.32;
+        protected double B              = 1;
+        protected int blankCounter      = 0;
+        protected int maxBlankCounter   = 5;
+        protected int sleepTime         = 5;
+        protected static int currentSleepTime  = 5;
+        protected int moreTime          = 0;
+        protected int difference        = 0;
 
         protected Size Screen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+        protected Rectangle edgeLeft;
+        protected Rectangle edgeRight;
+        protected Rectangle edgeTop;
+        protected Rectangle edgeBot;
         protected Bitmap bmpScreenshot;
         protected Bitmap scaledBmpScreenshot;
         protected Bitmap secondScaledBmpScreenshot;
-        protected double sRed = 255;
-        protected double sGreen = 255;
+
+        protected Bitmap bitmapedgeLeft;
+        protected Bitmap bitmapedgeRight;
+        protected Bitmap bitmapedgeTop;
+        protected Bitmap bitmapedgeBot;
+        protected Bitmap scalededgeLeft;
+        protected Bitmap scalededgeRight;
+        protected Bitmap scalededgeTop;
+        protected Bitmap scalededgeBot;
+
+        protected double sRed  = 255;
+        protected double sGreen= 255;
         protected double sBlue = 255;
         protected List<byte> LastByteToSend = new List<byte>(0);
-        protected List<byte> newByteToSend = new List<byte>(0);
+        protected List<byte> newByteToSend  = new List<byte>(0);
         protected List<byte> byteToSend;
         #endregion
 
         public Param_SynLight()
-        {
+        {            
             try
             {
                 using (StreamReader sr = new StreamReader(param))
@@ -340,6 +369,17 @@ namespace SynLight.Model
                 }
             }
             catch { }
+        }
+        private void edgesComp()
+        {
+            bitmapedgeTop = new Bitmap(1, height);
+            bitmapedgeBot = new Bitmap(1, height);
+            bitmapedgeLeft = new Bitmap(width, 1);
+            bitmapedgeRight = new Bitmap(width, 1);
+            edgeLeft = new Rectangle(0, 0, (int)(System.Windows.SystemParameters.PrimaryScreenWidth / Width), (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+            edgeRight = new Rectangle((int)(System.Windows.SystemParameters.PrimaryScreenWidth) - (int)(System.Windows.SystemParameters.PrimaryScreenWidth / Width), 0, (int)(System.Windows.SystemParameters.PrimaryScreenWidth / Width), (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+            edgeTop = new Rectangle(0, 0, (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
+            edgeBot = new Rectangle(0, (int)(System.Windows.SystemParameters.PrimaryScreenHeight) - (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height), (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
         }
 
         public static void Close()
