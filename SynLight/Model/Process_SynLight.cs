@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Threading;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Diagnostics;
 
 namespace SynLight.Model
 {
@@ -91,7 +92,6 @@ namespace SynLight.Model
         {
             try
             {
-                
                 int xScreen = (int)(SystemParameters.PrimaryScreenWidth);
                 int yScreen = (int)(SystemParameters.PrimaryScreenHeight);
 
@@ -135,18 +135,18 @@ namespace SynLight.Model
                     scaledBmpScreenshot.SetPixel(n, 0, scalededgeTop.GetPixel(n, 0));
                     scaledBmpScreenshot.SetPixel(n, Height-1, scalededgeBot.GetPixel(n, 0));
                 }
-                try
+                /*try
                 {
-                    /*ResizeSizes(scalededgeLeft).Save("1Left.bmp");
+                    ResizeSizes(scalededgeLeft).Save("1Left.bmp");
                     ResizeSizes(scalededgeRight).Save("3Right.bmp");
                     ResizeTops(scalededgeTop).Save("2Top.bmp");
                     ResizeTops(scalededgeBot).Save("4Bot.bmp");
-                    Resize(scaledBmpScreenshot).Save("5full.bmp");*/
+                    Resize(scaledBmpScreenshot).Save("5full.bmp");
                 }
                 catch
                 {
 
-                }
+                }*/
             }
             catch
             {
@@ -696,8 +696,8 @@ namespace SynLight.Model
             }
             sock.SendTo(newByteToSend.ToArray(), endPoint);
 
-            //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH
-            currentSleepTime = (currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Math.Min(Properties.Settings.Default.maxTime, Math.Max(0, Properties.Settings.Default.maxTime - difference)))) / 2;
+            //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
+            currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Math.Min(Properties.Settings.Default.maxTime, Math.Max(0, Properties.Settings.Default.maxTime - difference)))) / 4) + (int)(cpuCounter.NextValue()*2);
         }
         private bool ScaledBlank()
         {
