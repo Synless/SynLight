@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -39,7 +40,7 @@ namespace SynLight.Model
                 if ((value > 0) && (value < 50))
                 {
                     width = value;
-                    edgesComp();
+                    EdgesComp();
                 }
                 OnPropertyChanged("Width");
             }
@@ -64,7 +65,7 @@ namespace SynLight.Model
                     height = value;
                     Shifting = Math.Max((value/2)-1,0);
                 }
-                edgesComp();
+                EdgesComp();
                 OnPropertyChanged("Height");
             }
         }
@@ -268,10 +269,13 @@ namespace SynLight.Model
         protected List<byte> LastByteToSend = new List<byte>(0);
         protected List<byte> newByteToSend  = new List<byte>(0);
         protected List<byte> byteToSend;
+
+        protected PerformanceCounter cpuCounter;
         #endregion
 
         public Param_SynLight()
-        {            
+        {
+            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             try
             {
                 using (StreamReader sr = new StreamReader(param))
@@ -370,7 +374,7 @@ namespace SynLight.Model
             }
             catch { }
         }
-        private void edgesComp()
+        private void EdgesComp()
         {
             bitmapedgeTop = new Bitmap(1, height);
             bitmapedgeBot = new Bitmap(1, height);
