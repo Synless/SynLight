@@ -694,10 +694,25 @@ namespace SynLight.Model
                     newByteToSend[n + 2] = (byte)((newByteToSend[n + 2] * 2 + sBlue) / 3);
                 }
             }
+            if(UpDown!=0)
+            {
+                rotateArray();
+            }
             sock.SendTo(newByteToSend.ToArray(), endPoint);
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Math.Min(Properties.Settings.Default.maxTime, Math.Max(0, Properties.Settings.Default.maxTime - difference)))) / 4) + (int)(cpuCounter.NextValue()*2);
+        }
+        private void rotateArray()
+        {
+            List<byte> byteToSend2 = new List<byte>(newByteToSend);
+            
+            for (int n = 0; n < newByteToSend.Count; n++)
+            {
+                byteToSend2[n] = newByteToSend[(n + UpDown * 3)%(byteToSend.Count - 1)];
+            }
+
+            newByteToSend = new List<byte>(byteToSend2);
         }
         private bool ScaledBlank()
         {

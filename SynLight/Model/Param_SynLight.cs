@@ -104,6 +104,20 @@ namespace SynLight.Model
             }
         }
 
+        private int upDown = 0;
+        public int UpDown
+        {
+            get
+            {
+                return upDown;
+            }
+            set
+            {
+                upDown = value;
+                OnPropertyChanged("UpDown");
+            }
+        }
+
         private bool ratio = true;
         public bool Ratio
         {
@@ -352,7 +366,11 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "CORNERS")
                             {
-                                Corner = int.Parse(subLine[0]);
+                                Corner = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "UPDOWN")
+                            {
+                                UpDown = int.Parse(subLine[1]);
                             }
                             else if (subLine[0] == "SLEEPTIME")
                             {

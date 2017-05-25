@@ -44,9 +44,15 @@ namespace SynLight.View
             base.OnClosed(e);
             Environment.Exit(0);
         }
-        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        private void positiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex(@"\-*\d+");
             e.Handled = regex.IsMatch(e.Text);
         }
     }
