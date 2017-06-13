@@ -16,7 +16,7 @@ namespace SynLight.Model
         protected static UdpClient Client;        
 
         protected static string querry = "ping";
-        protected static string answer = "pong";
+        protected static string answer = "a0";
         protected static bool connected = false;
         #endregion  
 
