@@ -12,7 +12,7 @@ namespace SynLight.Model
         protected static List<Socket> sockList;
         protected static IPEndPoint endPoint;
         protected static IPAddress arduinoIP;
-        protected static int UDP_Port;
+        protected static int UDP_Port = 8787;
         protected static UdpClient Client;        
 
         protected static string querry = "ping";
