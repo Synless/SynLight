@@ -701,7 +701,7 @@ namespace SynLight.Model
             sock.SendTo(newByteToSend.ToArray(), endPoint);
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
-            currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Math.Min(Properties.Settings.Default.maxTime, Math.Max(0, Properties.Settings.Default.maxTime - difference)))) / 4) + (int)(cpuCounter.NextValue()*2);
+            currentSleepTime =  ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue()*2);
         }
         private void rotateArray()
         {
