@@ -37,7 +37,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value > 0) && (value < 50))
+                if ((value > 0) && (value < 500))
                 {
                     width = value;
                     EdgesComp();
@@ -55,7 +55,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value > 0) && (value < 50) && (value > shifting * 2))
+                if ((value > 0) && (value < 500) && (value > shifting * 2))
                 {
                     height = value;
                     Ratio = ratio;
@@ -79,7 +79,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value >= 0) && (value < 20) && (value < height / 2))
+                if ((value >= 0) && (value < 200) && (value < height / 2))
                 {
                     corner = value;
                 }
@@ -96,7 +96,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value >= 0) && (value < 20) && (value < height / 2))
+                if ((value >= 0) && (value < 200) && (value < height / 2))
                 {
                     shifting = value;
                 }

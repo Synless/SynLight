@@ -33,7 +33,14 @@ namespace SynLight.Model
             else
             {
                 Close();
-                process.Suspend();
+                try
+                {
+                    process.Suspend();
+                }
+                catch
+                {
+
+                }
             }
 #pragma warning disable CS0618
         }
