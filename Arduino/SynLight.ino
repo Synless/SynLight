@@ -2,7 +2,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUDP.h>
 
-const uint16_t PixelCount = 52; // Depending on the setup, carefull not to overflow
+const uint16_t PixelCount = 520; // Depending on the setup, carefull not to overflow
 const uint8_t PixelPin = 2;  // Make sure to set this to the correct pin, ignored for Esp8266
 
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
