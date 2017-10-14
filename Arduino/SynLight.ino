@@ -1,42 +1,26 @@
-#include <NeoPixelBus.h>
+#include <NeoPixelBus.h>  //https://github.com/Makuna/NeoPixelBus
 #include <ESP8266WiFi.h>
+#include <DNSServer.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>  //https://github.com/tzapu/WiFiManager
 #include <WiFiUDP.h>
 
-const uint16_t PixelCount = 520; // Depending on the setup, carefull not to overflow
-const uint8_t PixelPin = 2;  // Make sure to set this to the correct pin, ignored for Esp8266
-
+// Depending on the setup, has to be at least the number of LEDs
+const uint16_t PixelCount = 100; 
+const int PixelPin = 2;
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
-
-const char* ssid = "Synless_Wifi"; //Your wifi and password
-const char* password = "--------";
+//WIFI
 const unsigned int localPort = 8787;
 WiFiUDP UDP;
 boolean udpConnected = false;
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
-char ReplyBuffer[] = "a0";
+char ReplyBuffer[] = "pong";
 
 int red = 0;
 int green = 0;
 int blue = 0;
 unsigned long t1 = 0;
 bool timer = true;
-
-boolean connectWifi()
-{
-    boolean state = true;
-    int i = 1;
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        if (i++ >= 20) 
-        { 
-            state = false;
-            break; 
-        }
-    }
-    return state;
-}
 
 void fill(int _start, int _end, int r, int g, int b)
 {
@@ -54,17 +38,17 @@ void setup()
     delay(800);
     fill(0, PixelCount, 10, 0, 0);
     delay(100);
-    if (connectWifi())
+    //https://github.com/tzapu/WiFiManager#how-it-works
+    WiFiManager wifiManager;
+    wifiManager.autoConnect("SynLight");
+    fill(0, PixelCount, 8, 8, 0);
+    delay(100);
+    udpConnected = (UDP.begin(localPort) == 1);
+    if (udpConnected)
     {
-        fill(0, PixelCount, 8, 8, 0);
+        fill(0, PixelCount, 0, 10, 0);
         delay(100);
-        udpConnected = (UDP.begin(localPort) == 1);
-        if (udpConnected)
-        {
-            fill(0, PixelCount, 0, 10, 0);
-            delay(100);
-        }
-    }
+    }    
 }
 
 void loop()
@@ -72,8 +56,10 @@ void loop()
     if (udpConnected)
     {
         int packetSize = UDP.parsePacket();
+        //PINGING PACKET
         if (packetSize)
         {
+            Serial.println("packet");
             UDP.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
             if (packetSize == 4)
             {
@@ -84,6 +70,7 @@ void loop()
                     UDP.endPacket();
                 }
             }
+            //FRAME
             else if (packetSize>1)
             {
                 t1 = millis();
@@ -92,7 +79,7 @@ void loop()
                     red = packetBuffer[n];
                     green = packetBuffer[n + 1];
                     blue = packetBuffer[n + 2];
-                    //POWERED FROM A SINGLE USB3.0 CONNECTION
+                    //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
                     if((n/3)<PixelCount)      
                     {
                         strip.SetPixelColor(n/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
@@ -104,6 +91,7 @@ void loop()
                 }
                 strip.Show();
             }
+            //SPECIAL PACKETS
             else if (packetSize == 1)
             {
                 t1 = millis();
@@ -125,6 +113,7 @@ void loop()
             }
         }
     }
+    //STANDBY AFTER 7 SECONDS
     if (millis() - t1>7000)
     {
       t1 = millis();
