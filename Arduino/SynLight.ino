@@ -33,21 +33,22 @@ void fill(int _start, int _end, int r, int g, int b)
 
 void setup()
 {
+    Serial.begin(115200);
     strip.Begin();
     strip.Show();
     delay(800);
-    fill(0, PixelCount, 10, 0, 0);
+    fill(0, PixelCount, 20, 0, 0);
     delay(100);
     //https://github.com/tzapu/WiFiManager#how-it-works
     WiFiManager wifiManager;
     wifiManager.autoConnect("SynLight");
-    fill(0, PixelCount, 8, 8, 0);
+    fill(0, PixelCount, 15, 15, 0);
     delay(100);
     udpConnected = (UDP.begin(localPort) == 1);
     if (udpConnected)
     {
-        fill(0, PixelCount, 0, 10, 0);
-        delay(100);
+        fill(0, PixelCount, 0, 20, 0);
+        delay(200);
     }    
 }
 
@@ -55,19 +56,28 @@ void loop()
 {
     if (udpConnected)
     {
-        int packetSize = UDP.parsePacket();
-        //PINGING PACKET
+        int packetSize = UDP.parsePacket();        
         if (packetSize)
         {
-            Serial.println("packet");
+            Serial.print("Packet of size ");
+            Serial.println(packetSize);
+            
             UDP.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
             if (packetSize == 4)
-            {
-                if( packetBuffer[0]=='p' && packetBuffer[1]=='i' && packetBuffer[2]=='n' && packetBuffer[3]=='g')
+            {   //PINGING PACKET
+                t1 = millis();
+                if(packetBuffer[0]=='p' && packetBuffer[1]=='i' && packetBuffer[2]=='n' && packetBuffer[3]=='g')
                 {
                     UDP.beginPacket(UDP.remoteIP(), localPort);
                     UDP.write(ReplyBuffer);
                     UDP.endPacket();
+                    Serial.print("Ping received, answered [");Serial.print(ReplyBuffer);Serial.println("]");                    
+                }
+                //STATIC COLOR
+                else if(packetBuffer[0]==1)
+                {
+                    fill(0, PixelCount, packetBuffer[1], packetBuffer[2], packetBuffer[3]);
+                    Serial.print("Static color");
                 }
             }
             //FRAME
