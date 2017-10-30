@@ -52,9 +52,16 @@ namespace SynLight.Model
             long means = 0;*/
             while (PlayPause)
             {
-                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
-                Tick();
-                Thread.Sleep(currentSleepTime/2); // DEVIDED BY TWO THANKS TO THE edge METHOD
+                Stopwatch watch = Stopwatch.StartNew();
+                if (Index == 0)
+                {
+                    Tick();
+                }
+                else if (Index == 1)
+                {
+                    SingleColor();
+                }
+                Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
                 GC.Collect(); //COUPLES OF MB WON //1
                 watch.Stop();
                 long elapsedMs = watch.ElapsedMilliseconds;
@@ -77,7 +84,6 @@ namespace SynLight.Model
             }
             ProcessScreenShot();
             Send();
-                
         }
         private void GetScreenShot()
         {
@@ -102,28 +108,28 @@ namespace SynLight.Model
                 int xScreen = (int)(SystemParameters.PrimaryScreenWidth);
                 int yScreen = (int)(SystemParameters.PrimaryScreenHeight);
 
-                Rectangle rect = new Rectangle(0, 0, xScreen/Width, yScreen);
+                Rectangle rect = new Rectangle(0, 0, xScreen / Width, yScreen);
                 Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmp);
                 gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeLeft = new Bitmap(bmp, 1, Height);
                 gfxScreenshot.Clear(Color.Empty);
 
-                rect = new Rectangle(xScreen-(xScreen/Width)-1, 0, xScreen / Width, yScreen);
+                rect = new Rectangle(xScreen - (xScreen / Width) - 1, 0, xScreen / Width, yScreen);
                 bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot2 = Graphics.FromImage(bmp);
                 gfxScreenshot2.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeRight = new Bitmap(bmp, 1, Height);
                 gfxScreenshot2.Clear(Color.Empty);
 
-                rect = new Rectangle(0, 0, xScreen, yScreen/Height);
+                rect = new Rectangle(0, 0, xScreen, yScreen / Height);
                 bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot3 = Graphics.FromImage(bmp);
                 gfxScreenshot3.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeTop = new Bitmap(bmp, Width, 1);
                 gfxScreenshot3.Clear(Color.Empty);
 
-                rect = new Rectangle(0, yScreen-(yScreen/Height)-1, xScreen, yScreen / Height);
+                rect = new Rectangle(0, yScreen - (yScreen / Height) - 1, xScreen, yScreen / Height);
                 bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
                 gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
@@ -140,7 +146,7 @@ namespace SynLight.Model
                 for (int n = 1; n < scalededgeTop.Width - 1; n++)
                 {
                     scaledBmpScreenshot.SetPixel(n, 0, scalededgeTop.GetPixel(n, 0));
-                    scaledBmpScreenshot.SetPixel(n, Height-1, scalededgeBot.GetPixel(n, 0));
+                    scaledBmpScreenshot.SetPixel(n, Height - 1, scalededgeBot.GetPixel(n, 0));
                 }
                 /*try
                 {
@@ -187,7 +193,7 @@ namespace SynLight.Model
         }
         private Bitmap ResizeTops(Bitmap srcImage)
         {
-            Bitmap newImage = new Bitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight/Height);
+            Bitmap newImage = new Bitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight / Height);
             using (Graphics gr = Graphics.FromImage(newImage))
             {
                 gr.SmoothingMode = SmoothingMode.HighQuality;
@@ -202,7 +208,7 @@ namespace SynLight.Model
             try
             {
                 byteToSend = new List<byte>();
-                if (Corner==0)
+                if (Corner == 0)
                 {
                     if (Clockwise)
                     {
@@ -396,7 +402,7 @@ namespace SynLight.Model
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1 - Shifting).R));
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1 - Shifting).G));
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1 - Shifting).B));
-                            }                            
+                            }
                         }
                         if (BotLeft)
                         {
@@ -423,7 +429,7 @@ namespace SynLight.Model
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(Shifting, Math.Min(y, scaledBmpScreenshot.Height - 1 - Shifting))).R));
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(Shifting, Math.Min(y, scaledBmpScreenshot.Height - 1 - Shifting))).G));
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(Shifting, Math.Min(y, scaledBmpScreenshot.Height - 1 - Shifting))).B));
-                            }                            
+                            }
                         }
                     }
                 }
@@ -459,7 +465,7 @@ namespace SynLight.Model
                             }
                         }
                         if (TopRight)
-                        {                            
+                        {
                             for (int y = Corner; y < scaledBmpScreenshot.Height - 1 - Corner; y++)
                             {
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(Shifting, Math.Min(y, scaledBmpScreenshot.Height - 1 - Shifting))).R));
@@ -486,7 +492,7 @@ namespace SynLight.Model
                             }
                         }
                         if (BotRight)
-                        {                            
+                        {
                             for (int x = scaledBmpScreenshot.Width - 1 - Corner; x > Corner; x--)
                             {
                                 byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1 - Shifting).R));
@@ -657,6 +663,26 @@ namespace SynLight.Model
             {
             }
         }
+        private void SingleColor()
+        {
+            byteToSend = new List<byte>() { 1, Red, Green, Blue };
+            if (staticColorChanged)
+            {
+                staticColorChanged = false;
+                sock.SendTo(byteToSend.ToArray(), endPoint);
+                staticColorCurrentTime = 0;
+            }
+            else
+            {
+                staticColorCurrentTime++;
+                if (staticColorCurrentTime > staticColorMaxTime)
+                {
+                    sock.SendTo(byteToSend.ToArray(), endPoint);
+                    staticColorCurrentTime = 0;
+                }
+                currentSleepTime = 100;
+            }
+        }
         private void Send()
         {
             /*if (ScaledBlank())
@@ -701,22 +727,22 @@ namespace SynLight.Model
                     newByteToSend[n + 2] = (byte)((newByteToSend[n + 2] * 2 + sBlue) / 3);
                 }
             }
-            if(UpDown!=0)
+            if (UpDown != 0)
             {
-                rotateArray();
+                RotateArray();
             }
             sock.SendTo(newByteToSend.ToArray(), endPoint);
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
-            currentSleepTime =  ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue()*2);
+            currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
         }
-        private void rotateArray()
+        private void RotateArray()
         {
             List<byte> byteToSend2 = new List<byte>(newByteToSend);
-            
+
             for (int n = 0; n < newByteToSend.Count; n++)
             {
-                byteToSend2[n] = newByteToSend[(n + UpDown * 3)%(byteToSend.Count - 1)];
+                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count - 1)];
             }
 
             newByteToSend = new List<byte>(byteToSend2);

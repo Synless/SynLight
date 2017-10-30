@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="SynLight.View.MainWindow"
         xmlns:local="clr-namespace:SynLight.ViewModel"
         xmlns:conv="clr-namespace:SynLight.Converter"
-        Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="470" Width="360" MinHeight="450" MinWidth="330"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
+        Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="450" Width="330" MinHeight="450" MinWidth="330"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -16,78 +16,91 @@
     </Window.Resources>
     <UserControl>
         <Viewbox StretchDirection="Both" Stretch="Uniform">
-            <StackPanel Orientation="Vertical" Margin="14,14,14,2" HorizontalAlignment="Center">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center" >
-                                <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource x}"  />
-                                <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource y}"  />
+            <TabControl Background="#000000DD" Margin="0,20,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}">
+                <TabItem Header="Ambiant" TabIndex="0">
+                    <StackPanel Orientation="Vertical" Height="380" Width="310" HorizontalAlignment="Center">
+                        <StackPanel Margin="0,12,0,0" Orientation="Vertical" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center" >
+                                        <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource x}"  />
+                                        <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource y}"  />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center" >
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Width,       UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Height,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center">
+                                        <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource corners}"  />
+                                        <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource shifting}" />
+                                    </StackPanel>
+                                    <StackPanel Margin="5,5,10,5">
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Corner,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox" IsEnabled="{Binding SynLight.Ratio}" />
+                                    </StackPanel>
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center" >
-                                <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Width,       UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
-                                <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Height,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Vertical" Margin="5" HorizontalAlignment="Center">
-                                <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource corners}"  />
-                                <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource shifting}" />
-                            </StackPanel>
-                            <StackPanel Margin="5,5,10,5">
-                                <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Corner,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
-                                <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox" IsEnabled="{Binding SynLight.Ratio}" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Label Margin="20,0,35,0" Content="{DynamicResource ratio}"/>
+                                <RadioButton GroupName ="ratio" VerticalAlignment="Center"  Content="16/9" IsChecked="{Binding SynLight.Ratio}" />
+                                <RadioButton GroupName ="ratio" VerticalAlignment="Center" Content="21/9" Margin="20,0,0,0" />
                             </StackPanel>
                         </StackPanel>
-                        <!--<StackPanel Orientation="Vertical" Margin="5">
-                            <Button Margin="3" Height="25" Content="+"  Width="25" Command="{Binding AddLongeur}" />
-                            <Button Margin="3" Height="25" Content="+"  Width="25" Command="{Binding AddHauteur}" />
-                            <Button Margin="3" Height="25" Content="+"  Width="25" Command="{Binding AddShifting}" IsEnabled="{Binding SynLight.Ratio}"/>
-                        </StackPanel>-->
-                        <!--<StackPanel Orientation="Vertical" Margin="5">
-                            <Button Margin="3" Height="25" Content="-"  Width="25" Command="{Binding RemoveLongeur}" />
-                            <Button Margin="3" Height="25" Content="-"  Width="25" Command="{Binding RemoveHauteur}" />
-                            <Button Margin="3" Height="25" Content="-"  Width="25" Command="{Binding RemoveShifting}" IsEnabled="{Binding SynLight.Ratio}" />
-                        </StackPanel>-->
+                        <Separator Margin="12"/>
+                        <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" >
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="{DynamicResource first}" VerticalAlignment="Center"/>
+                                    <StackPanel Margin="6,0,0,0" Orientation="Vertical">
+                                        <RadioButton Name="TL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.TopLeft}" />
+                                        <RadioButton Name="BL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.BotLeft}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton Name="TR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.TopRight}" />
+                                        <RadioButton Name="BR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.BotRight}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Margin="38,0,0,0" Content="↕" FontSize="18" VerticalAlignment="Center"/>
+                                    <TextBox Margin="5,4,0,0" VerticalAlignment="Center" TextAlignment="Center" Height="22" TextWrapping="Wrap" Width="40" Text="{Binding SynLight.UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Label Margin="15,0,0,0" Content="{DynamicResource direction}" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Vertical" Margin="5,0,10,0" VerticalAlignment="Center">
+                                <RadioButton Margin="1" Content="{DynamicResource clockwise}"  GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, UpdateSourceTrigger=PropertyChanged}" />
+                                <RadioButton Margin="1" Content="{DynamicResource cclockwise}" GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Separator Margin="12" />
+                        <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox Margin="15,5,15,5" Content="LPFilter" IsChecked="{Binding SynLight.LPF}"   />
+                            <CheckBox Margin="5,5,15,5"  Content="BGFilter" IsChecked="{Binding SynLight.BGF}"   />
+                            <CheckBox Margin="5,5,15,5"  Content="Edges" IsChecked="{Binding SynLight.Edges}" Visibility="Collapsed"/>
+                            <!--<CheckBox Margin="5,5,15,5"  Content="{DynamicResource corners}"   IsChecked="{Binding SynLight.Corner}"/>-->
+                        </StackPanel>
+                        <Button Margin="10" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource BoolToPlayPause}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Label Margin="20,0,35,0" Content="{DynamicResource ratio}"/>
-                    <RadioButton GroupName ="ratio" VerticalAlignment="Center"  Content="16/9" IsChecked="{Binding SynLight.Ratio}" />
-                    <RadioButton GroupName ="ratio" VerticalAlignment="Center" Content="21/9" Margin="20,0,0,0" />
-                </StackPanel>
-                </StackPanel>
-                <Separator Margin="12" />
-                <StackPanel Margin="5,0,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                    <Label Content="{DynamicResource first}" VerticalAlignment="Center"/>
-                    <StackPanel Margin="6,0,0,0" Orientation="Vertical">
-                        <RadioButton Name="TL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.TopLeft}" />
-                        <RadioButton Name="BL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.BotLeft}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <RadioButton Name="TR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.TopRight}" />
-                        <RadioButton Name="BR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.BotRight}" />
-                    </StackPanel>
-                    </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Margin="38,0,0,0" Content="↕" FontSize="18" VerticalAlignment="Center"/>
-                            <TextBox Margin="5,4,0,0" VerticalAlignment="Center" TextAlignment="Center" Height="22" TextWrapping="Wrap" Width="40" Text="{Binding SynLight.UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox"/>
+                </TabItem>
+                <TabItem Header="Custom" TabIndex="1">
+                    <StackPanel Orientation="Vertical" Height="380" Width="310">
+                        <StackPanel Orientation="Horizontal" Margin="10,25,10,5" HorizontalAlignment="Center">
+                            <TextBlock Text="R" Foreground="Red" FontWeight="DemiBold" Margin="5"/>
+                            <Slider  Margin="5" Value="{Binding SynLight.Red}" Width="200"  Maximum="255"/>
+                            <TextBlock Text="{Binding SynLight.Red}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+                            <TextBlock Text="G" Foreground="Green" FontWeight="DemiBold" Margin="5"/>
+                            <Slider  Margin="5" Value="{Binding SynLight.Green}" Width="200" Maximum="255"/>
+                            <TextBlock Text="{Binding SynLight.Green}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+                            <TextBlock Text="B" Foreground="Blue" FontWeight="DemiBold" Margin="5"/>
+                            <Slider  Margin="5" Value="{Binding SynLight.Blue}" Width="200" Maximum="255"/>
+                            <TextBlock Text="{Binding SynLight.Blue}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
                         </StackPanel>
                     </StackPanel>
-                    <Label Margin="15,0,0,0" Content="{DynamicResource direction}" VerticalAlignment="Center"/>
-                    <StackPanel Orientation="Vertical" Margin="5,0,10,0" VerticalAlignment="Center">
-                        <RadioButton Margin="1" Content="{DynamicResource clockwise}"  GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, UpdateSourceTrigger=PropertyChanged}" />
-                        <RadioButton Margin="1" Content="{DynamicResource cclockwise}" GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                    </StackPanel>
-                </StackPanel>
-                <Separator Margin="12" />
-                <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <CheckBox Margin="15,5,15,5" Content="LPFilter" IsChecked="{Binding SynLight.LPF}"   />
-                    <CheckBox Margin="5,5,15,5"  Content="BGFilter" IsChecked="{Binding SynLight.BGF}"   />
-                    <CheckBox Margin="5,5,15,5"  Content="Edges" IsChecked="{Binding SynLight.Edges}" Visibility="Collapsed"/>
-                    <!--<CheckBox Margin="5,5,15,5"  Content="{DynamicResource corners}"   IsChecked="{Binding SynLight.Corner}"/>-->
-                </StackPanel>
-                <Button Margin="10" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource BoolToPlayPause}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
-            </StackPanel>
+                </TabItem>
+            </TabControl>
         </Viewbox>
     </UserControl>
 </Window>

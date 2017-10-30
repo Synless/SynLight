@@ -27,6 +27,19 @@ namespace SynLight.Model
                 OnPropertyChanged("Tittle");
             }
         }
+        private int index = 0;
+        public int Index
+        {
+            get
+            {
+                return index;
+            }
+            set
+            {
+                index = value;
+                OnPropertyChanged("Index");
+            }
+        }
 
         private int width = 18;
         public int Width
@@ -63,7 +76,7 @@ namespace SynLight.Model
                 else if ((value > 0) && (value < 50) && (value <= shifting * 2))
                 {
                     height = value;
-                    Shifting = Math.Max((value/2)-1,0);
+                    Shifting = Math.Max((value / 2) - 1, 0);
                 }
                 EdgesComp();
                 OnPropertyChanged("Height");
@@ -150,7 +163,7 @@ namespace SynLight.Model
                 clockwise = value;
                 OnPropertyChanged("Clockwise");
             }
-        }        
+        }
 
         private bool topLeft = false;
         public bool TopLeft
@@ -248,16 +261,62 @@ namespace SynLight.Model
                 OnPropertyChanged("Edges");
             }
         }
+        private byte red = 10;
+        public byte Red
+        {
+            get
+            {
+                return red;
+            }
+            set
+            {
+                red = value;
+                staticColorChanged = true;
+                OnPropertyChanged("Red");
+            }
+        }
+        private byte green = 10;
+        public byte Green
+        {
+            get
+            {
+                return green;
+            }
+            set
+            {
+                green = value;
+                staticColorChanged = true;
+                OnPropertyChanged("Green");
+            }
+        }
+        private byte blue = 10;
+        public byte Blue
+        {
+            get
+            {
+                return blue;
+            }
+            set
+            {
+                blue = value;
+                staticColorChanged = true;
+                OnPropertyChanged("Blue");
+            }
+        }
+
         #endregion
 
-        protected double A              = 1.32;
-        protected double B              = 1;
-        protected int blankCounter      = 0;
-        protected int maxBlankCounter   = 5;
-        protected int sleepTime         = 5;
-        protected static int currentSleepTime  = 5;
-        protected int moreTime          = 0;
-        protected int difference        = 0;
+        protected double A = 1.32;
+        protected double B = 1;
+        protected int blankCounter = 0;
+        protected int maxBlankCounter = 5;
+        protected int sleepTime = 5;
+        protected static int currentSleepTime = 5;
+        protected int moreTime = 0;
+        protected int difference = 0;
+        protected bool staticColorChanged = true;
+        protected int staticColorCurrentTime = 0;
+        protected int staticColorMaxTime = 20;
 
         protected Size Screen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Rectangle edgeLeft;
@@ -277,11 +336,11 @@ namespace SynLight.Model
         protected Bitmap scalededgeTop;
         protected Bitmap scalededgeBot;
 
-        protected double sRed  = 255;
-        protected double sGreen= 255;
+        protected double sRed = 255;
+        protected double sGreen = 255;
         protected double sBlue = 255;
         protected List<byte> LastByteToSend = new List<byte>(0);
-        protected List<byte> newByteToSend  = new List<byte>(0);
+        protected List<byte> newByteToSend = new List<byte>(0);
         protected List<byte> byteToSend;
 
         protected PerformanceCounter cpuCounter;

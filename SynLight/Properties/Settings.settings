@@ -15,7 +15,7 @@
       <Value Profile="(Default)">ping</Value>
     </Setting>
     <Setting Name="answer" Type="System.String" Scope="User">
-      <Value Profile="(Default)">a0</Value>
+      <Value Profile="(Default)">pong</Value>
     </Setting>
     <Setting Name="maxTime" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">200</Value>
