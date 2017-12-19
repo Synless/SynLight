@@ -20,5 +20,8 @@
     <Setting Name="maxTime" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">200</Value>
     </Setting>
+    <Setting Name="serialBaudRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">115200</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
