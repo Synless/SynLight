@@ -14,7 +14,7 @@ namespace SynLight.Model
         public static string param = Properties.Settings.Default.path; //MOVE TO PROPERTIES.SETTINGS.DEFAULT
 
         #region getset
-        private string tittle = "SynLight - ";
+        private string tittle = "SynLight - Disconnected";
         public string Tittle
         {
             get
@@ -22,8 +22,8 @@ namespace SynLight.Model
                 return tittle;
             }
             set
-            {
-                tittle = tittle.Split('-')[0] + "- " + value + "Hz";
+            {                
+                tittle = tittle.Split('-')[0] + "- " + connection.ToString() + " - " + value + "Hz";
                 OnPropertyChanged("Tittle");
             }
         }
@@ -377,10 +377,11 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "IP")
                             {
-                                if (!connected || true)
+                                if (connection == ConnectionType.Disconnected)
                                 {
                                     arduinoIP = IPAddress.Parse(subLine[1]);
                                     endPoint = new IPEndPoint(arduinoIP, UDP_Port);
+                                    connection = ConnectionType.ManualWifi;
                                 }
                             }
                             else if (subLine[0] == "TL")
@@ -462,7 +463,6 @@ namespace SynLight.Model
             edgeTop = new Rectangle(0, 0, (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
             edgeBot = new Rectangle(0, (int)(System.Windows.SystemParameters.PrimaryScreenHeight) - (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height), (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
         }
-
         public static void Close()
         {
             sock.SendTo(new byte[1] { 2 }, endPoint);

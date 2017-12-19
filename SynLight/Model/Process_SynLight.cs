@@ -19,7 +19,6 @@ namespace SynLight.Model
             process = new Thread(CheckMethod);
             process.Start();
         }
-
         public void PlayPausePushed()
         {
 #pragma warning disable CS0618
@@ -41,35 +40,38 @@ namespace SynLight.Model
                 {
 
                 }
-            }
+            }            
 #pragma warning disable CS0618
         }
         #region Privates methodes
         private void CheckMethod()
         {
-            /*long counter = 0;
-            long ticks = 0;
-            long means = 0;*/
-            while (PlayPause)
+            if (connection != ConnectionType.Disconnected)
             {
-                Stopwatch watch = Stopwatch.StartNew();
-                if (Index == 0)
+                /*long counter = 0;
+                long ticks = 0;
+                long means = 0;*/
+                while (PlayPause)
                 {
-                    Tick();
+                    Stopwatch watch = Stopwatch.StartNew();
+                    if (Index == 0)
+                    {
+                        Tick();
+                    }
+                    else if (Index == 1)
+                    {
+                        SingleColor();
+                    }
+                    Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
+                    GC.Collect(); //COUPLES OF MB WON //1
+                    watch.Stop();
+                    long elapsedMs = watch.ElapsedMilliseconds;
+                    //ticks += elapsedMs;
+                    ///counter++;
+                    //means = ticks / counter;
+                    int Hz = (int)(1000.0 / elapsedMs);
+                    Tittle = Hz.ToString();
                 }
-                else if (Index == 1)
-                {
-                    SingleColor();
-                }
-                Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
-                GC.Collect(); //COUPLES OF MB WON //1
-                watch.Stop();
-                long elapsedMs = watch.ElapsedMilliseconds;
-                //ticks += elapsedMs;
-                ///counter++;
-                //means = ticks / counter;
-                int Hz = (int)(1000.0 / elapsedMs);
-                Tittle = Hz.ToString();
             }
         }
         private void Tick()
@@ -669,7 +671,7 @@ namespace SynLight.Model
             if (staticColorChanged)
             {
                 staticColorChanged = false;
-                sock.SendTo(byteToSend.ToArray(), endPoint);
+                Send(byteToSend.ToArray());
                 staticColorCurrentTime = 0;
             }
             else
@@ -677,7 +679,7 @@ namespace SynLight.Model
                 staticColorCurrentTime++;
                 if (staticColorCurrentTime > staticColorMaxTime)
                 {
-                    sock.SendTo(byteToSend.ToArray(), endPoint);
+                    Send(byteToSend.ToArray());
                     staticColorCurrentTime = 0;
                 }
                 currentSleepTime = 100;
@@ -731,10 +733,34 @@ namespace SynLight.Model
             {
                 RotateArray();
             }
-            sock.SendTo(newByteToSend.ToArray(), endPoint);
+            Send(newByteToSend.ToArray());
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
+        }
+        private void Send(byte[] _toSend)
+        {
+            if (connection == ConnectionType.Wifi || connection == ConnectionType.ManualWifi)
+            {
+                sock.SendTo(_toSend, endPoint);
+            }
+            else if(connection == ConnectionType.Serial)
+            {                
+                string toSend = "";
+                for(int n=0; n < _toSend.Length-2; n+=3)
+                {
+                    toSend += 'R' + _toSend[n].ToString() + 'G' + _toSend[n + 1].ToString() + 'B' + _toSend[n + 2].ToString();
+                }
+                if (!serial.IsOpen)
+                {
+                    serial.Open();
+                    Thread.Sleep(1);
+                }
+                serial.Write(toSend);
+                Thread.Sleep(20);
+                serial.Close();
+            }
+
         }
         private void RotateArray()
         {
@@ -774,7 +800,7 @@ namespace SynLight.Model
             {
                 difference += Math.Abs((int)(byteToSend[n]) - (int)(LastByteToSend[n]));
             }
-        }
+        }        
         #endregion
     }
 }
