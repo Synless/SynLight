@@ -319,6 +319,8 @@ namespace SynLight.Model
         protected int staticColorMaxTime = 20;
 
         protected Size Screen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+        protected Size Screen2= new Size((int)System.Windows.SystemParameters.VirtualScreenWidth, (int)System.Windows.SystemParameters.VirtualScreenHeight);
+        
         protected Rectangle edgeLeft;
         protected Rectangle edgeRight;
         protected Rectangle edgeTop;
