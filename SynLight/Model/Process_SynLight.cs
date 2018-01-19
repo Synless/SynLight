@@ -19,6 +19,7 @@ namespace SynLight.Model
             process = new Thread(CheckMethod);
             process.Start();
         }
+
         public void PlayPausePushed()
         {
 #pragma warning disable CS0618
@@ -40,38 +41,35 @@ namespace SynLight.Model
                 {
 
                 }
-            }            
+            }
 #pragma warning disable CS0618
         }
         #region Privates methodes
         private void CheckMethod()
         {
-            if (connection != ConnectionType.Disconnected)
+            /*long counter = 0;
+            long ticks = 0;
+            long means = 0;*/
+            while (PlayPause)
             {
-                /*long counter = 0;
-                long ticks = 0;
-                long means = 0;*/
-                while (PlayPause)
+                Stopwatch watch = Stopwatch.StartNew();
+                if (Index == 0)
                 {
-                    Stopwatch watch = Stopwatch.StartNew();
-                    if (Index == 0)
-                    {
-                        Tick();
-                    }
-                    else if (Index == 1)
-                    {
-                        SingleColor();
-                    }
-                    Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
-                    GC.Collect(); //COUPLES OF MB WON //1
-                    watch.Stop();
-                    long elapsedMs = watch.ElapsedMilliseconds;
-                    //ticks += elapsedMs;
-                    ///counter++;
-                    //means = ticks / counter;
-                    int Hz = (int)(1000.0 / elapsedMs);
-                    Tittle = Hz.ToString();
+                    Tick();
                 }
+                else if (Index == 1)
+                {
+                    SingleColor();
+                }
+                Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
+                GC.Collect(); //COUPLES OF MB WON //1
+                watch.Stop();
+                long elapsedMs = watch.ElapsedMilliseconds;
+                //ticks += elapsedMs;
+                ///counter++;
+                //means = ticks / counter;
+                int Hz = (int)(1000.0 / elapsedMs);
+                Tittle = Hz.ToString();
             }
         }
         private void Tick()
@@ -671,15 +669,16 @@ namespace SynLight.Model
             if (staticColorChanged)
             {
                 staticColorChanged = false;
-                Send(byteToSend.ToArray());
+                sock.SendTo(byteToSend.ToArray(), endPoint);
                 staticColorCurrentTime = 0;
+                currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
             }
             else
             {
                 staticColorCurrentTime++;
                 if (staticColorCurrentTime > staticColorMaxTime)
                 {
-                    Send(byteToSend.ToArray());
+                    sock.SendTo(byteToSend.ToArray(), endPoint);
                     staticColorCurrentTime = 0;
                 }
                 currentSleepTime = 100;
@@ -733,34 +732,40 @@ namespace SynLight.Model
             {
                 RotateArray();
             }
-            Send(newByteToSend.ToArray());
+            if(false)
+            {
+                for (int n = 0; n < newByteToSend.Count-2; n+=3)
+                {
+                    int red = newByteToSend[n];
+                    int green = newByteToSend[n+1];
+                    int blue = newByteToSend[n+2];
+                    if(red>blue && red>green)
+                    {
+                        blue = -red / 2 + 5 * blue / 2;
+                        green = -red / 2 + 5 * green / 2;
+                    }
+                    else if(green>red && green>blue)
+                    {
+                        blue = -green / 2 + 5 * blue / 2;
+                        red = -green / 2 + 5 * red / 2;
+                    }
+                    else if(blue>red && blue>green)
+                    {
+                        green = -blue / 2 + 5 * green / 2;
+                        red = -blue / 2 + 5 * red / 2;
+                    }
+                    if (red < 0) { red = 0; }
+                    if (green < 0) { green = 0; }
+                    if (blue < 0) { blue = 0; }
+                    newByteToSend[n] = (byte)red;
+                    newByteToSend[n + 1] = (byte)green;
+                    newByteToSend[n + 2] = (byte)blue;
+                }
+            }
+            sock.SendTo(newByteToSend.ToArray(), endPoint);
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
-        }
-        private void Send(byte[] _toSend)
-        {
-            if (connection == ConnectionType.Wifi || connection == ConnectionType.ManualWifi)
-            {
-                sock.SendTo(_toSend, endPoint);
-            }
-            else if(connection == ConnectionType.Serial)
-            {                
-                string toSend = "";
-                for(int n=0; n < _toSend.Length-2; n+=3)
-                {
-                    toSend += 'R' + _toSend[n].ToString() + 'G' + _toSend[n + 1].ToString() + 'B' + _toSend[n + 2].ToString();
-                }
-                if (!serial.IsOpen)
-                {
-                    serial.Open();
-                    Thread.Sleep(1);
-                }
-                serial.Write(toSend);
-                Thread.Sleep(20);
-                serial.Close();
-            }
-
         }
         private void RotateArray()
         {
@@ -800,7 +805,7 @@ namespace SynLight.Model
             {
                 difference += Math.Abs((int)(byteToSend[n]) - (int)(LastByteToSend[n]));
             }
-        }        
+        }
         #endregion
     }
 }

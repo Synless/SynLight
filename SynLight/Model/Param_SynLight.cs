@@ -14,7 +14,7 @@ namespace SynLight.Model
         public static string param = Properties.Settings.Default.path; //MOVE TO PROPERTIES.SETTINGS.DEFAULT
 
         #region getset
-        private string tittle = "SynLight - Disconnected";
+        private string tittle = "SynLight - ";
         public string Tittle
         {
             get
@@ -22,8 +22,8 @@ namespace SynLight.Model
                 return tittle;
             }
             set
-            {                
-                tittle = tittle.Split('-')[0] + "- " + connection.ToString() + " - " + value + "Hz";
+            {
+                tittle = tittle.Split('-')[0] + "- " + value + "Hz";
                 OnPropertyChanged("Tittle");
             }
         }
@@ -320,7 +320,7 @@ namespace SynLight.Model
 
         protected Size Screen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Size Screen2= new Size((int)System.Windows.SystemParameters.VirtualScreenWidth, (int)System.Windows.SystemParameters.VirtualScreenHeight);
-        
+
         protected Rectangle edgeLeft;
         protected Rectangle edgeRight;
         protected Rectangle edgeTop;
@@ -379,11 +379,10 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "IP")
                             {
-                                if (connection == ConnectionType.Disconnected)
+                                if (!connected || true)
                                 {
                                     arduinoIP = IPAddress.Parse(subLine[1]);
                                     endPoint = new IPEndPoint(arduinoIP, UDP_Port);
-                                    connection = ConnectionType.ManualWifi;
                                 }
                             }
                             else if (subLine[0] == "TL")
@@ -404,11 +403,11 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "CW")
                             {
-                                clockwise = true;
+                                Clockwise = true;
                             }
                             else if (subLine[0] == "CCW")
                             {
-                                clockwise = false;
+                                Clockwise = false;
                             }
                             else if (subLine[0] == "A")
                             {
@@ -465,6 +464,7 @@ namespace SynLight.Model
             edgeTop = new Rectangle(0, 0, (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
             edgeBot = new Rectangle(0, (int)(System.Windows.SystemParameters.PrimaryScreenHeight) - (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height), (int)(System.Windows.SystemParameters.PrimaryScreenWidth), (int)(System.Windows.SystemParameters.PrimaryScreenHeight / Height));
         }
+
         public static void Close()
         {
             sock.SendTo(new byte[1] { 2 }, endPoint);

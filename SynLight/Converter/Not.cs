@@ -3,23 +3,16 @@ using System.Windows.Data;
 
 namespace SynLight.Converter
 {
-    class BoolToPlayPause : IValueConverter
+    class Not : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((bool)value)
-            {
-                return "STOP";
-            }
-            else
-            {
-                return "START";
-            }
+            return !((bool)(value));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return 0;
         }
     }
 }

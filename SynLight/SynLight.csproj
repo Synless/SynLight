@@ -66,6 +66,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\BoolToPlayPause.cs" />
+    <Compile Include="Converter\Not.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
@@ -124,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\SY.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\colorChart.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
