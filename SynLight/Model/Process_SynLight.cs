@@ -706,61 +706,53 @@ namespace SynLight.Model
                 blankCounter = 0;
                 moreTime = 0;
             }*/
-            NewToSend();
-            newByteToSend = new List<byte>(0);
-            if (LPF)
+            
+            
+            bool notZero = true;
+            foreach(byte b in byteToSend)
             {
-                for (int n = byteToSend.Count; n < LastByteToSend.Count && n < byteToSend.Count + 6; n++) { LastByteToSend.Add(0); }
-                for (int n = 0; n < byteToSend.Count; n++) { newByteToSend.Add((byte)(byteToSend[n] >> 1)); }
-                for (int n = 0; n < byteToSend.Count && n < LastByteToSend.Count; n++) { newByteToSend[n] += (byte)(LastByteToSend[n] >> 1); }
-                LastByteToSend = new List<byte>(byteToSend);
+                if(b!=0)
+                {
+                    notZero = false;
+                    break;
+                }
+            }
+            if(notZero)
+            {
+                for(int n = 0; n < byteToSend.Count; n++)
+                {
+                    byteToSend[n] = 5;
+                }
             }
             else
             {
-                LastByteToSend = newByteToSend = byteToSend;
-            }
-            if (BGF)
-            {
-                for (int n = 0; n < newByteToSend.Count - 2; n += 3)
-                {  //CONTRAST AND BRIGHNESS TWEAKING, RELEVENT FOR LOW BRIGNESS COUNTENT
-                    newByteToSend[n] = (byte)((newByteToSend[n] * 2 + sRed) / 3);
-                    newByteToSend[n + 1] = (byte)((newByteToSend[n + 1] * 2 + sGreen) / 3);
-                    newByteToSend[n + 2] = (byte)((newByteToSend[n + 2] * 2 + sBlue) / 3);
-                }
-            }
-            if (UpDown != 0)
-            {
-                RotateArray();
-            }
-            if(false)
-            {
-                for (int n = 0; n < newByteToSend.Count-2; n+=3)
+                NewToSend();
+                newByteToSend = new List<byte>(0);
+                if (LPF)
                 {
-                    int red = newByteToSend[n];
-                    int green = newByteToSend[n+1];
-                    int blue = newByteToSend[n+2];
-                    if(red>blue && red>green)
-                    {
-                        blue = -red / 2 + 5 * blue / 2;
-                        green = -red / 2 + 5 * green / 2;
-                    }
-                    else if(green>red && green>blue)
-                    {
-                        blue = -green / 2 + 5 * blue / 2;
-                        red = -green / 2 + 5 * red / 2;
-                    }
-                    else if(blue>red && blue>green)
-                    {
-                        green = -blue / 2 + 5 * green / 2;
-                        red = -blue / 2 + 5 * red / 2;
-                    }
-                    if (red < 0) { red = 0; }
-                    if (green < 0) { green = 0; }
-                    if (blue < 0) { blue = 0; }
-                    newByteToSend[n] = (byte)red;
-                    newByteToSend[n + 1] = (byte)green;
-                    newByteToSend[n + 2] = (byte)blue;
+                    for (int n = byteToSend.Count; n < LastByteToSend.Count && n < byteToSend.Count + 6; n++) { LastByteToSend.Add(0); }
+                    for (int n = 0; n < byteToSend.Count; n++) { newByteToSend.Add((byte)(byteToSend[n] >> 1)); }
+                    for (int n = 0; n < byteToSend.Count && n < LastByteToSend.Count; n++) { newByteToSend[n] += (byte)(LastByteToSend[n] >> 1); }
+                    LastByteToSend = new List<byte>(byteToSend);
                 }
+                else
+                {
+                    LastByteToSend = newByteToSend = byteToSend;
+                }
+                if (BGF)
+                {
+                    for (int n = 0; n < newByteToSend.Count - 2; n += 3)
+                    {  //CONTRAST AND BRIGHNESS TWEAKING, RELEVENT FOR LOW BRIGNESS COUNTENT
+                        newByteToSend[n] = (byte)((newByteToSend[n] * 2 + sRed) / 3);
+                        newByteToSend[n + 1] = (byte)((newByteToSend[n + 1] * 2 + sGreen) / 3);
+                        newByteToSend[n + 2] = (byte)((newByteToSend[n + 2] * 2 + sBlue) / 3);
+                    }
+                }
+                if (UpDown != 0)
+                {
+                    RotateArray();
+                }
+                
             }
             sock.SendTo(newByteToSend.ToArray(), endPoint);
 
