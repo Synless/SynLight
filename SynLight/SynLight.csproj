@@ -66,6 +66,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\BoolToPlayPause.cs" />
+    <Compile Include="Converter\BoolToVisib.cs" />
     <Compile Include="Converter\Not.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
     <Compile Include="Model\Startup.cs" />

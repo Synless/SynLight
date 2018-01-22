@@ -90,7 +90,7 @@ namespace SynLight.Model
             try
             {
                 Graphics gfxScreenshot = Graphics.FromImage(bmpScreenshot); //1
-                gfxScreenshot.CopyFromScreen(0, 0, 0, 0, Screen);
+                gfxScreenshot.CopyFromScreen(0, 0, 0, 0, currentScreen);
                 scaledBmpScreenshot = new Bitmap(bmpScreenshot, Width, Height);
                 gfxScreenshot.Clear(Color.Empty);
                 //Resize(scaledBmpScreenshot).Save("6regular.bmp");
@@ -101,10 +101,14 @@ namespace SynLight.Model
                 scaledBmpScreenshot.SetPixel(0, 0, Color.Black);
             }
         }
+
+        bool once = false;
         private void GetScreenShotedges()
         {
             try
             {
+                /*
+                Rectangle screenToCapture;               
                 int xScreen = (int)(SystemParameters.PrimaryScreenWidth);
                 int yScreen = (int)(SystemParameters.PrimaryScreenHeight);
 
@@ -135,6 +139,45 @@ namespace SynLight.Model
                 gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeBot = new Bitmap(bmp, Width, 1);
                 gfxScreenshot4.Clear(Color.Empty);
+                */
+                /*t xScreen = (scannedArea.Width-scannedArea.X);
+                int yScreen = (scannedArea.Height-scannedArea.Y);*/
+
+                //MULTIPLE MONITORS FIESTA
+                int startX = scannedArea.X;
+                int startY = scannedArea.Y;
+                int endX = scannedArea.Width;
+                int endY = scannedArea.Height;
+                int hX = endX - startX;
+                int hY = endY - startY;
+
+                Rectangle   rect = new Rectangle(startX, startY, startX+(hX/Width), endY);
+                Bitmap  bmp = new Bitmap(hX/Width, hY, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmp);
+                gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeLeft = new Bitmap(bmp, 1, Height);
+                gfxScreenshot.Clear(Color.Empty);
+
+                rect = new Rectangle(endX-(hX/Width), startY, startX + (hX / Width), endY);
+                bmp = new Bitmap(hX/Width, hY, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot2 = Graphics.FromImage(bmp);
+                gfxScreenshot2.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeRight = new Bitmap(bmp, 1, Height);
+                gfxScreenshot2.Clear(Color.Empty);
+
+                rect = new Rectangle(startX, startY, endX, startY+(hY/Height));
+                bmp = new Bitmap(hX, hY/Height, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot3 = Graphics.FromImage(bmp);
+                gfxScreenshot3.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeTop = new Bitmap(bmp, Width, 1);
+                gfxScreenshot3.Clear(Color.Empty);
+
+                rect = new Rectangle(startX, endY- (hY / Height), endX, endY);
+                bmp = new Bitmap(hX, hY/ Height, PixelFormat.Format32bppArgb);
+                Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
+                gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeBot = new Bitmap(bmp, Width, 1);
+                gfxScreenshot4.Clear(Color.Empty);                
 
                 scaledBmpScreenshot = new Bitmap(Width, Height);
 
@@ -148,18 +191,21 @@ namespace SynLight.Model
                     scaledBmpScreenshot.SetPixel(n, 0, scalededgeTop.GetPixel(n, 0));
                     scaledBmpScreenshot.SetPixel(n, Height - 1, scalededgeBot.GetPixel(n, 0));
                 }
-                /*try
+                try
                 {
-                    ResizeSizes(scalededgeLeft).Save("1Left.bmp");
-                    ResizeSizes(scalededgeRight).Save("3Right.bmp");
-                    ResizeTops(scalededgeTop).Save("2Top.bmp");
-                    ResizeTops(scalededgeBot).Save("4Bot.bmp");
-                    Resize(scaledBmpScreenshot).Save("5full.bmp");
+                    if (once)
+                    {
+                        once = false;
+                        ResizeSizes(scalededgeLeft).Save("1Left.bmp");
+                        ResizeSizes(scalededgeRight).Save("3Right.bmp");
+                        ResizeTops(scalededgeTop).Save("2Top.bmp");
+                        ResizeTops(scalededgeBot).Save("4Bot.bmp");
+                        Resize(scaledBmpScreenshot).Save("5full.bmp");
+                    }
                 }
                 catch
                 {
-
-                }*/
+                }
             }
             catch
             {

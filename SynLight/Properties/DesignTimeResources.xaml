@@ -5,5 +5,4 @@
         <ResourceDictionary Source="/SynLight;component/Resources/StringResources.xaml"/>
         <ResourceDictionary Source="/SynLight;component/Resources/StringResources.fr-FR.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-
 </ResourceDictionary>
