@@ -100,15 +100,14 @@ namespace SynLight.Model
                 scaledBmpScreenshot = new Bitmap(1, 1);
                 scaledBmpScreenshot.SetPixel(0, 0, Color.Black);
             }
-        }
-
-        bool once = false;
+        }        
         private void GetScreenShotedges()
         {
             try
             {
+                #region old single screen
                 /*
-                Rectangle screenToCapture;               
+                Rectangle screenToCapture;
                 int xScreen = (int)(SystemParameters.PrimaryScreenWidth);
                 int yScreen = (int)(SystemParameters.PrimaryScreenHeight);
 
@@ -142,17 +141,18 @@ namespace SynLight.Model
                 */
                 /*t xScreen = (scannedArea.Width-scannedArea.X);
                 int yScreen = (scannedArea.Height-scannedArea.Y);*/
+                #endregion
 
                 //MULTIPLE MONITORS FIESTA
-                int startX = scannedArea.X;
-                int startY = scannedArea.Y;
-                int endX = scannedArea.Width;
-                int endY = scannedArea.Height;
-                int hX = endX - startX;
-                int hY = endY - startY;
+                startX = scannedArea.X;
+                startY = scannedArea.Y;
+                endX = scannedArea.Width;
+                endY = scannedArea.Height;
+                hX = endX - startX;
+                hY = endY - startY;
 
-                Rectangle   rect = new Rectangle(startX, startY, startX+(hX/Width), endY);
-                Bitmap  bmp = new Bitmap(hX/Width, hY, PixelFormat.Format32bppArgb);
+                rect = new Rectangle(startX, startY, startX+(hX/Width), endY);
+                bmp = new Bitmap(hX/Width, hY, PixelFormat.Format32bppArgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmp);
                 gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeLeft = new Bitmap(bmp, 1, Height);
@@ -177,7 +177,7 @@ namespace SynLight.Model
                 Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
                 gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeBot = new Bitmap(bmp, Width, 1);
-                gfxScreenshot4.Clear(Color.Empty);                
+                gfxScreenshot4.Clear(Color.Empty);
 
                 scaledBmpScreenshot = new Bitmap(Width, Height);
 
@@ -193,9 +193,9 @@ namespace SynLight.Model
                 }
                 try
                 {
-                    if (once)
+                    if (debug)
                     {
-                        once = false;
+                        debug = false;
                         ResizeSizes(scalededgeLeft).Save("1Left.bmp");
                         ResizeSizes(scalededgeRight).Save("3Right.bmp");
                         ResizeTops(scalededgeTop).Save("2Top.bmp");

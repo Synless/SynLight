@@ -451,15 +451,20 @@ namespace SynLight.Model
         protected Bitmap bmpScreenshot;
         protected Bitmap scaledBmpScreenshot;
         protected Bitmap secondScaledBmpScreenshot;
-
-        protected Bitmap bitmapedgeLeft;
-        protected Bitmap bitmapedgeRight;
-        protected Bitmap bitmapedgeTop;
-        protected Bitmap bitmapedgeBot;
         protected Bitmap scalededgeLeft;
         protected Bitmap scalededgeRight;
         protected Bitmap scalededgeTop;
         protected Bitmap scalededgeBot;
+        protected bool screenConfigured = false;
+        protected bool debug = false;
+        protected int startX;
+        protected int startY;
+        protected int endX;
+        protected int endY;
+        protected int hX;
+        protected int hY;
+        protected Rectangle rect;
+        protected Bitmap bmp;
 
         protected double sRed   = 255;
         protected double sGreen = 255;
@@ -469,9 +474,6 @@ namespace SynLight.Model
         protected List<byte> byteToSend;
 
         protected PerformanceCounter cpuCounter;
-        protected bool screenConfigured = false;
-        //protected int screenIndex = 0;
-
         #endregion
 
         public Param_SynLight()
@@ -510,7 +512,7 @@ namespace SynLight.Model
                             else if (subLine[0] == "SCREEN1")
                             {
                                 screen1Size.Width   = int.Parse(subLine[1].Split(',')[0]);
-                                screen1Size.Height  = int.Parse(subLine[1].Split(',')[1]);                                
+                                screen1Size.Height  = int.Parse(subLine[1].Split(',')[1]);
                             }
                             else if (subLine[0] == "SCREEN2")
                             {
@@ -614,12 +616,6 @@ namespace SynLight.Model
         }
         private void EdgesComp()
         {
-            bitmapedgeTop   = new Bitmap(1, height);
-            bitmapedgeBot   = new Bitmap(1, height);
-            bitmapedgeLeft  = new Bitmap(width, 1);
-            bitmapedgeRight = new Bitmap(width, 1);
-
-            //experimeting with multiple screen :
             screenSelectionUpdated();
 
             double ratio = screensSize.Width / screensSize.Height;
@@ -638,15 +634,12 @@ namespace SynLight.Model
             }
             else
             {
-                tmp = screen1Size;
+                //tmp = screen1Size;
+                scannedArea = new Rectangle(0, 0, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+                Screen3Visible = false;
+                Screen2Visible = false;
             }
-
-            edgeLeft    = new Rectangle(0, 0, tmp.Width / Width, tmp.Height);
-            edgeRight   = new Rectangle(tmp.Width - (tmp.Width / Width), 0, (tmp.Width / Width), tmp.Height);
-            edgeTop     = new Rectangle(0, 0, tmp.Width, (tmp.Height / Height));
-            edgeBot     = new Rectangle(0, tmp.Height - (tmp.Height / Height), tmp.Height, tmp.Height / Height);
         }
-
         public static void Close()
         {
             sock.SendTo(new byte[1] { 2 }, endPoint);

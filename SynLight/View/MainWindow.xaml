@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="SynLight.View.MainWindow"
         xmlns:local="clr-namespace:SynLight.ViewModel"
         xmlns:conv="clr-namespace:SynLight.Converter"
-        Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="460" Width="350" MinHeight="450" MinWidth="330"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
+        Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="455" Width="350" MinHeight="450" MinWidth="330"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -20,23 +20,23 @@
         <Viewbox StretchDirection="Both" Stretch="Uniform">
             <TabControl Background="#000000DD" Margin="0,15,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}">
                 <TabItem Header="Ambiant" TabIndex="0">
-                    <StackPanel Orientation="Vertical" Height="370" Width="310" HorizontalAlignment="Center">                        
+                    <StackPanel Orientation="Vertical" Height="370" Width="310" HorizontalAlignment="Center">
                         <StackPanel Margin="0,15,0,0" Orientation="Vertical" HorizontalAlignment="Center">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,15,5" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
-                                        <RadioButton Margin="2" GroupName ="screen0" VerticalAlignment="Center" Content="{DynamicResource screenFull}" IsChecked="{Binding SynLight.ScreenFull}" />
-                                        <RadioButton Margin="2" GroupName ="screen1" VerticalAlignment="Center" Content="{DynamicResource screen1}" IsChecked="{Binding SynLight.Screen1}" />
-                                        <RadioButton Margin="2" GroupName ="screen2" VerticalAlignment="Center" Content="{DynamicResource screen2}" IsChecked="{Binding SynLight.Screen2}" />
-                                        <RadioButton Margin="2" GroupName ="screen3" VerticalAlignment="Center" Content="{DynamicResource screen3}" IsChecked="{Binding SynLight.Screen3}" Visibility="{Binding SynLight.Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,15,5" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
+                                        <RadioButton Margin="2" GroupName ="screen0" VerticalAlignment="Top" Content="{DynamicResource screenFull}" IsChecked="{Binding SynLight.ScreenFull}" />
+                                        <RadioButton Margin="2" GroupName ="screen1" VerticalAlignment="Top" Content="{DynamicResource screen1}" IsChecked="{Binding SynLight.Screen1}" />
+                                        <RadioButton Margin="2" GroupName ="screen2" VerticalAlignment="Top" Content="{DynamicResource screen2}" IsChecked="{Binding SynLight.Screen2}" />
+                                        <RadioButton Margin="2" GroupName ="screen3" VerticalAlignment="Top" Content="{DynamicResource screen3}" IsChecked="{Binding SynLight.Screen3}" Visibility="{Binding SynLight.Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" >
                                         <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource x}"  />
                                         <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource y}"  />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" >
-                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Width,       UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
-                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Height,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Width,     UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
+                                        <TextBox Margin="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Height,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="10,5,0,0" HorizontalAlignment="Center">
                                         <Label Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right" Content="{DynamicResource corners}"  />
@@ -52,7 +52,7 @@
                                 <Label Margin="0,0,15,0" Content="{DynamicResource ratio}"/>
                                 <RadioButton GroupName ="ratio" VerticalAlignment="Center"  Content="16/9" IsChecked="{Binding SynLight.Ratio}" />
                                 <RadioButton GroupName ="ratio" VerticalAlignment="Center" Content="21/9" Margin="20,0,0,0" />
-                            </StackPanel>                            
+                            </StackPanel>
                         </StackPanel>
                         <Separator Margin="12"/>
                         <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" >
@@ -79,13 +79,13 @@
                                 <RadioButton Margin="1" Content="{DynamicResource cclockwise}" GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, Converter={StaticResource Not}, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </StackPanel>
-                        <Separator Margin="10" />
+                        <Separator Margin="10"/>
                         <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
                             <CheckBox Margin="15,5,15,5" Content="LPFilter" IsChecked="{Binding SynLight.LPF}"   />
                             <CheckBox Margin="5,5,15,5"  Content="BGFilter" IsChecked="{Binding SynLight.BGF}"   />
                             <CheckBox Margin="5,5,15,5"  Content="Edges" IsChecked="{Binding SynLight.Edges}" Visibility="Collapsed"/>
                             <!--<CheckBox Margin="5,5,15,5"  Content="{DynamicResource corners}"   IsChecked="{Binding SynLight.Corner}"/>-->
-                        </StackPanel>                        
+                        </StackPanel>
                         <Button Margin="5" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
                     </StackPanel>
                 </TabItem>
