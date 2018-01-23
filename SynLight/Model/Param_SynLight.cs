@@ -53,7 +53,7 @@ namespace SynLight.Model
                 screen1 = !value;
                 screen2 = !value;
                 screen3 = !value;
-                screenSelectionUpdated();
+                ScreenSelectionUpdated();
             }
         }
 
@@ -70,7 +70,7 @@ namespace SynLight.Model
                 screen1 = value;
                 screen2 = !value;
                 screen3 = !value;
-                screenSelectionUpdated();
+                ScreenSelectionUpdated();
             }
         }
 
@@ -87,7 +87,7 @@ namespace SynLight.Model
                 screen1 = !value;
                 screen2 = value;
                 screen3 = !value;
-                screenSelectionUpdated();
+                ScreenSelectionUpdated();
             }
         }
 
@@ -104,11 +104,11 @@ namespace SynLight.Model
                 screen1 = !value;
                 screen2 = !value;
                 screen3 = value;
-                screenSelectionUpdated();
+                ScreenSelectionUpdated();
             }
         }
 
-        private void screenSelectionUpdated()
+        private void ScreenSelectionUpdated()
         {
             if (screenFull)
             {
@@ -511,19 +511,19 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "SCREEN1")
                             {
-                                screen1Size.Width   = int.Parse(subLine[1].Split(',')[0]);
-                                screen1Size.Height  = int.Parse(subLine[1].Split(',')[1]);
+                                screen1Size.Width   = Math.Min(40960, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                screen1Size.Height  = Math.Min(24000, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                             }
                             else if (subLine[0] == "SCREEN2")
                             {
-                                screen2Size.Width = int.Parse(subLine[1].Split(',')[0]);
-                                screen2Size.Height = int.Parse(subLine[1].Split(',')[1]);
+                                screen2Size.Width   = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                screen2Size.Height  = Math.Min(0, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
                                 Screen2Visible = true;
                             }
                             else if (subLine[0] == "SCREEN3")
                             {
-                                screen3Size.Width = int.Parse(subLine[1].Split(',')[0]);
-                                screen3Size.Height = int.Parse(subLine[1].Split(',')[1]);
+                                screen3Size.Width   = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                screen3Size.Height  = Math.Min(0, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
                                 Screen3Visible = true;
                             }
                             else if (subLine[0] == "Y")
@@ -616,7 +616,7 @@ namespace SynLight.Model
         }
         private void EdgesComp()
         {
-            screenSelectionUpdated();
+            ScreenSelectionUpdated();
 
             double ratio = screensSize.Width / screensSize.Height;
             bool multipleScreen = ratio > (21.0 / 9.0);
