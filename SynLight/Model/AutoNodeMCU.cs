@@ -11,18 +11,35 @@ namespace SynLight.Model
         protected static Socket sock;
         protected static List<Socket> sockList;
         protected static IPEndPoint endPoint;
-        protected static IPAddress arduinoIP;
+        protected static IPAddress nodeMCU;
         protected static int UDP_Port = 8787;
         protected static UdpClient Client;        
 
         protected static string querry = "ping";
         protected static string answer = "pong"; //a0
-        protected static bool connected = false;
         #endregion  
 
+        private static bool staticConnected = false;
         private bool single = true;
+        protected bool connected = false;
+        public bool Connected
+        {
+            get
+            {
+                return connected;
+            }
+            set
+            {
+                connected = value;
+                OnPropertyChanged("Connected");
+            }
+        }
         
         public AutoNodeMCU()
+        {
+            FindNodeMCU();
+        }
+        public void FindNodeMCU()
         {
             querry = Properties.Settings.Default.querry;
             answer = Properties.Settings.Default.answer;
@@ -36,8 +53,9 @@ namespace SynLight.Model
                     try { sock.SendTo(ping, endPoint); }
                     catch { }
                     System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
-                    if (connected)
+                    if (staticConnected)
                     {
+                        Connected = true;
                         if (!single)
                             sockList.Add(sock);
                         else
@@ -47,8 +65,9 @@ namespace SynLight.Model
                     try { sock.SendTo(ping, endPoint); }
                     catch { }
                     System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
-                    if (connected)
+                    if (staticConnected)
                     {
+                        Connected = true;
                         if (!single)
                             sockList.Add(sock);
                         else
@@ -62,19 +81,19 @@ namespace SynLight.Model
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
             Client.BeginReceive(new AsyncCallback(recv), null);
+            var ipString = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();//TEST TO BE DONE HERE
             if (System.Text.Encoding.UTF8.GetString(received).Contains(answer))
             {
-                connected = true;
+                staticConnected = true;
             }
         }
         public bool init()
         {
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             sockList = new List<Socket>();
-            arduinoIP = new IPAddress(new byte[4] { 192, 168, 0, 14 });
+            nodeMCU = new IPAddress(new byte[4] { 192, 168, 0, 14 });
             UDP_Port = 8787;
             Client = new UdpClient(0);
-            // WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOW
             try
             {
                 Client = new UdpClient(UDP_Port);

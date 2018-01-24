@@ -19,7 +19,6 @@ namespace SynLight.Model
             process = new Thread(CheckMethod);
             process.Start();
         }
-
         public void PlayPausePushed()
         {
 #pragma warning disable CS0618
@@ -47,30 +46,32 @@ namespace SynLight.Model
         #region Privates methodes
         private void CheckMethod()
         {
-            /*long counter = 0;
-            long ticks = 0;
-            long means = 0;*/
-            while (PlayPause)
-            {
-                Stopwatch watch = Stopwatch.StartNew();
-                if (Index == 0)
+                while(!Connected)
                 {
-                    Tick();
+                //IF NOT CONNECTED, TRY TO RECONNECT
+                    Tittle = "SynLight - Trying to connect ...";
+                    Thread.Sleep(2000);
+                    FindNodeMCU();
                 }
-                else if (Index == 1)
+                while (PlayPause)
                 {
-                    SingleColor();
-                }
-                Thread.Sleep(currentSleepTime / 2); // DEVIDED BY TWO THANKS TO THE edge METHOD
-                GC.Collect(); //COUPLES OF MB WON //1
-                watch.Stop();
-                long elapsedMs = watch.ElapsedMilliseconds;
-                //ticks += elapsedMs;
-                ///counter++;
-                //means = ticks / counter;
-                int Hz = (int)(1000.0 / elapsedMs);
-                Tittle = Hz.ToString();
-            }
+                    Stopwatch watch = Stopwatch.StartNew();
+                    if (Index == 0)
+                    {
+                        Tick();
+                    }
+                    else if (Index == 1)
+                    {
+                        SingleColor();
+                    }
+
+                    Thread.Sleep(currentSleepTime);
+                    GC.Collect(); //COUPLES OF MB WON
+                    watch.Stop();
+
+                    int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+                    Tittle = "Synlight - " + Hz.ToString();
+                }           
         }
         private void Tick()
         {
@@ -493,7 +494,7 @@ namespace SynLight.Model
                 staticColorChanged = false;
                 sock.SendTo(byteToSend.ToArray(), endPoint);
                 staticColorCurrentTime = 0;
-                currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
+                currentSleepTime = (((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2))/2;
             }
             else
             {
@@ -591,18 +592,6 @@ namespace SynLight.Model
             }
 
             newByteToSend = new List<byte>(byteToSend2);
-        }
-        private bool ScaledBlank()
-        {
-            for (int x = 0; x < scaledBmpScreenshot.Width; x++)
-            {
-                for (int y = 0; y < scaledBmpScreenshot.Height; y++)
-                {
-                    if (scaledBmpScreenshot.GetPixel(x, y).R + scaledBmpScreenshot.GetPixel(x, y).G + scaledBmpScreenshot.GetPixel(x, y).B > 0)
-                        return false;
-                }
-            }
-            return true;
         }
         private void NewToSend()
         {

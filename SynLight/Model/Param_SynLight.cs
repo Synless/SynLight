@@ -13,7 +13,7 @@ namespace SynLight.Model
         public static string param = Properties.Settings.Default.path; //MOVE TO PROPERTIES.SETTINGS.DEFAULT
 
         #region getset
-        private string tittle = "SynLight - ";
+        private string tittle = "SynLight - Disconnected";
         public string Tittle
         {
             get
@@ -22,7 +22,7 @@ namespace SynLight.Model
             }
             set
             {
-                tittle = tittle.Split('-')[0] + "- " + value + "Hz";
+                tittle = value;
                 OnPropertyChanged("Tittle");
             }
         }
@@ -107,7 +107,6 @@ namespace SynLight.Model
                 ScreenSelectionUpdated();
             }
         }
-
         private void ScreenSelectionUpdated()
         {
             if (screenFull)
@@ -540,10 +539,12 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "IP")
                             {
-                                if (!connected || true)
+                                if (!Connected)
                                 {
-                                    arduinoIP = IPAddress.Parse(subLine[1]);
-                                    endPoint = new IPEndPoint(arduinoIP, UDP_Port);
+                                    nodeMCU = IPAddress.Parse(subLine[1]);
+                                    endPoint = new IPEndPoint(nodeMCU, UDP_Port);
+                                    Tittle = "Synlight - Using manual IP";
+                                    Connected = true;
                                 }
                             }
                             else if (subLine[0] == "TL")
@@ -616,21 +617,17 @@ namespace SynLight.Model
         }
         private void EdgesComp()
         {
-            ScreenSelectionUpdated();
+            //ScreenSelectionUpdated();//CAN MAYBE BE DELETED
 
             double ratio = screensSize.Width / screensSize.Height;
             bool multipleScreen = ratio > (21.0 / 9.0);
 
-            Size tmp = screen1Size;
-
             if(multipleScreen && !Screen2Visible)
             {
-                System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
-                tmp = screensSize;
+                System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");                
             }
             else if(multipleScreen && Screen2Visible)
-            {
-                tmp = screen2Size;
+            {                
             }
             else
             {
@@ -642,7 +639,10 @@ namespace SynLight.Model
         }
         public static void Close()
         {
-            sock.SendTo(new byte[1] { 2 }, endPoint);
+            if (endPoint != null)
+            {
+                sock.SendTo(new byte[1] { 2 }, endPoint);
+            }
         }
     }
 }

@@ -17,9 +17,9 @@
         <conv:BoolToVisib x:Key="b2v"/>
     </Window.Resources>
     <UserControl>
-        <Viewbox StretchDirection="Both" Stretch="Uniform">
+        <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="{Binding SynLight.Connected}">
             <TabControl Background="#000000DD" Margin="0,15,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}">
-                <TabItem Header="Ambiant" TabIndex="0">
+                <TabItem Header="Ambiant" TabIndex="0">                    
                     <StackPanel Orientation="Vertical" Height="370" Width="310" HorizontalAlignment="Center">
                         <StackPanel Margin="0,15,0,0" Orientation="Vertical" HorizontalAlignment="Center">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -87,7 +87,7 @@
                             <!--<CheckBox Margin="5,5,15,5"  Content="{DynamicResource corners}"   IsChecked="{Binding SynLight.Corner}"/>-->
                         </StackPanel>
                         <Button Margin="5" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
-                    </StackPanel>
+                    </StackPanel>                    
                 </TabItem>
                 <TabItem Header="Custom" TabIndex="1">
                     <StackPanel Height="380" Width="310">
