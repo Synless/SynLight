@@ -6,7 +6,7 @@
 #include <WiFiUDP.h>
 
 // Depending on the setup, has to be at least the number of LEDs
-const uint16_t PixelCount = 100; 
+const uint16_t PixelCount = 1000; 
 const int PixelPin = 2;
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
 //WIFI
@@ -33,10 +33,11 @@ void fill(int _start, int _end, int r, int g, int b)
 
 void setup()
 {
+    delay(1000);
     Serial.begin(115200);
     strip.Begin();
     strip.Show();
-    delay(800);
+    delay(100);
     fill(0, PixelCount, 20, 0, 0);
     delay(100);
     //https://github.com/tzapu/WiFiManager#how-it-works
@@ -48,7 +49,7 @@ void setup()
     if (udpConnected)
     {
         fill(0, PixelCount, 0, 20, 0);
-        delay(200);
+        delay(100);
     }    
 }
 
