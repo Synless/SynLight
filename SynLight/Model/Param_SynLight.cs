@@ -435,6 +435,7 @@ namespace SynLight.Model
         protected bool staticColorChanged = true;
         protected int staticColorCurrentTime = 0;
         protected int staticColorMaxTime = 20;
+        protected int justBlack = 0;
 
         protected Size screensSize = new Size((int)System.Windows.SystemParameters.VirtualScreenWidth, (int)System.Windows.SystemParameters.VirtualScreenHeight);
         protected Size screen1Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -473,6 +474,15 @@ namespace SynLight.Model
         protected List<byte> byteToSend;
 
         protected PerformanceCounter cpuCounter;
+
+        protected enum PayloadType
+        {
+            ping            = 0,
+            fixedColor      = 1,
+            standardPayload = 2,
+            multiplePayload = 3,
+            terminalPayload = 4
+        }
         #endregion
 
         public Param_SynLight()
@@ -637,6 +647,13 @@ namespace SynLight.Model
                 Screen2Visible = false;
             }
         }
+
+        protected void SendPayload(PayloadType plt, List<byte> payload)
+        {
+            payload.Insert(0, (byte)plt);
+            sock.SendTo(payload.ToArray(), endPoint);
+        }
+
         public static void Close()
         {
             if (endPoint != null)

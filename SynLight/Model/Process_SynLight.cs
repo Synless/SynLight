@@ -509,46 +509,24 @@ namespace SynLight.Model
         }
         private void Send()
         {
-            /*if (ScaledBlank())
+            #region If the screen is black ...            
+            foreach (byte b in byteToSend)
             {
-                if (blankCounter++ > maxBlankCounter)
+                if (b != 0)
                 {
-                    try
-                    {
-                        sock.SendTo(new byte[1] { 1 }, endPoint);
-                        if (moreTime < 1000)
-                            moreTime += 100;
-                        Thread.Sleep(moreTime);
-                    }
-                    catch { }
-                    return;
-                }
-            }
-            else
-            {
-                blankCounter = 0;
-                moreTime = 0;
-            }*/
-            
-            
-            bool notZero = true;
-            foreach(byte b in byteToSend)
-            {
-                if(b!=0)
-                {
-                    notZero = false;
+                    justBlack++;
                     break;
                 }
             }
-            if(notZero)
+            if (justBlack>5)
             {
-                for(int n = 0; n < byteToSend.Count; n++)
-                {
-                    byteToSend[n] = 5;
-                }
-            }
+                justBlack = 0;
+                sock.SendTo(new byte[] { (byte)PayloadType.fixedColor, 5 }, endPoint);
+            } 
+            #endregion
+
             else
-            {
+            {                
                 NewToSend();
                 newByteToSend = new List<byte>(0);
                 if (LPF)
@@ -562,22 +540,30 @@ namespace SynLight.Model
                 {
                     LastByteToSend = newByteToSend = byteToSend;
                 }
-                if (BGF)
-                {
-                    for (int n = 0; n < newByteToSend.Count - 2; n += 3)
-                    {  //CONTRAST AND BRIGHNESS TWEAKING, RELEVENT FOR LOW BRIGNESS COUNTENT
-                        newByteToSend[n] = (byte)((newByteToSend[n] * 2 + sRed) / 3);
-                        newByteToSend[n + 1] = (byte)((newByteToSend[n + 1] * 2 + sGreen) / 3);
-                        newByteToSend[n + 2] = (byte)((newByteToSend[n + 2] * 2 + sBlue) / 3);
-                    }
-                }
                 if (UpDown != 0)
                 {
                     RotateArray();
                 }
-                
+                else if (byteToSend.Count < 1440)
+                {
+                    SendPayload(PayloadType.standardPayload, newByteToSend);
+                }
+                else if (byteToSend.Count > 1439 && byteToSend.Count < 2880)
+                {
+                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(0,   1439));
+                    SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(1439,1440));
+                }
+                /*//SEE IF RANGE IS INCLUSIVE OR NOT
+                else if (byteToSend.Count > 2879 && byteToSend.Count < 2879)
+                {
+                    List<byte> newList = newByteToSend.GetRange(0, 1439);
+                    SendPayload(PayloadType.multiplePayload, newByteToSend);
+                    newList = newByteToSend.GetRange(1439, 1440);
+                    SendPayload(PayloadType.terminalPayload, newByteToSend);
+                }
+                */
             }
-            sock.SendTo(newByteToSend.ToArray(), endPoint);
+            
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
