@@ -480,7 +480,7 @@ namespace SynLight.Model
             ping            = 0,
             fixedColor      = 1,
             multiplePayload = 2,
-            terminalPayload = 3
+            terminalPayload = 3,            
         }
         protected int packetSize = 1200;
         #endregion
@@ -658,7 +658,7 @@ namespace SynLight.Model
         {
             if (endPoint != null)
             {
-                sock.SendTo(new byte[1] { 2 }, endPoint);
+                sock.SendTo(new byte[2] { (byte)PayloadType.fixedColor,0 }, endPoint);
             }
         }
     }
