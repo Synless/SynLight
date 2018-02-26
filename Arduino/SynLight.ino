@@ -21,6 +21,7 @@ int green = 0;
 int blue = 0;
 unsigned long t1 = 0;
 bool timer = true;
+int ledCounter = 1;
 
 void fill(int _start, int _end, int r, int g, int b)
 {
@@ -33,7 +34,7 @@ void fill(int _start, int _end, int r, int g, int b)
 
 void setup()
 {
-    delay(1000);
+    delay(500);
     Serial.begin(115200);
     strip.Begin();
     strip.Show();
@@ -42,6 +43,7 @@ void setup()
     delay(100);
     //https://github.com/tzapu/WiFiManager#how-it-works
     WiFiManager wifiManager;
+    delay(100);
     wifiManager.autoConnect("SynLight");
     fill(0, PixelCount, 15, 15, 0);
     delay(100);
@@ -60,74 +62,93 @@ void loop()
         int packetSize = UDP.parsePacket();        
         if (packetSize)
         {
-            Serial.print("Packet of size ");
-            Serial.println(packetSize);
+            t1 = millis();
+
+            Serial.print("Packet of size : ");Serial.println(packetSize);            
             
             UDP.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-            if (packetSize == 4)
-            {   //PINGING PACKET
-                t1 = millis();
-                if(packetBuffer[0]=='p' && packetBuffer[1]=='i' && packetBuffer[2]=='n' && packetBuffer[3]=='g')
-                {
-                    UDP.beginPacket(UDP.remoteIP(), localPort);
-                    UDP.write(ReplyBuffer);
-                    UDP.endPacket();
-                    Serial.print("Ping received, answered [");Serial.print(ReplyBuffer);Serial.println("]");                    
-                }
-                //STATIC COLOR
-                else if(packetBuffer[0]==1)
-                {
-                    fill(0, PixelCount, packetBuffer[1], packetBuffer[2], packetBuffer[3]);
-                    Serial.print("Static color");
-                }
-            }
-            //FRAME
-            else if (packetSize>1)
+
+            if(packetBuffer[0]==0)      //PING
             {
-                t1 = millis();
-                for (int n = 0; n<packetSize - 2; n += 3)
+                Serial.println("Received : Ping header");
+                if(packetSize==5)
                 {
-                    red = packetBuffer[n];
-                    green = packetBuffer[n + 1];
-                    blue = packetBuffer[n + 2];
-                    //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
-                    if((n/3)<PixelCount)      
+                    if(packetBuffer[1]=='p' && packetBuffer[2]=='i' && packetBuffer[3]=='n' && packetBuffer[4]=='g')
                     {
-                        strip.SetPixelColor(n/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
-                    }
-                    else
-                    {
-                        break;
+                        Serial.println("Received : Ping command")
+                        Serial.print("Answering -> [");Serial.print(ReplyBuffer);Serial.println("]");
+
+                        UDP.beginPacket(UDP.remoteIP(), localPort);
+                        UDP.write(ReplyBuffer);
+                        UDP.endPacket();
                     }
                 }
-                strip.Show();
             }
-            //SPECIAL PACKETS
-            else if (packetSize == 1)
+            else if(packetBuffer[0]==1) //STATIC
             {
-                t1 = millis();
-                UDP.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-                int specialPacket = packetBuffer[0];
-                switch (specialPacket) 
+                Serial.println("Received : Static color header");
+                if(packetSize==2)
                 {
-                  case 0:
-                    break;
-                  case 1:
-                    fill(0, PixelCount, 25, 25, 25);
-                    break;
-                  case 2:
-                    fill(0, PixelCount, 0, 0, 0);
-                    break;
-                  default:
-                    break;
-                }  
+                    Serial.print("Received : Static color command"); 
+                    fill(0, PixelCount, packetBuffer[1], packetBuffer[1], packetBuffer[1]);                                                        
+                }
+            }
+            else if(packetBuffer[0]==2) //NON-TERMINAL
+            {
+                Serial.println("Received : Multiple payload header");
+                if(packetSize>3)
+                {
+                    Serial.print("Received : Multiple payload command"); 
+                    while(ledCounter<packetSize - 2)
+                    {
+                        red = packetBuffer[ledCounter];
+                        green = packetBuffer[ledCounter + 1];
+                        blue = packetBuffer[ledCounter + 2];
+                        //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
+                        if((ledCounter/3)<PixelCount)      
+                        {
+                            strip.SetPixelColor(ledCounter/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        ledCounter += 3;
+                    }                                                                            
+                }
+            }
+            else if(packetBuffer[0]==3) //TERMINAL
+            {
+                Serial.println("Received : Multiple payload header");
+                if(packetSize>3)
+                {
+                    Serial.print("Received : Multiple payload command"); 
+                    while(ledCounter<packetSize - 2)
+                    {
+                        red = packetBuffer[ledCounter];
+                        green = packetBuffer[ledCounter + 1];
+                        blue = packetBuffer[ledCounter + 2];
+                        //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
+                        if((ledCounter/3)<PixelCount)      
+                        {
+                            strip.SetPixelColor(ledCounter/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        ledCounter += 3;
+                    }
+                    strip.Show();
+                    ledCounter = 1;                                                                           
+                }
             }
         }
     }
     //STANDBY AFTER 7 SECONDS
     if (millis() - t1>7000)
     {
-      t1 = millis();
-      fill(0, PixelCount, 0, 0, 0);
+        t1 = millis();
+        fill(0, PixelCount, 0, 0, 0);
     }
 }
