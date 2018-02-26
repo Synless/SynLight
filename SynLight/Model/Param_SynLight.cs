@@ -479,10 +479,10 @@ namespace SynLight.Model
         {
             ping            = 0,
             fixedColor      = 1,
-            standardPayload = 2,
-            multiplePayload = 3,
-            terminalPayload = 4
+            multiplePayload = 2,
+            terminalPayload = 3
         }
+        protected int packetSyze = 1200;
         #endregion
 
         public Param_SynLight()

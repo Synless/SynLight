@@ -544,26 +544,18 @@ namespace SynLight.Model
                 {
                     RotateArray();
                 }
-                else if (byteToSend.Count < 1440)
+
+                //TODO                                               
+                for (int n = 0; n < byteToSend.Count; n += packetSyze)
                 {
-                    SendPayload(PayloadType.standardPayload, newByteToSend);
+                    if(n+packetSyze>newByteToSend.Count)                        
+                        break;
+                        
+                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSyze));                        
                 }
-                else if (byteToSend.Count > 1439 && byteToSend.Count < 2880)
-                {
-                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(0,   1439));
-                    SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(1439,1440));
-                }
-                /*//SEE IF RANGE IS INCLUSIVE OR NOT
-                else if (byteToSend.Count > 2879 && byteToSend.Count < 2879)
-                {
-                    List<byte> newList = newByteToSend.GetRange(0, 1439);
-                    SendPayload(PayloadType.multiplePayload, newByteToSend);
-                    newList = newByteToSend.GetRange(1439, 1440);
-                    SendPayload(PayloadType.terminalPayload, newByteToSend);
-                }
-                */
+                int index = newByteToSend.Count - (newByteToSend.Count % packetSyze);
+                SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count%packetSyze));
             }
-            
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
