@@ -482,7 +482,7 @@ namespace SynLight.Model
             multiplePayload = 2,
             terminalPayload = 3
         }
-        protected int packetSyze = 1200;
+        protected int packetSize = 1200;
         #endregion
 
         public Param_SynLight()

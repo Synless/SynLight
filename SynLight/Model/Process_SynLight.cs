@@ -546,15 +546,15 @@ namespace SynLight.Model
                 }
 
                 //TODO                                               
-                for (int n = 0; n < byteToSend.Count; n += packetSyze)
+                for (int n = 0; n < byteToSend.Count; n += packetSize)
                 {
-                    if(n+packetSyze>newByteToSend.Count)                        
+                    if(n+packetSize>newByteToSend.Count)                        
                         break;
                         
-                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSyze));                        
+                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));                        
                 }
-                int index = newByteToSend.Count - (newByteToSend.Count % packetSyze);
-                SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count%packetSyze));
+                int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
+                SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count%packetSize));
             }
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
