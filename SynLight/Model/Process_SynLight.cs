@@ -546,11 +546,8 @@ namespace SynLight.Model
                 }
 
                 //TODO                                               
-                for (int n = 0; n < byteToSend.Count; n += packetSize)
-                {
-                    if(n+packetSize>newByteToSend.Count)                        
-                        break;
-                        
+                for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
+                {                        
                     SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));                        
                 }
                 int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
