@@ -99,7 +99,7 @@ void loop()
                 if(packetSize>3)
                 {
                     Serial.println("Received : Payload command"); 
-                    while(ledCounter<packetSize - 2)
+                    while(ledCounter<packetSize - 2 && ledCounter<packetSize - 2)
                     {
                         red = packetBuffer[ledCounter];
                         green = packetBuffer[ledCounter + 1];
