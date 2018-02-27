@@ -509,24 +509,28 @@ namespace SynLight.Model
         }
         private void Send()
         {
-            #region If the screen is black ...            
+            #region If the screen is black ...
+            black = true;
             foreach (byte b in byteToSend)
             {
                 if (b != 0)
                 {
-                    justBlack++;
+                    black = false;
                     break;
                 }
             }
-            if (justBlack>5)
+            if (black)
             {
-                justBlack = 0;
-                sock.SendTo(new byte[] { (byte)PayloadType.fixedColor, 5 }, endPoint);
+                if (justBlack++>5)
+                {
+                    justBlack = 0;
+                    sock.SendTo(new byte[] { (byte)PayloadType.fixedColor, 5 }, endPoint);
+                }
             } 
             #endregion
 
             else
-            {                
+            {
                 NewToSend();
                 newByteToSend = new List<byte>(0);
                 if (LPF)
@@ -545,17 +549,26 @@ namespace SynLight.Model
                     RotateArray();
                 }
 
-                //TODO                                               
+                //TODO
                 for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
-                {                        
-                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));                        
+                {
+                    /*List<byte> tmp = newByteToSend.GetRange(n, packetSize);
+                    for(int m=0;m< tmp.Count;m++)
+                    {
+                        if(tmp[m]!= newByteToSend[n+m])
+                        {
+
+                        }
+                    }
+                    */
+                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
                 }
                 int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
                 SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count%packetSize));
             }
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
-            currentSleepTime = ((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2);
+            currentSleepTime = (((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2))/3;
         }
         private void RotateArray()
         {

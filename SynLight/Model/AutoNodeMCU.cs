@@ -50,7 +50,7 @@ namespace SynLight.Model
                 for (byte n = 0; n < 255; n++)
                 {
                     endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 0, n }), UDP_Port);
-                    try { sock.SendTo(ping, endPoint); }
+                    try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
                     catch { }
                     System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
                     if (staticConnected)
@@ -62,7 +62,7 @@ namespace SynLight.Model
                             break;
                     }
                     endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 1, n }), UDP_Port);
-                    try { sock.SendTo(ping, endPoint); }
+                    try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
                     catch { }
                     System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
                     if (staticConnected)
@@ -80,10 +80,9 @@ namespace SynLight.Model
         {
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
-            Client.BeginReceive(new AsyncCallback(recv), null);
-            var ipString = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();//TEST TO BE DONE HERE
             if (System.Text.Encoding.UTF8.GetString(received).Contains(answer))
             {
+                Client.BeginReceive(new AsyncCallback(recv), null);
                 staticConnected = true;
             }
         }
@@ -103,6 +102,18 @@ namespace SynLight.Model
             {   
                 return false;
             }
+        }
+        protected enum PayloadType
+        {
+            ping = 0,
+            fixedColor = 1,
+            multiplePayload = 2,
+            terminalPayload = 3,
+        }
+        protected void SendPayload(PayloadType plt, List<byte> payload)
+        {
+            payload.Insert(0, (byte)plt);
+            sock.SendTo(payload.ToArray(), endPoint);
         }
         ~AutoNodeMCU()
         {
