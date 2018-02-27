@@ -89,60 +89,40 @@ void loop()
                 Serial.println("Received : Static color header");
                 if(packetSize==2)
                 {
-                    Serial.print("Received : Static color command"); 
+                    Serial.println("Received : Static color command"); 
                     fill(0, PixelCount, packetBuffer[1], packetBuffer[1], packetBuffer[1]);                                                        
                 }
             }
-            else if(packetBuffer[0]==2) //NON-TERMINAL
+            else if(packetBuffer[0]==2 || packetBuffer[0]==3)
             {
-                Serial.println("Received : Multiple payload header");
+                Serial.println("Received : Payload header");
                 if(packetSize>3)
                 {
-                    Serial.print("Received : Multiple payload command"); 
+                    Serial.println("Received : Payload command"); 
                     while(ledCounter<packetSize - 2)
                     {
                         red = packetBuffer[ledCounter];
                         green = packetBuffer[ledCounter + 1];
-                        blue = packetBuffer[ledCounter + 2];
-                        //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
+                        blue = packetBuffer[ledCounter + 2];                        
                         if((ledCounter/3)<PixelCount)      
                         {
+                            //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
                             strip.SetPixelColor(ledCounter/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
                         }
                         else
                         {
                             break;
                         }
-                        ledCounter += 3;
-                    }                                                                            
-                }
-            }
-            else if(packetBuffer[0]==3) //TERMINAL
-            {
-                Serial.println("Received : Multiple payload header");
-                if(packetSize>3)
-                {
-                    Serial.print("Received : Multiple payload command"); 
-                    while(ledCounter<packetSize - 2)
+                        ledCounter += 3;                        
+                    }                   
+                    if(packetBuffer[0]==3)
                     {
-                        red = packetBuffer[ledCounter];
-                        green = packetBuffer[ledCounter + 1];
-                        blue = packetBuffer[ledCounter + 2];
-                        //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
-                        if((ledCounter/3)<PixelCount)      
-                        {
-                            strip.SetPixelColor(ledCounter/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
-                        }
-                        else
-                        {
-                            break;
-                        }
-                        ledCounter += 3;
-                    }
-                    strip.Show();
-                    ledCounter = 1;                                                                           
+                        strip.Show();
+                        ledCounter = 1;
+                        Serial.println("--- Show ---"); 
+                    }                                                         
                 }
-            }
+            }            
         }
     }
     //STANDBY AFTER 7 SECONDS
