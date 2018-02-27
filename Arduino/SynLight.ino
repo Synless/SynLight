@@ -21,7 +21,8 @@ int green = 0;
 int blue = 0;
 unsigned long t1 = 0;
 bool timer = true;
-int ledCounter = 1;
+unsigned int ledCounter = 0;
+unsigned int totalLedCounter = 0;
 
 void fill(int _start, int _end, int r, int g, int b)
 {
@@ -64,7 +65,7 @@ void loop()
         {
             t1 = millis();
 
-            Serial.print("Packet of size : ");Serial.println(packetSize);            
+            Serial.print("\nPacket of size : ");Serial.println(packetSize);            
             
             UDP.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
 
@@ -75,7 +76,7 @@ void loop()
                 {
                     if(packetBuffer[1]=='p' && packetBuffer[2]=='i' && packetBuffer[3]=='n' && packetBuffer[4]=='g')
                     {
-                        Serial.println("Received : Ping command")
+                        Serial.println("Received : Ping command");
                         Serial.print("Answering -> [");Serial.print(ReplyBuffer);Serial.println("]");
 
                         UDP.beginPacket(UDP.remoteIP(), localPort);
@@ -99,28 +100,37 @@ void loop()
                 if(packetSize>3)
                 {
                     Serial.println("Received : Payload command"); 
-                    while(ledCounter<packetSize - 2 && ledCounter<packetSize - 2)
+                    Serial.print("ledCounter start\t: ");Serial.println(ledCounter);
+                    Serial.print("totalLedCounter start\t: ");Serial.println(totalLedCounter); 
+                                      
+                    while(ledCounter<((packetSize-2)/3) && ledCounter<PixelCount)
                     {
-                        red = packetBuffer[ledCounter];
-                        green = packetBuffer[ledCounter + 1];
-                        blue = packetBuffer[ledCounter + 2];                        
-                        if((ledCounter/3)<PixelCount)      
+                        //Serial.print("ledCounter+totalLedCounter\t: ");Serial.println(ledCounter+totalLedCounter); 
+                        red   = packetBuffer[ledCounter*3 + 1];
+                        green = packetBuffer[ledCounter*3 + 2];
+                        blue  = packetBuffer[ledCounter*3 + 3];                        
+                        if((ledCounter)<PixelCount)      
                         {
                             //POWERED FROM A SINGLE USB3.0 CONNECTION, NO EXTERNAL PSU, THUS THE DIVISIONS
-                            strip.SetPixelColor(ledCounter/3,RgbColor(red>>2,green>>2,(blue*3)>>4));   
+                            strip.SetPixelColor(ledCounter+totalLedCounter,RgbColor(red>>2,green>>2,(blue*3)>>4));   
                         }
                         else
                         {
                             break;
                         }
-                        ledCounter += 3;                        
-                    }                   
+                        ledCounter++;                        
+                    }                    
+                    totalLedCounter += ledCounter;
+                    Serial.print("ledCounter end\t\t: ");Serial.println(ledCounter);
+                    Serial.print("totalLedCounter end\t: ");Serial.println(totalLedCounter);
+                    ledCounter = 0;                       
+                                  
                     if(packetBuffer[0]==3)
                     {
                         strip.Show();
-                        ledCounter = 1;
-                        Serial.println("--- Show ---"); 
-                    }                                                         
+                        Serial.println("\n--- Show ---\n");
+                        totalLedCounter = 0;
+                    }   
                 }
             }            
         }
