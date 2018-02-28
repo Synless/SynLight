@@ -437,6 +437,7 @@ namespace SynLight.Model
         protected int staticColorMaxTime = 20;
         protected ushort justBlack = 0;
         protected bool black = false;
+        protected const int packetSize = 1200;
 
         protected Size screensSize = new Size((int)System.Windows.SystemParameters.VirtualScreenWidth, (int)System.Windows.SystemParameters.VirtualScreenHeight);
         protected Size screen1Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -476,7 +477,7 @@ namespace SynLight.Model
 
         protected PerformanceCounter cpuCounter;
         
-        protected int packetSize = 1200;
+        
         #endregion
 
         public Param_SynLight()
