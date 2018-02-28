@@ -31,6 +31,7 @@ void fill(int _start, int _end, int r, int g, int b)
         strip.SetPixelColor(n,RgbColor(r,g,b));
     }
     strip.Show();
+    Serial.println("\n-------- Show --------\n");    
 }
 
 void setup()
@@ -83,15 +84,27 @@ void loop()
                         UDP.write(ReplyBuffer);
                         UDP.endPacket();
                     }
+                    else
+                    {
+                        Serial.println("Received : Ping commmand with right size but not matching"); 
+                    }
+                }
+                else
+                {
+                    Serial.println("Received : Ping commmand with wrong size"); 
                 }
             }
             else if(packetBuffer[0]==1) //STATIC
             {
                 Serial.println("Received : Static color header");
-                if(packetSize==2)
+                if(packetSize==4)
                 {
                     Serial.println("Received : Static color command"); 
-                    fill(0, PixelCount, packetBuffer[1], packetBuffer[1], packetBuffer[1]);                                                        
+                    fill(0, PixelCount, packetBuffer[1], packetBuffer[2], packetBuffer[3]);                                                        
+                }
+                else
+                {
+                    Serial.println("Received : Not static color command"); 
                 }
             }
             else if(packetBuffer[0]==2 || packetBuffer[0]==3)
@@ -103,7 +116,7 @@ void loop()
                     Serial.print("ledCounter start\t: ");Serial.println(ledCounter);
                     Serial.print("totalLedCounter start\t: ");Serial.println(totalLedCounter); 
                                       
-                    while(ledCounter<((packetSize-2)/3) && ledCounter<PixelCount)
+                    while(ledCounter<=((packetSize-2)/3) && ledCounter<PixelCount)
                     {
                         //Serial.print("ledCounter+totalLedCounter\t: ");Serial.println(ledCounter+totalLedCounter); 
                         red   = packetBuffer[ledCounter*3 + 1];
@@ -128,9 +141,13 @@ void loop()
                     if(packetBuffer[0]==3)
                     {
                         strip.Show();
-                        Serial.println("\n--- Show ---\n");
+                        Serial.println("\n-------- Show --------\n");
                         totalLedCounter = 0;
                     }   
+                }
+                else
+                {
+                    Serial.println("Received : Not Payload color command"); 
                 }
             }            
         }
