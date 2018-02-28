@@ -488,11 +488,11 @@ namespace SynLight.Model
         }
         private void SingleColor()
         {
-            byteToSend = new List<byte>() { 1, Red, Green, Blue };
+            byteToSend = new List<byte>() { Red, Green, Blue };
             if (staticColorChanged)
             {
                 staticColorChanged = false;
-                sock.SendTo(byteToSend.ToArray(), endPoint);
+                SendPayload(PayloadType.fixedColor, byteToSend);
                 staticColorCurrentTime = 0;
                 currentSleepTime = (((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2))/2;
             }
@@ -501,7 +501,7 @@ namespace SynLight.Model
                 staticColorCurrentTime++;
                 if (staticColorCurrentTime > staticColorMaxTime)
                 {
-                    sock.SendTo(byteToSend.ToArray(), endPoint);
+                    SendPayload(PayloadType.fixedColor, byteToSend);
                     staticColorCurrentTime = 0;
                 }
                 currentSleepTime = 100;
