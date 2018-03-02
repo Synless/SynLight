@@ -264,7 +264,7 @@ namespace SynLight.Model
                 if(!fromWidth)
                 {
                     ratio = !ratio;
-                }                
+                }
                 if (!ratio)
                 {
                     double tmp = Height / A;
@@ -333,13 +333,20 @@ namespace SynLight.Model
             }
         }
 
-        private static bool playPause = true;
+        protected System.Threading.Thread process;
+
+        private bool playPause = true;
         public bool PlayPause
         {
             get { return playPause; }
             set
             {
                 playPause = value;
+                System.Threading.Thread.Sleep(50);
+                if(playPause)
+                {
+                    process.Start();
+                }
                 OnPropertyChanged("PlayPause");
             }
         }
@@ -635,10 +642,10 @@ namespace SynLight.Model
 
             if(multipleScreen && !Screen2Visible)
             {
-                System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");                
+                System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
             }
             else if(multipleScreen && Screen2Visible)
-            {                
+            {
             }
             else
             {
@@ -648,8 +655,6 @@ namespace SynLight.Model
                 Screen2Visible = false;
             }
         }
-
-        
 
         public static void Close()
         {

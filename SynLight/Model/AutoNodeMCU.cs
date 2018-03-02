@@ -115,6 +115,15 @@ namespace SynLight.Model
             payload.Insert(0, (byte)plt);
             sock.SendTo(payload.ToArray(), endPoint);
         }
+        protected void SendPayload(PayloadType plt, int r=0,int g=0,int b=0)
+        {
+            List<byte> payload = new List<byte>();
+            payload.Insert(0, (byte)b);
+            payload.Insert(0, (byte)g);
+            payload.Insert(0, (byte)r);
+            payload.Insert(0, (byte)plt);
+            sock.SendTo(payload.ToArray(), endPoint);
+        }
         ~AutoNodeMCU()
         {
             Client.Close();

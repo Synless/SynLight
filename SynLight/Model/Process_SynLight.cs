@@ -11,7 +11,7 @@ namespace SynLight.Model
 {
     public class Process_SynLight : Param_SynLight
     {
-        Thread process;
+        
 
         public Process_SynLight()
         {
@@ -19,30 +19,7 @@ namespace SynLight.Model
             process = new Thread(CheckMethod);
             process.Start();
         }
-        public void PlayPausePushed()
-        {
-#pragma warning disable CS0618
-            PlayPause = !PlayPause;
-            if (PlayPause)
-            {
-                //CREATION OF A SECOND WORKER NOT TO BLOCK THE PROGRAM
-                process.Priority = ThreadPriority.Lowest;
-                process.Resume();
-            }
-            else
-            {
-                Close();
-                try
-                {
-                    process.Suspend();
-                }
-                catch
-                {
 
-                }
-            }
-#pragma warning disable CS0618
-        }
         #region Privates methodes
         private void CheckMethod()
         {
@@ -71,7 +48,9 @@ namespace SynLight.Model
 
                     int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                     Tittle = "Synlight - " + Hz.ToString() + "Hz";
-                }           
+                }
+                SendPayload(PayloadType.fixedColor, 0);
+                process = new Thread(CheckMethod);
         }
         private void Tick()
         {

@@ -16,29 +16,28 @@
         <conv:BoolToPlayPause x:Key="b2pp"/>
         <conv:Not x:Key="Not"/>
         <conv:BoolToVisib x:Key="b2v"/>
+        <System:Double  x:Key="ToggleSwitchCarageWidth">30</System:Double>
+        <System:Double  x:Key="ToggleSwitchWidth">60</System:Double>
+        <System:Double  x:Key="ToggleSwitchHeight">20</System:Double>
+        <System:Double  x:Key="ToggleSwitchBigCarageWidth">90</System:Double>
+        <System:Double  x:Key="ToggleSwitchBigWidth">180</System:Double>
+        <System:Double  x:Key="ToggleSwitcBighHeight">60</System:Double>
+        <Thickness      x:Key="ToggleSwitchBorderThickness">1</Thickness>
+        <CornerRadius   x:Key="ToggleSwitchCornerRadius">0</CornerRadius>
         <LinearGradientBrush x:Key="CheckedBlue" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FF285AB3" Offset="0" />
-            <GradientStop Color="#FF4184EC" Offset="0.5" />
-            <GradientStop Color="#FF558BED" Offset="0.5" />
-            <GradientStop Color="#FF7DACF0" Offset="1" />
+            <GradientStop Color="#FF285AB3" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedGreen" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#BB08633A" Offset="0" />
-            <GradientStop Color="#BB11AC34" Offset="0.5" />
-            <GradientStop Color="#BB15BD3B" Offset="0.5" />
-            <GradientStop Color="#BB1DD23F" Offset="1" />
+            <GradientStop Color="#BB0D823F" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedRed" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFB4384A" Offset="0" />
-            <GradientStop Color="#FFF55174" Offset="0.5" />
-            <GradientStop Color="#FFF6657B" Offset="0.5" />
-            <GradientStop Color="#FFFB5DBC" Offset="1" />
+            <GradientStop Color="#FFBD384A" Offset="0" />
+            <GradientStop Color="#FFB4384A" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedGrey" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFD5D5D5" Offset="0" />
-            <GradientStop Color="#FFEEEEEE" Offset="0.1" />
-            <GradientStop Color="#FFF8F8F8" Offset="0.5" />
-            <GradientStop Color="#FFFCFCFC" Offset="0.5" />
+            <GradientStop Color="#FFE5E5E5" Offset="0" />
             <GradientStop Color="#FFFEFEFE" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
@@ -48,7 +47,7 @@
             <GradientStop Color="#FFFA8E12" Offset="0.5" />
             <GradientStop Color="#FFFF981D" Offset="0.5" />
             <GradientStop Color="#FFFCBC5A" Offset="1" />
-        </LinearGradientBrush>        
+        </LinearGradientBrush>
         <LinearGradientBrush x:Key="BackGroundBorder" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFBDBDBD" Offset="0" />
             <GradientStop Color="#FFE7E7E7" Offset="0.1" />
@@ -58,7 +57,6 @@
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="Carage" EndPoint="0,1" StartPoint="0,0">
             <GradientStop Color="#FFF0F0F0" Offset="0" />
-            <GradientStop Color="#FFCDCDCD" Offset="0.1" />
             <GradientStop Color="#FFFBFBFB" Offset="1" />
         </LinearGradientBrush>
         <SolidColorBrush x:Key="RegularBorder" Color="#FF737373" />
@@ -68,18 +66,9 @@
         <SolidColorBrush x:Key="CheckedGreenBorder" Color="#BB147438" />
         <SolidColorBrush x:Key="CheckedBlueBorder" Color="#BB143874" />
         <SolidColorBrush x:Key="EasyGrey" Color="#DDFFFFFF" />
-        <System:Double  x:Key="ToggleSwitchCarageWidth">30</System:Double>
-        <System:Double  x:Key="ToggleSwitchWidth">60</System:Double>
-        <System:Double  x:Key="ToggleSwitchHeight">20</System:Double>
-        <System:Double  x:Key="ToggleSwitchBigCarageWidth">90</System:Double>
-        <System:Double  x:Key="ToggleSwitchBigWidth">180</System:Double>
-        <System:Double  x:Key="ToggleSwitcBighHeight">60</System:Double>
-        <Thickness      x:Key="ToggleSwitchBorderThickness">1</Thickness>
-        <CornerRadius   x:Key="ToggleSwitchCornerRadius">1</CornerRadius>
-
         <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
             <Border Background="{TemplateBinding Background}" 
-                x:Name="Bd" CornerRadius="2" BorderThickness="1" BorderBrush="{StaticResource RegularBorder}" >
+                x:Name="Bd" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" BorderThickness="1" BorderBrush="{StaticResource RegularBorder}" >
                 <ScrollViewer x:Name="PART_ContentHost"/>
             </Border>
             <ControlTemplate.Triggers>
@@ -120,7 +109,6 @@
                                           TextElement.FontWeight="Bold">
                                 </ContentPresenter>
                             </Border>
-
                         </Grid>
                         <!--<ControlTemplate.Triggers>
                             <Trigger Property="IsPressed" Value="True">
@@ -160,19 +148,19 @@
                         <ControlTemplate.Resources>
                             <Storyboard x:Key="OnChecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OnUnchecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="0" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </ControlTemplate.Resources>
                         <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchBigWidth}">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
                             <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedRed}" BorderBrush="{StaticResource CheckedRedBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitcBighHeight}" Width="{StaticResource ToggleSwitchBigWidth}">
+                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedGreen}" BorderBrush="{StaticResource CheckedGreenBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitcBighHeight}" Width="{StaticResource ToggleSwitchBigWidth}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
@@ -204,8 +192,8 @@
                                     <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
                                 </Trigger.EnterActions>
                                 <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedGreen}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedGreenBorder}" />
+                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedRed}" />
+                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedRedBorder}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <!-- ToDo: Add Style for Isenabled == False -->
@@ -417,7 +405,7 @@
         </Style>
         <Style TargetType="{x:Type TabItem}">
             <Setter Property="Visibility" Value="Visible" />
-            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Foreground" Value="{StaticResource EasyGrey}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
@@ -467,7 +455,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <UserControl Background="#DD000000">
+    <UserControl Background="#FF101010">
         <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="true">
             <TabControl  Margin="0,10,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="330" Height="415">
                 <TabItem Header="{DynamicResource ambiant}" TabIndex="0" Width="80">
@@ -500,7 +488,7 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0">
-                                <Label Margin="0,0,15,0" Content="{DynamicResource ratio}"/>
+                                <Label Style="{StaticResource Labels}" Margin="0,0,15,0" Content="{DynamicResource ratio}"/>
                                 <CheckBox Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding SynLight.Ratio, Converter={StaticResource Not}}"/>
                             </StackPanel>
                         </StackPanel>
@@ -535,7 +523,7 @@
                             <Label Style="{StaticResource Labels}" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource LPF}" />
                             <CheckBox Margin="5" IsChecked="{Binding SynLight.LPF}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
                         </StackPanel>
-                        <CheckBox Margin="8" Style="{StaticResource ToggleSwitchPlayPause}" Command="{Binding CommandPlay}"/>
+                        <CheckBox Margin="8" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding SynLight.PlayPause}" />
                         <!--<Button Margin="5" Style="{StaticResource ButtonRoundCorner}" BorderBrush="{StaticResource RegularBorder}" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />-->
                     </StackPanel>
                 </TabItem>

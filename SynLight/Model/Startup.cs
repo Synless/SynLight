@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -11,6 +12,14 @@ namespace SynLight.Model
         /// </summary>
         public static void StartOrKill()
         {
+            Process[] xaml = Process.GetProcesses();
+            foreach (Process p in xaml)
+            {
+                if (p.ProcessName.Contains("XAML Designer") || p.ProcessName.Contains("XDesProc"))
+                {
+                    p.Kill();
+                }
+            }
             string procName = Process.GetCurrentProcess().ProcessName;
             System.Collections.Generic.List<Process> processes = Process.GetProcessesByName(procName).ToList();
             while (processes.Count > 1)
@@ -34,7 +43,7 @@ namespace SynLight.Model
         /// </summary>
         public static void CleanFiles()
         {
-            //.vs            
+            //.vs
             try
             {
                 string[] vsPathSplits = Directory.GetCurrentDirectory().Split('\\');
