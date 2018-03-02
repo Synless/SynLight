@@ -1,4 +1,4 @@
-﻿<Window
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="SynLight.View.MainWindow"
@@ -22,6 +22,18 @@
             <GradientStop Color="#FF558BED" Offset="0.5" />
             <GradientStop Color="#FF7DACF0" Offset="1" />
         </LinearGradientBrush>
+        <LinearGradientBrush x:Key="CheckedGreen" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#BB08633A" Offset="0" />
+            <GradientStop Color="#BB11AC34" Offset="0.5" />
+            <GradientStop Color="#BB15BD3B" Offset="0.5" />
+            <GradientStop Color="#BB1DD23F" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="CheckedRed" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFB4384A" Offset="0" />
+            <GradientStop Color="#FFF55174" Offset="0.5" />
+            <GradientStop Color="#FFF6657B" Offset="0.5" />
+            <GradientStop Color="#FFFB5DBC" Offset="1" />
+        </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedGrey" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFD5D5D5" Offset="0" />
             <GradientStop Color="#FFEEEEEE" Offset="0.1" />
@@ -37,6 +49,7 @@
             <GradientStop Color="#FFFF981D" Offset="0.5" />
             <GradientStop Color="#FFFCBC5A" Offset="1" />
         </LinearGradientBrush>
+        
         <LinearGradientBrush x:Key="BackGroundBorder" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFBDBDBD" Offset="0" />
             <GradientStop Color="#FFE7E7E7" Offset="0.1" />
@@ -56,8 +69,69 @@
         <CornerRadius   x:Key="ToggleSwitchCornerRadius">1</CornerRadius>
 
         <SolidColorBrush x:Key="RegularBorder" Color="#FF737373" />
+        <SolidColorBrush x:Key="DarkerBorder" Color="#FF535353" />
         <SolidColorBrush x:Key="CheckedOrangeBorder" Color="#FF8E4A1B" />
+        <SolidColorBrush x:Key="CheckedRedBorder" Color="#FF743814" />
+        <SolidColorBrush x:Key="CheckedGreenBorder" Color="#FF147438" />
         <SolidColorBrush x:Key="CheckedBlueBorder" Color="#FF143874" />
+        <Style x:Key="ButtonRoundCorner" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid x:Name="grid">
+                            <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource DarkerBorder}" BorderThickness="1" Background="{StaticResource Carage}">
+                                <!--<Border.Background>
+                                    <RadialGradientBrush GradientOrigin="0.496,1.052">
+                                        <RadialGradientBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterX="0.5" CenterY="0.5" 
+                                                        ScaleX="1.5" ScaleY="1.5"/>
+                                                <TranslateTransform X="0.02" Y="0.3"/>
+                                            </TransformGroup>
+                                        </RadialGradientBrush.RelativeTransform>
+                                        <GradientStop Offset="1" Color="#00000000"/>
+                                        <GradientStop Offset="0.3" Color="#FFFFFFFF"/>
+                                    </RadialGradientBrush>
+                                </Border.Background>-->
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          TextElement.FontWeight="Bold">
+                                </ContentPresenter>
+                            </Border>
+
+                        </Grid>
+                        <!--<ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <RadialGradientBrush GradientOrigin="0.496,1.052">
+                                            <RadialGradientBrush.RelativeTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.5" ScaleY="1.5"/>
+                                                    <TranslateTransform X="0.02" Y="0.3"/>
+                                                </TransformGroup>
+                                            </RadialGradientBrush.RelativeTransform>
+                                            <GradientStop Color="#00000000" Offset="1"/>
+                                            <GradientStop Color="#FF303030" Offset="0.3"/>
+                                        </RadialGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FF33962B"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="grid" Value="0.25"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>-->
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="ToggleSwitchOnOff_blue" TargetType="CheckBox">
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
@@ -79,17 +153,17 @@
                         <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
                             <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource BackGroundBorder}" BorderBrush="{StaticResource RegularBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedRed}" BorderBrush="{StaticResource CheckedRedBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <Ellipse x:Name="Off" Width="10" Height="10" Stroke="#FF6A6A6A" StrokeThickness="1.5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="10" Stroke="#FF7A7A7A" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Ellipse x:Name="Off" Width="10" Height="10" Stroke="white" StrokeThickness="1.5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="10" Stroke="white" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Grid>
                                 </Border>
-                                <Border HorizontalAlignment="Left" BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                                <Border HorizontalAlignment="Left" BorderBrush="{StaticResource RegularBorder}" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
                                     <Border.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -113,8 +187,8 @@
                                 <Setter TargetName="On" Property="Stroke" Value="White" />
                                 <Setter TargetName="Off" Property="Stroke" Value="White" />
                                 <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
+                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedGreen}" />
+                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedGreenBorder}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <!-- ToDo: Add Style for Isenabled == False -->
@@ -145,14 +219,78 @@
                         <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
                             <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource BackGroundBorder}" BorderBrush="{StaticResource RegularBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="0,0,0,0.4" x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" FontWeight="DemiBold" Foreground="White"/>
-                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" FontWeight="DemiBold" Foreground="#FF555555"/>
+                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" FontWeight="DemiBold" Foreground="White"/>
+                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" FontWeight="DemiBold" Foreground="White"/>
+                                    </Grid>
+                                </Border>
+                                <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            <SkewTransform AngleX="0" AngleY="0" />
+                                            <RotateTransform Angle="0" />
+                                            <TranslateTransform X="0" Y="0" />
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Border Background="{StaticResource Carage}"/>
+                                </Border>
+                            </Grid>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                                </Trigger.ExitActions>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                                </Trigger.EnterActions>
+                                <!-- Change Orange or Blue color here -->
+                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
+                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <!-- ToDo: Add Style for Isenabled == False -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ToggleSwitchCCC" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <ControlTemplate.Resources>
+                            <Storyboard x:Key="OnChecking">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="OnUnchecking">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.06" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </ControlTemplate.Resources>
+                        <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                            <Grid>
+                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="↻"  FontSize="18" Foreground="White" Padding="0,0,0,4" />
+                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="↺"  FontSize="18" Foreground="White" Padding="1.5,0,0,4"/>
                                     </Grid>
                                 </Border>
                                 <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
@@ -262,17 +400,18 @@
                                 </StackPanel>
                             </StackPanel>
                             <Label Margin="15,0,0,0" Content="{DynamicResource direction}" VerticalAlignment="Center"/>
-                            <StackPanel Orientation="Vertical" Margin="5,0,10,0" VerticalAlignment="Center">
+                            <CheckBox Style="{StaticResource ToggleSwitchCCC}" IsChecked="{Binding SynLight.Clockwise, Converter={StaticResource Not}}" />
+                            <!--<StackPanel Orientation="Vertical" Margin="5,0,10,0" VerticalAlignment="Center">
                                 <RadioButton Margin="1" Content="{DynamicResource clockwise}"  GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, UpdateSourceTrigger=PropertyChanged}" />
                                 <RadioButton Margin="1" Content="{DynamicResource cclockwise}" GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, Converter={StaticResource Not}, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
+                            </StackPanel>-->
                         </StackPanel>
                         <Separator Margin="10"/>
                         <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{DynamicResource LPF}" />
                             <CheckBox Margin="5" IsChecked="{Binding SynLight.LPF}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
                         </StackPanel>
-                        <Button Margin="5" BorderBrush="{StaticResource RegularBorder}" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
+                        <Button Margin="5" Style="{StaticResource ButtonRoundCorner}" BorderBrush="{StaticResource RegularBorder}" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="Custom" TabIndex="1">
