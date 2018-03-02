@@ -17,5 +17,6 @@
     <system:String x:Key="screen1">Screen 1</system:String>
     <system:String x:Key="screen2">Screen 2</system:String>
     <system:String x:Key="screen3">Screen 3</system:String>
+    <system:String x:Key="LPF">Low-pass temporal filter :</system:String>
     <!-- All StringResources Goes Here -->
 </ResourceDictionary> 

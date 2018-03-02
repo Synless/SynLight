@@ -189,7 +189,9 @@ namespace SynLight.Model
                 if ((value > 0) && (value < 500) && (value > shifting * 2))
                 {
                     height = value;
+                    fromWidth = true;
                     Ratio = ratio;
+                    fromWidth = false;
                 }
                 else if ((value > 0) && (value < 50) && (value <= shifting * 2))
                 {
@@ -200,6 +202,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Height");
             }
         }
+        private bool fromWidth = false;
 
         private int corner = 0;
         public int Corner
@@ -258,7 +261,10 @@ namespace SynLight.Model
             }
             set
             {
-                ratio = value;
+                if(!fromWidth)
+                {
+                    ratio = !ratio;
+                }                
                 if (!ratio)
                 {
                     double tmp = Height / A;
