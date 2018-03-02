@@ -284,7 +284,7 @@ namespace SynLight.Model
             get { return clockwise; }
             set
             {
-                clockwise = value;
+                clockwise = !clockwise;
                 OnPropertyChanged("Clockwise");
             }
         }

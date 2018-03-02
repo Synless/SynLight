@@ -4,6 +4,8 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <system:String x:Key="tittle">SynLight</system:String>
+    <system:String x:Key="ambiant">Ambiant</system:String>
+    <system:String x:Key="static">Statique</system:String>
     <system:String x:Key="x">X :</system:String>
     <system:String x:Key="y">Y :</system:String>
     <system:String x:Key="corners">Coins :</system:String>
