@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using UnityEngine;
 
 namespace SynLight.Model
 {
     public class Param_SynLight : AutoNodeMCU
     {
         #region variables
-        public static string param = Properties.Settings.Default.path; //MOVE TO PROPERTIES.SETTINGS.DEFAULT
+        public static string param = Properties.Settings.Default.path;
 
         #region getset
         private string tittle = "SynLight - Disconnected";
@@ -26,6 +27,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Tittle");
             }
         }
+
         private int index = 0;
         public int Index
         {
@@ -331,9 +333,7 @@ namespace SynLight.Model
                 botLeft = value;
                 OnPropertyChanged("BotLeft");
             }
-        }
-
-        protected System.Threading.Thread process;
+        }        
 
         private bool playPause = true;
         public bool PlayPause
@@ -392,7 +392,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Edges");
             }
         }
-        private byte red = 10;
+        private byte red = 30;
         public byte Red
         {
             get
@@ -406,7 +406,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Red");
             }
         }
-        private byte green = 10;
+        private byte green = 15;
         public byte Green
         {
             get
@@ -420,7 +420,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Green");
             }
         }
-        private byte blue = 10;
+        private byte blue = 0;
         public byte Blue
         {
             get
@@ -434,7 +434,6 @@ namespace SynLight.Model
                 OnPropertyChanged("Blue");
             }
         }
-
         #endregion
 
         protected double A = 1.32;
@@ -489,9 +488,11 @@ namespace SynLight.Model
         protected List<byte> byteToSend;
 
         protected PerformanceCounter cpuCounter;
-        
-        
+        protected System.Threading.Thread process;
+
         #endregion
+        
+
 
         public Param_SynLight()
         {
@@ -660,7 +661,7 @@ namespace SynLight.Model
         {
             if (endPoint != null)
             {
-                sock.SendTo(new byte[2] { (byte)PayloadType.fixedColor,0 }, endPoint);
+                SendPayload(PayloadType.fixedColor, 0);
             }
         }
     }

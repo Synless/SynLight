@@ -527,8 +527,7 @@ namespace SynLight.Model
                 {
                     RotateArray();
                 }
-
-                //TODO
+                
                 for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
                 {
                     SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));

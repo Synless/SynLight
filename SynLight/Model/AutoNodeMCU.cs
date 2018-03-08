@@ -110,17 +110,26 @@ namespace SynLight.Model
             multiplePayload = 2,
             terminalPayload = 3,
         }
-        protected void SendPayload(PayloadType plt, List<byte> payload)
+        protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
             payload.Insert(0, (byte)plt);
             sock.SendTo(payload.ToArray(), endPoint);
         }
-        protected void SendPayload(PayloadType plt, int r=0,int g=0,int b=0)
+        protected static void SendPayload(PayloadType plt, byte r=0)
         {
             List<byte> payload = new List<byte>();
-            payload.Insert(0, (byte)b);
-            payload.Insert(0, (byte)g);
-            payload.Insert(0, (byte)r);
+            payload.Insert(0, r);
+            payload.Insert(0, r);
+            payload.Insert(0, r);
+            payload.Insert(0, (byte)plt);
+            sock.SendTo(payload.ToArray(), endPoint);
+        }
+        protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
+        {
+            List<byte> payload = new List<byte>();
+            payload.Insert(0, b);
+            payload.Insert(0, g);
+            payload.Insert(0, r);
             payload.Insert(0, (byte)plt);
             sock.SendTo(payload.ToArray(), endPoint);
         }
