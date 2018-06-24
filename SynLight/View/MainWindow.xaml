@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:SynLight.ViewModel"
         xmlns:conv="clr-namespace:SynLight.Converter"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="455" Width="350" MinHeight="430" MinWidth="330"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
+    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Height="484" Width="310" MinHeight="484" MinWidth="310"  HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -91,50 +91,10 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid x:Name="grid">
                             <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource DarkerBorder}" BorderThickness="1" Background="{StaticResource Carage}">
-                                <!--<Border.Background>
-                                    <RadialGradientBrush GradientOrigin="0.496,1.052">
-                                        <RadialGradientBrush.RelativeTransform>
-                                            <TransformGroup>
-                                                <ScaleTransform CenterX="0.5" CenterY="0.5" 
-                                                        ScaleX="1.5" ScaleY="1.5"/>
-                                                <TranslateTransform X="0.02" Y="0.3"/>
-                                            </TransformGroup>
-                                        </RadialGradientBrush.RelativeTransform>
-                                        <GradientStop Offset="1" Color="#00000000"/>
-                                        <GradientStop Offset="0.3" Color="#FFFFFFFF"/>
-                                    </RadialGradientBrush>
-                                </Border.Background>-->
-                                <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          TextElement.FontWeight="Bold">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="Bold">
                                 </ContentPresenter>
                             </Border>
                         </Grid>
-                        <!--<ControlTemplate.Triggers>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" TargetName="border">
-                                    <Setter.Value>
-                                        <RadialGradientBrush GradientOrigin="0.496,1.052">
-                                            <RadialGradientBrush.RelativeTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.5" ScaleY="1.5"/>
-                                                    <TranslateTransform X="0.02" Y="0.3"/>
-                                                </TransformGroup>
-                                            </RadialGradientBrush.RelativeTransform>
-                                            <GradientStop Color="#00000000" Offset="1"/>
-                                            <GradientStop Color="#FF303030" Offset="0.3"/>
-                                        </RadialGradientBrush>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" TargetName="border" Value="#FF33962B"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" TargetName="grid" Value="0.25"/>
-                            </Trigger>
-
-                        </ControlTemplate.Triggers>-->
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -148,12 +108,12 @@
                         <ControlTemplate.Resources>
                             <Storyboard x:Key="OnChecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="0" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OnUnchecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </ControlTemplate.Resources>
@@ -212,12 +172,12 @@
                         <ControlTemplate.Resources>
                             <Storyboard x:Key="OnChecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OnUnchecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="0" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </ControlTemplate.Resources>
@@ -284,7 +244,7 @@
                         <ControlTemplate.Resources>
                             <Storyboard x:Key="OnChecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OnUnchecking">
@@ -302,8 +262,8 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" FontWeight="DemiBold" Foreground="White"/>
-                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" FontWeight="DemiBold" Foreground="White"/>
+                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" Foreground="White"/>
+                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" Foreground="White"/>
                                     </Grid>
                                 </Border>
                                 <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
@@ -348,7 +308,7 @@
                         <ControlTemplate.Resources>
                             <Storyboard x:Key="OnChecking">
                                 <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0800000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OnUnchecking">
@@ -445,7 +405,7 @@
                             <Border x:Name="Border" Grid.Row="1" BorderThickness="2" CornerRadius="4,0,4,0" BorderBrush="#8EFFFFFF" Background="Transparent">
                                 <Grid>
                                     <Border CornerRadius="2" Margin="3,3,0,0">
-                                        <ContentPresenter x:Name="PART_SelectedContentHost" Margin="1" ContentSource="SelectedContent"/>                                        
+                                        <ContentPresenter x:Name="PART_SelectedContentHost" Margin="1" ContentSource="SelectedContent"/>
                                     </Border>
                                 </Grid>
                             </Border>
@@ -457,9 +417,9 @@
     </Window.Resources>
     <UserControl Background="#FF101010">
         <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="true">
-            <TabControl  Margin="0,10,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="330" Height="415">
+            <TabControl  Margin="0,10,0,10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="285" Height="442">
                 <TabItem Header="{DynamicResource ambiant}" TabIndex="0" Width="80">
-                    <StackPanel Orientation="Vertical" Height="370" Width="310" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <StackPanel Margin="0,15,0,0" Orientation="Vertical" HorizontalAlignment="Center">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -488,40 +448,48 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0">
-                                <Label Style="{StaticResource Labels}" Margin="0,0,15,0" Content="{DynamicResource ratio}"/>
+                                <Label Style="{StaticResource Labels}" Margin="0,0,5,0" Content="{DynamicResource ratio}"/>
                                 <CheckBox Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding SynLight.Ratio, Converter={StaticResource Not}}"/>
                             </StackPanel>
                         </StackPanel>
                         <Separator Margin="10" Foreground="#BBDBDBDB" Height="5"/>
-                        <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" >
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="0,1,0,0" Orientation="Horizontal" HorizontalAlignment="Center" >
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel Orientation="Vertical">
                                     <Label Style="{StaticResource Labels}"  Content="{DynamicResource first}"/>
-                                    <StackPanel Margin="6,0,0,0" Orientation="Vertical">
-                                        <RadioButton Name="TL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.TopLeft}" />
-                                        <RadioButton Name="BL" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center" IsChecked="{Binding SynLight.BotLeft}" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical">
-                                        <RadioButton Name="TR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.TopRight}" />
-                                        <RadioButton Name="BR" Margin="1" GroupName="position" Content="" HorizontalAlignment="Center"  IsChecked="{Binding SynLight.BotRight}" />
-                                    </StackPanel>
+                                    <Label Style="{StaticResource Labels}"  HorizontalAlignment="Right" Margin="0,7,2,0" Content="↕" FontSize="18"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Style="{StaticResource Labels}" Margin="38,0,0,0" Content="↕" FontSize="18"/>
-                                    <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="5,4,0,0" Padding="1" VerticalAlignment="Center" TextAlignment="Center" Height="22" TextWrapping="Wrap" Width="40" Text="{Binding SynLight.UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox"/>
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <RadioButton Name="TL" GroupName="position" Margin="2" IsChecked="{Binding SynLight.TopLeft}" />
+                                            <RadioButton Name="BL" GroupName="position" Margin="2" IsChecked="{Binding SynLight.BotLeft}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <RadioButton Name="TR" GroupName="position" Margin="2" IsChecked="{Binding SynLight.TopRight}" />
+                                            <RadioButton Name="BR" GroupName="position" Margin="2" IsChecked="{Binding SynLight.BotRight}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="0,10,0,0" Padding="1" VerticalAlignment="Center" TextAlignment="Center" Height="22" TextWrapping="Wrap" Width="40" Text="{Binding SynLight.UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox"/>
                                 </StackPanel>
                             </StackPanel>
                             <Label Style="{StaticResource Labels}" Margin="15,0,0,0" Content="{DynamicResource direction}" />
-                            <CheckBox Style="{StaticResource ToggleSwitchCCC}" IsChecked="{Binding SynLight.Clockwise, Converter={StaticResource Not}}" />
+                            <CheckBox Style="{StaticResource ToggleSwitchCCC}" IsChecked="{Binding SynLight.Clockwise}" />
                             <!--<StackPanel Orientation="Vertical" Margin="5,0,10,0" VerticalAlignment="Center">
                                 <RadioButton Margin="1" Content="{DynamicResource clockwise}"  GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, UpdateSourceTrigger=PropertyChanged}" />
                                 <RadioButton Margin="1" Content="{DynamicResource cclockwise}" GroupName ="sens" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding SynLight.Clockwise, Converter={StaticResource Not}, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>-->
                         </StackPanel>
                         <Separator Margin="10" Foreground="#BBDBDBDB" Height="5"/>
-                        <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Label Style="{StaticResource Labels}" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource LPF}" />
-                            <CheckBox Margin="5" IsChecked="{Binding SynLight.LPF}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Center">
+                                <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{DynamicResource LPF}" />
+                                <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="F.lux :" />
+                            </StackPanel>
+                            <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Center">
+                                <CheckBox Margin="5" IsChecked="{Binding SynLight.UsingFlux}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                                <CheckBox Margin="5" IsChecked="{Binding SynLight.LPF}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                            </StackPanel>
                         </StackPanel>
                         <CheckBox Margin="8" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding SynLight.PlayPause}" />
                         <!--<Button Margin="5" Style="{StaticResource ButtonRoundCorner}" BorderBrush="{StaticResource RegularBorder}" Width="120" HorizontalAlignment="Center" Height="70" Command="{Binding CommandPlay}" Content="{Binding SynLight.PlayPause, Converter={StaticResource b2pp}, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontFamily="Calibri" FontStretch="ExtraExpanded" />-->
@@ -533,21 +501,18 @@
                             <StackPanel Orientation="Horizontal" Margin="10,25,10,5" HorizontalAlignment="Center">
                                 <TextBlock Text="R" Foreground="Red" FontWeight="DemiBold" Margin="5"/>
                                 <Slider  Margin="5" Value="{Binding SynLight.Red}" Width="200"  Maximum="255"/>
-                                <TextBlock Text="{Binding SynLight.Red}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
+                                <TextBlock Text="{Binding SynLight.Red}" TextAlignment="Right" VerticalAlignment="Center" Width="25" Foreground="{StaticResource EasyGrey}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
                                 <TextBlock Text="G" Foreground="Green" FontWeight="DemiBold" Margin="5"/>
                                 <Slider  Margin="5" Value="{Binding SynLight.Green}" Width="200" Maximum="255"/>
-                                <TextBlock Text="{Binding SynLight.Green}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
+                                <TextBlock Text="{Binding SynLight.Green}" TextAlignment="Right" VerticalAlignment="Center" Width="25" Foreground="{StaticResource EasyGrey}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
                                 <TextBlock Text="B" Foreground="Blue" FontWeight="DemiBold" Margin="5"/>
                                 <Slider  Margin="5" Value="{Binding SynLight.Blue}" Width="200" Maximum="255"/>
-                                <TextBlock Text="{Binding SynLight.Blue}" TextAlignment="Right" VerticalAlignment="Center" Width="25"/>
+                                <TextBlock Text="{Binding SynLight.Blue}" TextAlignment="Right" VerticalAlignment="Center" Width="25" Foreground="{StaticResource EasyGrey}"/>
                             </StackPanel>
-                        </StackPanel>
-                        <StackPanel>
-                            <!--Image Source="/SynLight;component/Images/colorChart.png" MouseDown="" />-->
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

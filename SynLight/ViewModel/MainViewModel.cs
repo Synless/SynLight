@@ -33,6 +33,7 @@ namespace SynLight.ViewModel
         public MainViewModel()
         {
             SynLight            = new Process_SynLight();
+            CommandPlay         = new Command(ActionPlay);
             AddLongeur          = new Command(IncrementerLongeur);
             RemoveLongeur       = new Command(DecrementerLongeur);
             AddHauteur          = new Command(IncrementerHauteur);
@@ -42,6 +43,10 @@ namespace SynLight.ViewModel
         }
 
         #region Command
+        private void ActionPlay(object parametre)
+        {
+            //SynLight.PlayPausePushed();
+        }
         private void IncrementerLongeur(object parametre)
         {
             SynLight.Width += 1; //DO NOT USE "Width++;"

@@ -25,7 +25,7 @@ namespace SynLight.Model
         {
                 while(!Connected)
                 {
-                //IF NOT CONNECTED, TRY TO RECONNECT
+                    //IF NOT CONNECTED, TRY TO RECONNECT
                     Tittle = "SynLight - Trying to connect ...";
                     Thread.Sleep(2000);
                     FindNodeMCU();
@@ -35,6 +35,10 @@ namespace SynLight.Model
                     Stopwatch watch = Stopwatch.StartNew();
                     if (Index == 0)
                     {
+                        if (UsingFlux)
+                        {
+                            Flux();
+                        }
                         Tick();
                     }
                     else if (Index == 1)
@@ -52,6 +56,31 @@ namespace SynLight.Model
                 SendPayload(PayloadType.fixedColor, 0);
                 process = new Thread(CheckMethod);
         }
+
+        private void Flux()
+        {
+            startTimeInt    = startTime.Hour    * 60 + startTime.Minute;
+            endTimeInt      = endTime.Hour      * 60 + endTime.Minute;
+            currentTimeInt  = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+
+            if (currentTimeInt > startTimeInt && currentTimeInt < endTimeInt)
+            {
+                fluxRatio = (nmMinutesStop - nbMinutesStart) / nmMinutesStop;
+            }
+            else if (Math.Abs(currentTimeInt - endTimeInt) < nbMinutesStart)
+            {
+                fluxRatio = (nmMinutesStop - nbMinutesStart + Double.Parse(Math.Abs(currentTimeInt - endTimeInt).ToString())) / nmMinutesStop;
+            }
+            else if (currentTimeInt > midDay.Hour * 60 + midDay.Minute)
+            {
+                currentTimeInt = (24 * 60) - currentTimeInt;
+                if (Math.Abs(currentTimeInt - startTimeInt) < nbMinutesStart)
+                {
+                    fluxRatio = (nmMinutesStop - nbMinutesStart + Double.Parse(Math.Abs(currentTimeInt - startTimeInt).ToString())) / nmMinutesStop;
+                }
+            }
+        }
+
         private void Tick()
         {
             if (!edges)

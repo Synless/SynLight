@@ -285,7 +285,7 @@ namespace SynLight.Model
             get { return clockwise; }
             set
             {
-                clockwise = !clockwise;
+                clockwise = value;
                 OnPropertyChanged("Clockwise");
             }
         }
@@ -433,6 +433,16 @@ namespace SynLight.Model
                 OnPropertyChanged("Blue");
             }
         }
+        private bool usingFlux = true;
+        public bool UsingFlux
+        {
+            get { return usingFlux; }
+            set
+            {
+                usingFlux = value;
+                OnPropertyChanged("UsingFlux");
+            }
+        }
         #endregion
 
         protected double A = 1.32;
@@ -449,6 +459,15 @@ namespace SynLight.Model
         protected ushort justBlack = 0;
         protected bool black = false;
         protected const int packetSize = 1200;
+        protected double fluxRatio = 1.0;
+        protected DateTime startTime = DateTime.Parse("00:00:00");
+        protected DateTime midDay = DateTime.Parse("12:00:00");
+        protected DateTime endTime = DateTime.Parse("05:00:00");
+        protected const double nbMinutesStart = 200.0;
+        protected const double nmMinutesStop = 250.0;
+        protected int startTimeInt;
+        protected int endTimeInt;
+        protected int currentTimeInt;
 
         protected Size screensSize = new Size((int)System.Windows.SystemParameters.VirtualScreenWidth, (int)System.Windows.SystemParameters.VirtualScreenHeight);
         protected Size screen1Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -490,8 +509,6 @@ namespace SynLight.Model
         protected System.Threading.Thread process;
 
         #endregion
-        
-
 
         public Param_SynLight()
         {
