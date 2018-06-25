@@ -487,8 +487,8 @@
                                 <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="F.lux :" />
                             </StackPanel>
                             <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Center">
-                                <CheckBox Margin="5" IsChecked="{Binding SynLight.UsingFlux}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
                                 <CheckBox Margin="5" IsChecked="{Binding SynLight.LPF}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                                <CheckBox Margin="5" IsChecked="{Binding SynLight.UsingFlux}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
                             </StackPanel>
                         </StackPanel>
                         <CheckBox Margin="8" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding SynLight.PlayPause}" />

@@ -556,7 +556,32 @@ namespace SynLight.Model
                 {
                     RotateArray();
                 }
-                
+                if (UsingFlux)
+                {
+                    for (int n = 2; n < byteToSend.Count - 2; n += 3)
+                    {
+                        string s;
+                        byte b;
+
+                        s = (newByteToSend[n] * fluxRatio).ToString().Split(',')[0];
+                        b = byte.Parse(s);
+                        newByteToSend[n] = b;
+
+                        s = (newByteToSend[n-1] * ((1+fluxRatio)/2)).ToString().Split(',')[0];
+                        b = byte.Parse(s);
+                        newByteToSend[n-1] = b;
+
+                        s = (newByteToSend[n - 2] * (1 + (1-fluxRatio)/3)).ToString().Split(',')[0];
+                        short i = short.Parse(s);
+                        if(i>255)
+                        {
+                            i = 255;
+                        }
+                        b = Byte.Parse(i.ToString());
+                        newByteToSend[n - 2] = b;
+                    }
+                }
+
                 for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
                 {
                     SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
