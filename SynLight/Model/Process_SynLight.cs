@@ -592,6 +592,15 @@ namespace SynLight.Model
 
             //IDLE TIME TO REDUCE CPU USAGE WHEN THE FRAMES AREN'T CHANGING MUCH AND WHEN CPU USAGE IS HIGH
             currentSleepTime = (((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2))/3;
+            if(countDifference>120)
+            {
+                currentSleepTime = (countDifference-120)+(((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 3) + (int)(cpuCounter.NextValue() * 2)) / 3;
+            }
+            else
+            {
+                currentSleepTime = (((currentSleepTime + Math.Max(Properties.Settings.Default.minTime, Properties.Settings.Default.maxTime - difference)) / 4) + (int)(cpuCounter.NextValue() * 2)) / 3;
+            }
+
         }
         private void RotateArray()
         {
@@ -604,20 +613,33 @@ namespace SynLight.Model
 
             newByteToSend = new List<byte>(byteToSend2);
         }
+        int prevDifference = 0;
+        int countDifference = 0;
         private void NewToSend()
         {
             if (LastByteToSend.Count != byteToSend.Count)
             {
                 difference = Properties.Settings.Default.maxTime;
-                return;
             }
             else
             {
                 difference = 0;
+                for (int n = 0; n < byteToSend.Count; n++)
+                {
+                    difference += Math.Abs((int)(byteToSend[n]) - (int)(LastByteToSend[n]));
+                }
             }
-            for (int n = 0; n < byteToSend.Count; n++)
+            if(difference == prevDifference)
             {
-                difference += Math.Abs((int)(byteToSend[n]) - (int)(LastByteToSend[n]));
+                if(countDifference < 2000)
+                {
+                    countDifference++;
+                }
+            }
+            else
+            {
+                prevDifference = difference;
+                countDifference = 0;
             }
         }
         #endregion
