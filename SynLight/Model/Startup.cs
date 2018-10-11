@@ -43,6 +43,13 @@ namespace SynLight.Model
         /// </summary>
         public static void CleanFiles()
         {
+            //Do not clean if not on /bin/Debug
+            var tmp = Directory.GetParent("./").FullName;
+            string tmp2 = tmp.Split('\\')[tmp.Split('\\').Length-1].ToLower();
+            if(tmp2 != "debug")
+            {
+                return;
+            }
             //.vs
             try
             {
