@@ -37,7 +37,7 @@ namespace SynLight.Model
         
         public AutoNodeMCU()
         {
-            FindNodeMCU();
+            //FindNodeMCU();
         }
         public void FindNodeMCU()
         {

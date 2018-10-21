@@ -23,7 +23,7 @@ namespace SynLight.Model
         #region Privates methodes
         private void CheckMethod()
         {
-                while(!Connected)
+                while(!staticConnected)
                 {
                     //IF NOT CONNECTED, TRY TO RECONNECT
                     Tittle = "SynLight - Trying to connect ...";
