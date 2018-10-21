@@ -13,13 +13,13 @@ namespace SynLight.Model
         protected static IPEndPoint endPoint;
         protected static IPAddress nodeMCU;
         protected static int UDP_Port = 8787;
-        protected static UdpClient Client;        
+        protected static UdpClient Client;
 
         protected static string querry = "ping";
         protected static string answer = "pong"; //a0
         #endregion  
 
-        private static bool staticConnected = false;
+        protected static bool staticConnected = false;
         private bool single = true;
         protected bool connected = false;
         public bool Connected
@@ -41,6 +41,7 @@ namespace SynLight.Model
         }
         public void FindNodeMCU()
         {
+            staticConnected = false;
             querry = Properties.Settings.Default.querry;
             answer = Properties.Settings.Default.answer;
             if (init())
@@ -113,6 +114,8 @@ namespace SynLight.Model
         protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
             payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+
             sock.SendTo(payload.ToArray(), endPoint);
         }
         protected static void SendPayload(PayloadType plt, byte r=0)
@@ -122,6 +125,8 @@ namespace SynLight.Model
             payload.Insert(0, r);
             payload.Insert(0, r);
             payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+
             sock.SendTo(payload.ToArray(), endPoint);
         }
         protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
@@ -131,6 +136,8 @@ namespace SynLight.Model
             payload.Insert(0, g);
             payload.Insert(0, r);
             payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+
             sock.SendTo(payload.ToArray(), endPoint);
         }
         ~AutoNodeMCU()

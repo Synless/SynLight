@@ -574,12 +574,15 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "IP")
                             {
-                                if (!Connected)
+                                if (!staticConnected)
                                 {
-                                    nodeMCU = IPAddress.Parse(subLine[1]);
-                                    endPoint = new IPEndPoint(nodeMCU, UDP_Port);
-                                    Tittle = "Synlight - Using manual IP";
-                                    Connected = true;
+                                    if (!Connected)
+                                    {
+                                        nodeMCU = IPAddress.Parse(subLine[1]);
+                                        endPoint = new IPEndPoint(nodeMCU, UDP_Port);
+                                        Tittle = "Synlight - Using manual IP";
+                                        Connected = true;
+                                    }
                                 }
                             }
                             else if (subLine[0] == "TL")

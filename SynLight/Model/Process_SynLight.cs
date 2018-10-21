@@ -532,7 +532,7 @@ namespace SynLight.Model
                 if (justBlack++>5)
                 {
                     justBlack = 0;
-                    sock.SendTo(new byte[] { (byte)PayloadType.fixedColor, 5 }, endPoint);
+                    sock.SendTo(new byte[] { (byte)('A'), (byte)PayloadType.fixedColor, 5 }, endPoint);
                 }
             } 
             #endregion
