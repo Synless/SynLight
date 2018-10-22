@@ -334,19 +334,33 @@ namespace SynLight.Model
             }
         }        
 
-        private bool playPause = true;
+        private bool playPause = false;
         public bool PlayPause
         {
             get { return playPause; }
             set
             {
                 playPause = value;
-                System.Threading.Thread.Sleep(50);
-                if(playPause)
+                System.Threading.Thread.Sleep(10);
+                if(playPause && !process_mainLoop.IsAlive && !process_findESP.IsAlive)
                 {
-                    process.Start();
+                    process_mainLoop.Start();
+                }
+                else
+                {
+                    
                 }
                 OnPropertyChanged("PlayPause");
+            }
+        }
+        private bool canPlayPause = false;
+        public bool CanPlayPause
+        {
+            get { return canPlayPause; }
+            set
+            {
+                canPlayPause = value;
+                OnPropertyChanged("CanPlayPause");
             }
         }
 
@@ -506,7 +520,8 @@ namespace SynLight.Model
         protected List<byte> byteToSend;
 
         protected PerformanceCounter cpuCounter;
-        protected System.Threading.Thread process;
+        protected System.Threading.Thread process_findESP;
+        protected System.Threading.Thread process_mainLoop;
 
         #endregion
 
@@ -576,14 +591,11 @@ namespace SynLight.Model
                             {
                                 if (!staticConnected)
                                 {
-                                    if (!Connected)
-                                    {
-                                        nodeMCU = IPAddress.Parse(subLine[1]);
-                                        endPoint = new IPEndPoint(nodeMCU, UDP_Port);
-                                        Tittle = "Synlight - Using manual IP";
-                                        Connected = true;
-                                    }
-                                }
+                                    nodeMCU = IPAddress.Parse(subLine[1]);
+                                    endPoint = new IPEndPoint(nodeMCU, UDP_Port);
+                                    Tittle = "Synlight - " + subLine[1];
+                                    staticConnected = true;
+                                }                                
                             }
                             else if (subLine[0] == "TL")
                             {

@@ -11,50 +11,57 @@ namespace SynLight.Model
 {
     public class Process_SynLight : Param_SynLight
     {
-        
-
         public Process_SynLight()
         {
             bmpScreenshot = new Bitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
-            process = new Thread(CheckMethod);
-            process.Start();
+            process_findESP = new Thread(findESP);
+            process_mainLoop = new Thread(CheckMethod);
+            process_findESP.Start();
         }
 
+        private void findESP()
+        {
+            while (!staticConnected)
+            {
+                //IF NOT CONNECTED, TRY TO RECONNECT
+                Tittle = "SynLight - Trying to connect ...";                
+                FindNodeMCU();
+                Thread.Sleep(2000);
+            }
+            CanPlayPause = true;
+            PlayPause = true;
+            process_mainLoop.Start();
+        }
         #region Privates methodes
         private void CheckMethod()
         {
-                while(!staticConnected)
+            while (PlayPause)
+            {
+                Stopwatch watch = Stopwatch.StartNew();
+                if (Index == 0)
                 {
-                    //IF NOT CONNECTED, TRY TO RECONNECT
-                    Tittle = "SynLight - Trying to connect ...";
-                    Thread.Sleep(2000);
-                    FindNodeMCU();
+                    if (UsingFlux)
+                    {
+                        Flux();
+                    }
+                    Tick();
                 }
-                while (PlayPause)
+                else if (Index == 1)
                 {
-                    Stopwatch watch = Stopwatch.StartNew();
-                    if (Index == 0)
-                    {
-                        if (UsingFlux)
-                        {
-                            Flux();
-                        }
-                        Tick();
-                    }
-                    else if (Index == 1)
-                    {
-                        SingleColor();
-                    }
-
-                    Thread.Sleep(currentSleepTime);
-                    GC.Collect(); //COUPLES OF MB WON
-                    watch.Stop();
-
-                    int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
-                    Tittle = "Synlight - " + Hz.ToString() + "Hz";
+                    SingleColor();
                 }
-                SendPayload(PayloadType.fixedColor, 0);
-                process = new Thread(CheckMethod);
+
+                Thread.Sleep(currentSleepTime);
+                GC.Collect(); //COUPLES OF MB WON
+                watch.Stop();
+
+                int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+                Tittle = "Synlight - " + Hz.ToString() + "Hz";
+            }
+            SendPayload(PayloadType.fixedColor, 0);
+            process_mainLoop = new Thread(CheckMethod);
+
+            Tittle = "Synlight - Paused";
         }
 
         private void Flux()

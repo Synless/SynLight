@@ -17,7 +17,14 @@ namespace SynLight.Model
             {
                 if (p.ProcessName.Contains("XAML Designer") || p.ProcessName.Contains("XDesProc"))
                 {
-                    p.Kill();
+                    try
+                    {
+                        p.Kill();
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
             string procName = Process.GetCurrentProcess().ProcessName;

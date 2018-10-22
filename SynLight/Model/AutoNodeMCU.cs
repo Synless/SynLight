@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -8,68 +8,67 @@ namespace SynLight.Model
     public class AutoNodeMCU : ModelBase
     {
         #region Variables
-        protected static Socket sock;
+        protected static Socket sock = new Socket(SocketType.Dgram, ProtocolType.Udp);
         protected static List<Socket> sockList;
         protected static IPEndPoint endPoint;
         protected static IPAddress nodeMCU;
-        protected static int UDP_Port = 8787;
-        protected static UdpClient Client;
+        protected static int UDP_Port = 8787; //Must match the next line UdpClient port and the ESP listenning port
+        protected static UdpClient Client= new UdpClient(8787);
 
         protected static string querry = "ping";
         protected static string answer = "pong"; //a0
         #endregion  
 
         protected static bool staticConnected = false;
-        private bool single = true;
-        protected bool connected = false;
-        public bool Connected
-        {
-            get
-            {
-                return connected;
-            }
-            set
-            {
-                connected = value;
-                OnPropertyChanged("Connected");
-            }
-        }
+        private readonly bool multipleESP = false;
         
         public AutoNodeMCU()
         {
+            /*
+             * Was previously used at the creation of the object, meaning at startup, but it was blocking the view from behind displayed
+             * Now the FindNodeMCU is called after the program has started, you can even see the [Trying to connect] state on the tittle-bar
+             */
             //FindNodeMCU();
+
         }
         public void FindNodeMCU()
         {
-            staticConnected = false;
+            staticConnected = false; //If we are here, it means we haven't found the ESP. But if 'staticConnected' is true we should not be here too so ...
+
             querry = Properties.Settings.Default.querry;
             answer = Properties.Settings.Default.answer;
+
             if (init())
             {
-                byte[] ping = System.Text.Encoding.ASCII.GetBytes(querry);
-                Client.BeginReceive(new AsyncCallback(recv), null);
-                for (byte n = 0; n < 255; n++)
+                byte[] ping = System.Text.Encoding.ASCII.GetBytes(querry); //"ping" -> [p,i,n,g]
+                Client.BeginReceive(new AsyncCallback(recv), null); //Subscribe to the even "data received" : recv
+
+                for (byte n = 1; n < 254; n++) //Checking local IP from 1 to 254
                 {
-                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 0, n }), UDP_Port);
+                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 0, n }), UDP_Port); //Try with 192.168.0.N
                     try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
                     catch { }
-                    System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
-                    if (staticConnected)
+                    System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime); //Wait for a short while for the ESP to answer and give the time to 'recv ' to trigger
+
+                    //DEBUG PURPOSE
+                    //staticConnected = true;
+                    //return;
+                    //END DEBUG
+
+                    if (staticConnected) //If we received "pong"
                     {
-                        Connected = true;
-                        if (!single)
+                        if (multipleESP) //Can be added to a list of ESP, maybe supported in the futur
                             sockList.Add(sock);
-                        else
+                        else //We found the single ESP, the current IP address if the ESP IP address, just return;
                             break;
                     }
-                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 1, n }), UDP_Port);
+                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 1, n }), UDP_Port); //Try with 192.168.1.N
                     try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
                     catch { }
                     System.Threading.Thread.Sleep(Properties.Settings.Default.UDPwaitTime);
                     if (staticConnected)
                     {
-                        Connected = true;
-                        if (!single)
+                        if (multipleESP)
                             sockList.Add(sock);
                         else
                             break;
@@ -89,8 +88,19 @@ namespace SynLight.Model
         }
         public bool init()
         {
+            //This function may become a check for the manual IP
+            //For now, no check is being done when using manual IP address for the ESP
+
+            /*
+            nodeMCU = IPAddress.Parse(subLine[1]);
+            endPoint = new IPEndPoint(nodeMCU, UDP_Port);
+            Tittle = "Synlight - " + subLine[1];
+            staticConnected = true;
+             */
+
+            return true;
+
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            sockList = new List<Socket>();
             nodeMCU = new IPAddress(new byte[4] { 192, 168, 0, 14 });
             UDP_Port = 8787;
             Client = new UdpClient(0);
@@ -100,7 +110,7 @@ namespace SynLight.Model
                 return true;
             }
             catch
-            {   
+            {
                 return false;
             }
         }
@@ -127,7 +137,11 @@ namespace SynLight.Model
             payload.Insert(0, (byte)plt);
             payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
 
-            sock.SendTo(payload.ToArray(), endPoint);
+            try //If terminating without the ESP being found
+            {
+                sock.SendTo(payload.ToArray(), endPoint);
+            }
+            catch { }
         }
         protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
         {
