@@ -29,8 +29,10 @@
             <GradientStop Color="#FF285AB3" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedGreen" StartPoint="0,0" EndPoint="0,1">
+            <!--<GradientStop Color="#BB08633A" Offset="0" />
+            <GradientStop Color="#BB0D823F" Offset="1" />-->
             <GradientStop Color="#BB08633A" Offset="0" />
-            <GradientStop Color="#BB0D823F" Offset="1" />
+            <GradientStop Color="#BB08633A" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="CheckedRed" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFBD384A" Offset="0" />
