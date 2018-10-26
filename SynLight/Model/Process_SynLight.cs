@@ -550,44 +550,29 @@ namespace SynLight.Model
                 newByteToSend = new List<byte>(0);
                 if (LPF)
                 {
-                    for (int n = byteToSend.Count; n < LastByteToSend.Count && n < byteToSend.Count + 6; n++) { LastByteToSend.Add(0); }
-                    for (int n = 0; n < byteToSend.Count; n++) { newByteToSend.Add((byte)(byteToSend[n] >> 1)); }
-                    for (int n = 0; n < byteToSend.Count && n < LastByteToSend.Count; n++) { newByteToSend[n] += (byte)(LastByteToSend[n] >> 1); }
-                    LastByteToSend = new List<byte>(byteToSend);
+                    while (LastByteToSend.Count < byteToSend.Count) { LastByteToSend.Add(0); } //In case X/Y increased
+
+                    int odd = 0; //rounding errorLastByteToSend.Add(0);
+                    for (int n = 0; n < byteToSend.Count; n++)
+                    {
+                        odd = byteToSend[n] + LastByteToSend[n];
+                        if(odd % 2 != 0) //To correct the -1 error rounding
+                        {
+                            odd++;
+                        }
+                        odd = odd / 2;
+                        newByteToSend.Add((byte)odd); //newByteToSend[n] = rounded-up sum
+                    }
+                    //LastByteToSend = new List<byte>(byteToSend);
+                    LastByteToSend = new List<byte>(newByteToSend);
                 }
                 else
                 {
                     LastByteToSend = newByteToSend = byteToSend;
                 }
-                if (UpDown != 0)
-                {
-                    RotateArray();
-                }
-                if (UsingFlux)
-                {
-                    for (int n = 2; n < byteToSend.Count - 2; n += 3)
-                    {
-                        string s;
-                        byte b;
-
-                        s = (newByteToSend[n] * fluxRatio).ToString().Split(',')[0];
-                        b = byte.Parse(s);
-                        newByteToSend[n] = b;
-
-                        s = (newByteToSend[n-1] * ((1+fluxRatio)/2)).ToString().Split(',')[0];
-                        b = byte.Parse(s);
-                        newByteToSend[n-1] = b;
-
-                        s = (newByteToSend[n - 2] * (1 + (1-fluxRatio)/3)).ToString().Split(',')[0];
-                        short i = short.Parse(s);
-                        if(i>255)
-                        {
-                            i = 255;
-                        }
-                        b = Byte.Parse(i.ToString());
-                        newByteToSend[n - 2] = b;
-                    }
-                }
+                
+                if (UpDown != 0){ RotateArray(); }
+                if (UsingFlux)  { Flux(); }
 
                 for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
                 {
@@ -647,6 +632,31 @@ namespace SynLight.Model
             {
                 prevDifference = difference;
                 countDifference = 0;
+            }
+        }
+        private void Flux()
+        {
+            for (int n = 2; n < byteToSend.Count - 2; n += 3)
+            {
+                string s;
+                byte b;
+
+                s = (newByteToSend[n] * fluxRatio).ToString().Split(',')[0];
+                b = byte.Parse(s);
+                newByteToSend[n] = b;
+
+                s = (newByteToSend[n-1] * ((1+fluxRatio)/2)).ToString().Split(',')[0];
+                b = byte.Parse(s);
+                newByteToSend[n-1] = b;
+
+                s = (newByteToSend[n - 2] * (1 + (1-fluxRatio)/3)).ToString().Split(',')[0];
+                short i = short.Parse(s);
+                if(i>255)
+                {
+                    i = 255;
+                }
+                b = Byte.Parse(i.ToString());
+                newByteToSend[n - 2] = b;
             }
         }
         #endregion
