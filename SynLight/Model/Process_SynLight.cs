@@ -24,7 +24,7 @@ namespace SynLight.Model
             while (!staticConnected)
             {
                 //IF NOT CONNECTED, TRY TO RECONNECT
-                Tittle = "SynLight - Trying to connect ...";                
+                Tittle = "SynLight - Trying to connect ...";
                 FindNodeMCU();
                 Thread.Sleep(2000);
             }
@@ -40,10 +40,6 @@ namespace SynLight.Model
                 Stopwatch watch = Stopwatch.StartNew();
                 if (Index == 0)
                 {
-                    if (UsingFlux)
-                    {
-                        Flux();
-                    }
                     Tick();
                 }
                 else if (Index == 1)
@@ -62,30 +58,6 @@ namespace SynLight.Model
             process_mainLoop = new Thread(CheckMethod);
 
             Tittle = "Synlight - Paused";
-        }
-
-        private void Flux()
-        {
-            startTimeInt    = startTime.Hour    * 60 + startTime.Minute;
-            endTimeInt      = endTime.Hour      * 60 + endTime.Minute;
-            currentTimeInt  = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
-
-            if (currentTimeInt > startTimeInt && currentTimeInt < endTimeInt)
-            {
-                fluxRatio = (nmMinutesStop - nbMinutesStart) / nmMinutesStop;
-            }
-            else if (Math.Abs(currentTimeInt - endTimeInt) < nbMinutesStart)
-            {
-                fluxRatio = (nmMinutesStop - nbMinutesStart + Double.Parse(Math.Abs(currentTimeInt - endTimeInt).ToString())) / nmMinutesStop;
-            }
-            else if (currentTimeInt > midDay.Hour * 60 + midDay.Minute)
-            {
-                currentTimeInt = (24 * 60) - currentTimeInt;
-                if (Math.Abs(currentTimeInt - startTimeInt) < nbMinutesStart)
-                {
-                    fluxRatio = (nmMinutesStop - nbMinutesStart + Double.Parse(Math.Abs(currentTimeInt - startTimeInt).ToString())) / nmMinutesStop;
-                }
-            }
         }
 
         private void Tick()
@@ -573,6 +545,11 @@ namespace SynLight.Model
                 
                 if (UpDown != 0){ RotateArray(); }
                 if (UsingFlux)  { Flux(); }
+
+                if(staticColorChanged) //When changing tab, one frame could still be processing, so it is discarded here
+                {
+                    return;
+                }
 
                 for (int n = 0; n+packetSize <= byteToSend.Count; n += packetSize)
                 {

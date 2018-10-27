@@ -37,6 +37,11 @@ namespace SynLight.Model
             set
             {
                 index = value;
+                if (value == 1)
+                {
+                    SendPayload(PayloadType.fixedColor, new List<byte>() { Red, Green, Blue });
+                    staticColorChanged = true;
+                }
                 OnPropertyChanged("Index");
             }
         }
@@ -467,7 +472,7 @@ namespace SynLight.Model
         protected static int currentSleepTime = 5;
         protected int moreTime = 0;
         protected int difference = 0;
-        protected bool staticColorChanged = true;
+        protected bool staticColorChanged = false;
         protected int staticColorCurrentTime = 0;
         protected int staticColorMaxTime = 20;
         protected ushort justBlack = 0;
@@ -595,7 +600,7 @@ namespace SynLight.Model
                                     endPoint = new IPEndPoint(nodeMCU, UDP_Port);
                                     Tittle = "Synlight - " + subLine[1];
                                     staticConnected = true;
-                                }                                
+                                }
                             }
                             else if (subLine[0] == "TL")
                             {
