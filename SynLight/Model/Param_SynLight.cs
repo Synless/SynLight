@@ -410,7 +410,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Edges");
             }
         }
-        private byte red = 30;
+        private byte red = 100;
         public byte Red
         {
             get
@@ -424,7 +424,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Red");
             }
         }
-        private byte green = 15;
+        private byte green = 60;
         public byte Green
         {
             get
@@ -450,6 +450,32 @@ namespace SynLight.Model
                 blue = value;
                 staticColorChanged = true;
                 OnPropertyChanged("Blue");
+            }
+        }
+        private bool contrastEnable = false;
+        public bool ContrastEnable
+        {
+            get
+            {
+                return contrastEnable;
+            }
+            set
+            {
+                contrastEnable = value;
+                OnPropertyChanged("ContrastEnable");
+            }
+        }
+        private int contrast = 50;
+        public int Contrast
+        {
+            get
+            {
+                return contrast;
+            }
+            set
+            {
+                contrast = value;
+                OnPropertyChanged("Contrast");
             }
         }
         private bool usingFlux = true;

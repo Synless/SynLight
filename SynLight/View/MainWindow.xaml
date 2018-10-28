@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:SynLight.ViewModel"
         xmlns:conv="clr-namespace:SynLight.Converter"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Width="400" Height="620" MinHeight="620" MinWidth="400" HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
+    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Width="320" Height="520" MinHeight="520" MinWidth="320" HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -419,41 +419,51 @@
     </Window.Resources>
     <UserControl Background="#FF101010">
         <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="{Binding SynLight.CanPlayPause}">
-            <TabControl Margin="10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="280" Height="440" >
+            <TabControl Margin="10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="485" >
                 <TabItem Header="{DynamicResource ambiant}" TabIndex="0" Width="80">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <StackPanel Margin="5,10,7,0" Orientation="Vertical" HorizontalAlignment="Center">
                             <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="true">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2">
-                                        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,15,5" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="2">
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="0,5,15,5" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
                                             <RadioButton Margin="2" GroupName ="screen0" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.ScreenFull}" />
                                             <RadioButton Margin="2" GroupName ="screen1" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.Screen1}" />
                                             <RadioButton Margin="2" GroupName ="screen2" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.Screen2}" />
                                             <RadioButton Margin="2" GroupName ="screen3" VerticalAlignment="Top" Content="{DynamicResource screen3}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.Screen3}" Visibility="{Binding SynLight.Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
-                                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" >
+                                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"  >
                                             <Label Style="{StaticResource Labels}" Content="{DynamicResource x}"  />
                                             <Label Style="{StaticResource Labels}" Content="{DynamicResource y}"  />
                                         </StackPanel>
-                                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" >
+                                        <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" >
                                             <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Width,     UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
                                             <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Height,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
                                         </StackPanel>
-                                        <StackPanel Orientation="Vertical" Margin="10,5,0,0" HorizontalAlignment="Center">
+                                        <StackPanel Orientation="Vertical" Margin="10,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" >
                                             <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource corners}"  />
                                             <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource shifting}" />
                                         </StackPanel>
-                                        <StackPanel Margin="0,5,0,0">
+                                        <StackPanel Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" >
                                             <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Corner,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
-                                            <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox" IsEnabled="{Binding SynLight.Ratio}" />
+                                            <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="positiveNumberValidationTextBox"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </Viewbox>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,0,0">
-                                <Label Style="{StaticResource Labels}" Margin="0,0,5,0" Content="{DynamicResource ratio}"/>
-                                <CheckBox Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding SynLight.Ratio, Converter={StaticResource Not}}"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5,10,0">
+                                    <Label Style="{StaticResource Labels}" Margin="0,0,3,0" Content="{DynamicResource ratio}"/>
+                                    <CheckBox Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding SynLight.Ratio, Converter={StaticResource Not}}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,5,0,0">
+                                    <Label Style="{StaticResource Labels}" Margin="0,0,2,0" Content="Contrast :"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <CheckBox Name="Contrast" Margin="5" IsChecked="{Binding SynLight.ContrastEnable}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                                        <Slider IsEnabled="{Binding SynLight.ContrastEnable}" Margin="5" Value="{Binding SynLight.Contrast}" Width="60"  Maximum="100"/>
+                                        <!--<TextBox IsEnabled="{Binding SynLight.ContrastEnable}" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Contrast,    UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"/>-->
+                                    </StackPanel>
+                                    </StackPanel>
                             </StackPanel>
                         </StackPanel>
                         <Separator Margin="10" Foreground="#BBDBDBDB" Height="5"/>
@@ -485,7 +495,7 @@
                             </StackPanel>-->
                         </StackPanel>
                         <Separator Margin="10" Foreground="#BBDBDBDB" Height="5"/>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Center">
                                 <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{DynamicResource LPF}" />
                                 <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="F.lux :" />
