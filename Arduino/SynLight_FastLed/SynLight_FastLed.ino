@@ -32,6 +32,7 @@ unsigned int ledCounter = 0;
 unsigned int totalLedCounter = 0;
 bool active = true;
 long long_counter = 0;
+short dimmer = 0;
 
 void fill(int _start, int _end, int r, int g, int b)
 {
@@ -223,7 +224,17 @@ void loop()
     }
     //STANDBY AFTER 7 SECONDS
     if ((millis() - t1>7000) && active)
-    {
+    {        
+        /*dimmer = map(x, 7000, 10000, 255, 0);
+        FastLED.setBrightness(dimmer);
+        FastLED.show();
+
+        if(dimmer==0)
+        {
+            active = false;
+            t1 = millis();
+            fill(0, NUM_LEDS, 0, 0, 0);
+        }*/
         active = false;
         t1 = millis();
         fill(0, NUM_LEDS, 0, 0, 0);
