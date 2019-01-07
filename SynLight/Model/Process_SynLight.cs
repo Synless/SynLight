@@ -70,7 +70,7 @@ namespace SynLight.Model
             {
                 GetScreenShotedges();
             }
-            if(ContrastEnable)
+            if(Contrast> 0 /*|| ContrastEnable*/)
                 scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
             ProcessScreenShot();
             Send();

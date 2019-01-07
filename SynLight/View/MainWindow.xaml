@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:SynLight.ViewModel"
         xmlns:conv="clr-namespace:SynLight.Converter"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Width="320" Height="520" MinHeight="520" MinWidth="320" HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
+    Title="{Binding SynLight.Tittle, UpdateSourceTrigger=PropertyChanged}" Width="360" Height="500" MinHeight="500" MinWidth="360" HorizontalContentAlignment="Right" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -419,7 +419,7 @@
     </Window.Resources>
     <UserControl Background="#FF101010">
         <Viewbox StretchDirection="Both" Stretch="Uniform" IsEnabled="{Binding SynLight.CanPlayPause}">
-            <TabControl Margin="10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="485" >
+            <TabControl Margin="10" SelectedIndex="{Binding SynLight.Index, UpdateSourceTrigger=PropertyChanged}" Width="320" Height="430" >
                 <TabItem Header="{DynamicResource ambiant}" TabIndex="0" Width="80">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                         <StackPanel Margin="5,10,7,0" Orientation="Vertical" HorizontalAlignment="Center">
@@ -459,7 +459,7 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,5,0,0">
                                     <Label Style="{StaticResource Labels}" Margin="0,0,2,0" Content="Contrast :"/>
                                     <StackPanel Orientation="Vertical">
-                                        <CheckBox Name="Contrast" Margin="5" IsChecked="{Binding SynLight.ContrastEnable}" Style="{StaticResource ToggleSwitchOnOff_blue}" />
+                                        <!--<CheckBox Name="Contrast" Margin="5" IsChecked="{Binding SynLight.ContrastEnable}" Style="{StaticResource ToggleSwitchOnOff_blue}" />-->
                                         <Slider IsEnabled="{Binding SynLight.ContrastEnable}" Margin="5" Value="{Binding SynLight.Contrast}" Width="60"  Maximum="100"/>
                                         <!--<TextBox IsEnabled="{Binding SynLight.ContrastEnable}" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="2" VerticalAlignment="Center" TextAlignment="Center" Height="25" TextWrapping="Wrap" Width="45" Text="{Binding SynLight.Contrast,    UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"/>-->
                                     </StackPanel>

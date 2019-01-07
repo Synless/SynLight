@@ -452,7 +452,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Blue");
             }
         }
-        private bool contrastEnable = false;
+        /*private bool contrastEnable = true;
         public bool ContrastEnable
         {
             get
@@ -464,8 +464,8 @@ namespace SynLight.Model
                 contrastEnable = value;
                 OnPropertyChanged("ContrastEnable");
             }
-        }
-        private int contrast = 50;
+        }*/
+        private int contrast = 0;
         public int Contrast
         {
             get
@@ -508,8 +508,8 @@ namespace SynLight.Model
         protected DateTime startTime = DateTime.Parse("00:00:00");
         protected DateTime midDay = DateTime.Parse("12:00:00");
         protected DateTime endTime = DateTime.Parse("05:00:00");
-        protected const double nbMinutesStart = 200.0;
-        protected const double nmMinutesStop = 250.0;
+        protected const double nbMinutesStart = 250.0;
+        protected const double nmMinutesStop = 300.0;
         protected int startTimeInt;
         protected int endTimeInt;
         protected int currentTimeInt;
@@ -568,7 +568,7 @@ namespace SynLight.Model
                     {
                         try
                         {
-                            string[] subLine = line.Trim('\r').Split('=');
+                            string[] subLine = line.ToUpper().Trim('\r').Split('=');
                             if (subLine[0] == "MAINSCREEN")
                             {
                                 if (subLine[1]=="1")
@@ -679,6 +679,10 @@ namespace SynLight.Model
                             else if (subLine[0] == "SLEEPTIME")
                             {
                                 sleepTime = int.Parse(subLine[1]);
+                            }
+                            else if(subLine[0] == "CONTRAST")
+                            {
+                                Contrast = int.Parse(subLine[1]);
                             }
                             /*
                             else if (subLine[0] == "QUERRY")
