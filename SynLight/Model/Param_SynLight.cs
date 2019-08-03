@@ -608,7 +608,7 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "X")
                             {
-                                Height = int.Parse(subLine[1]);
+                                Width = int.Parse(subLine[1]);
                             }
                             else if (subLine[0] == "Y")
                             {
