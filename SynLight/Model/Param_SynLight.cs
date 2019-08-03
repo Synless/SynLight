@@ -606,6 +606,10 @@ namespace SynLight.Model
                                 screen3Size.Height  = Math.Min(0, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
                                 Screen3Visible = true;
                             }
+                            else if (subLine[0] == "X")
+                            {
+                                Height = int.Parse(subLine[1]);
+                            }
                             else if (subLine[0] == "Y")
                             {
                                 Height = int.Parse(subLine[1]);
