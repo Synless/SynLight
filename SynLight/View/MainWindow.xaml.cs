@@ -17,7 +17,7 @@ namespace SynLight.View
             Model.Startup.StartOrKill();
             Model.Startup.CleanFiles();
             if (Model.Startup.ShowOrHide())
-                Hide();
+                Hide(); //TODO: Test with new Windows
             SetLanguageDictionary();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
