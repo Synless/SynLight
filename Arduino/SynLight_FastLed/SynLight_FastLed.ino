@@ -60,10 +60,11 @@ void setup()
     //strip.Show();
     delay(100);
     fill(0, NUM_LEDS, 20, 0, 0);
-    delay(100);
+    delay(10);
     //https://github.com/tzapu/WiFiManager#how-it-works
     WiFiManager wifiManager;
-    delay(100);
+    delay(10);
+    wifiManager.setSTAStaticIPConfig(IPAddress(192,168,137,175), IPAddress(192,168,137,1), IPAddress(255,255,255,0));
     wifiManager.autoConnect("SynLight");
     fill(0, NUM_LEDS, 15, 15, 0);
     delay(100);
