@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using Xceed.Wpf.Toolkit;
 
 namespace SynLight.View
 {
@@ -13,15 +14,12 @@ namespace SynLight.View
     {
         public MainWindow()
         {
-
             Model.Startup.StartOrKill();
-            Model.Startup.CleanFiles();
             if (Model.Startup.ShowOrHide())
-                Hide(); //TODO: Test with new Windows
+                Hide();
+
             SetLanguageDictionary();
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            //DataContext = new MainViewModel(); //ALREADY SET IN XAML
         }
 
         private void SetLanguageDictionary()
@@ -44,16 +42,20 @@ namespace SynLight.View
             base.OnClosed(e);
             Environment.Exit(0);
         }
-        private void positiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
+
+        private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
-
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex(@"\-*\d+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _dropDownButton.IsOpen = false;
         }
     }
 }
