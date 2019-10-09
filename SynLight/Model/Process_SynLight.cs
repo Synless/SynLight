@@ -75,6 +75,7 @@ namespace SynLight.Model
         private int _Wigth;
         private int _Corner;
         private int _Shifting;
+        private bool tryGetAndProcessScreenPart = true;
         private void Tick()
         {
             //Freezing the values for this loop
@@ -87,10 +88,11 @@ namespace SynLight.Model
             GetScreenShotedges();
 
             //Test for standalone beacon
-            if (debug2)
+            if (tryGetAndProcessScreenPart)
             {
                 Rectangle rect = new Rectangle(10, 10, 500, 500); //Paramters : X,Y,Width,Height - 0,0 is the top-left corner
                 GetAndProcessScreenPart(rect);
+                tryGetAndProcessScreenPart = false; //To execute only once, remove for continuous operation
             }
             
             if (Contrast > 0)
@@ -184,7 +186,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool debug2 = true;
+        private bool saveBmpBeacon = true;
         private void GetAndProcessScreenPart(Rectangle _rect)
         {
             try
@@ -217,18 +219,20 @@ namespace SynLight.Model
                 screenPartToSend.Add(g);
                 screenPartToSend.Add(b);
 
+                //Network parameters
                 System.Net.IPAddress ip = System.Net.IPAddress.Parse("192.168.1.123");
                 int port = 8787;
                 System.Net.IPEndPoint edp = new System.Net.IPEndPoint(ip,port);
 
+                //Sending with custom Endpoint
                 SendPayload(PayloadType.fixedColor, screenPartToSend, edp);
 
                 //Capturing the very first frame
-                if (debug2)
+                if (saveBmpBeacon)
                 {
                     try
                     {
-                        debug2 = false;
+                        saveBmpBeacon = false;
                         Resize(bmpBeacon).Save("5full.bmp");
                     }
                     catch
