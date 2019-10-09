@@ -103,10 +103,30 @@ namespace SynLight.Model
 
             try
             {
-                //MessageBox.Show("A");
                 sock.SendTo(payload.ToArray(), endPoint);
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+
+            //for (int n = 2; n < payload.Count-2;n+=3)
+            //{
+            //    int i = payload[n] + payload[n+1] + payload[n+2];
+            //    Console.Write(i.ToString() + "|");
+            //}
+            //Console.WriteLine();
+        }
+        protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
+        {
+            payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+
+            try
+            {
+                sock.SendTo(payload.ToArray(), edp);
+            }
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
             }

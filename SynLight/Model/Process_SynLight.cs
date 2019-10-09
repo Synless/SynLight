@@ -85,6 +85,13 @@ namespace SynLight.Model
             
             //GetScreenShot(); //Old method
             GetScreenShotedges();
+
+            //Test for standalone beacon
+            if (debug2)
+            {
+                Rectangle rect = new Rectangle(10, 10, 500, 500); //Paramters : X,Y,Width,Height - 0,0 is the top-left corner
+                GetAndProcessScreenPart(rect);
+            }
             
             if (Contrast > 0)
             {
@@ -176,6 +183,65 @@ namespace SynLight.Model
                 scaledBmpScreenshot.SetPixel(0, 0, Color.Black);
             }
         }
+
+        private bool debug2 = true;
+        private void GetAndProcessScreenPart(Rectangle _rect)
+        {
+            try
+            {
+                //Sanitizing
+                Rect rect = new Rect
+                {
+                    X = Math.Min(screensSize.Width, Math.Max(_rect.X, 0)),
+                    Y = Math.Min(screensSize.Height, Math.Max(_rect.Y, 0)),
+                    Width = Math.Min(screensSize.Width, Math.Max(_rect.Width, 1)),
+                    Height = Math.Min(screensSize.Height, Math.Max(_rect.Height, 1))
+                };
+
+                //Copy from GetScreenShotedges
+                Bitmap bmpBeacon = new Bitmap((int)rect.Width, (int)rect.Height, PixelFormat.Format32bppRgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmpBeacon);
+                //Should always be Left/Top/0/0
+                gfxScreenshot.CopyFromScreen((int)rect.Left, (int)rect.Top, 0, 0, bmpBeacon.Size);
+
+                //Rescaling depending on what needs to be sent
+                //1 color or one LED -> 1,1
+                bmpBeacon = new Bitmap(bmpBeacon, 1, 1);
+
+                //Scanning through the bitmap, creating to payload
+                byte r = bmpBeacon.GetPixel(0, 0).R;
+                byte g = bmpBeacon.GetPixel(0, 0).G;
+                byte b = bmpBeacon.GetPixel(0, 0).B;
+                List<byte> screenPartToSend = new List<byte>();
+                screenPartToSend.Add(r);
+                screenPartToSend.Add(g);
+                screenPartToSend.Add(b);
+
+                System.Net.IPAddress ip = System.Net.IPAddress.Parse("192.168.1.123");
+                int port = 8787;
+                System.Net.IPEndPoint edp = new System.Net.IPEndPoint(ip,port);
+
+                SendPayload(PayloadType.fixedColor, screenPartToSend, edp);
+
+                //Capturing the very first frame
+                if (debug2)
+                {
+                    try
+                    {
+                        debug2 = false;
+                        Resize(bmpBeacon).Save("5full.bmp");
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                gfxScreenshot.Clear(Color.Empty);
+            }
+            catch
+            {
+            }
+        }
         private void GetScreenShotedges()
         {
             try
@@ -188,32 +254,32 @@ namespace SynLight.Model
                 hX = endX - startX;
                 hY = endY - startY;
 
-                startY += ((_Shifting * hY) / _Height) /2;
+                startY += ((_Shifting * hY) / _Height) / 2;
                 endY -= ((_Shifting * hY) / _Height) / 2;
 
-                rect = new Rectangle(startX, startY, startX+(hX/ _Wigth), endY);
-                bmp = new Bitmap(hX/ _Wigth, hY, PixelFormat.Format32bppRgb);
+                rect = new Rectangle(startX, startY, startX + (hX / _Wigth), endY);
+                bmp = new Bitmap(hX / _Wigth, hY, PixelFormat.Format32bppRgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmp);
                 gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeLeft = new Bitmap(bmp, 1, _Height);
                 gfxScreenshot.Clear(Color.Empty);
 
-                rect = new Rectangle(endX-(hX/ _Wigth), startY, startX + (hX / _Wigth), endY);
-                bmp = new Bitmap(hX/ _Wigth, hY, PixelFormat.Format32bppRgb);
+                rect = new Rectangle(endX - (hX / _Wigth), startY, startX + (hX / _Wigth), endY);
+                bmp = new Bitmap(hX / _Wigth, hY, PixelFormat.Format32bppRgb);
                 Graphics gfxScreenshot2 = Graphics.FromImage(bmp);
                 gfxScreenshot2.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeRight = new Bitmap(bmp, 1, _Height);
                 gfxScreenshot2.Clear(Color.Empty);
 
-                rect = new Rectangle(startX, startY, endX, startY+(hY/ _Height));
-                bmp = new Bitmap(hX, hY/ _Height, PixelFormat.Format32bppRgb);
+                rect = new Rectangle(startX, startY, endX, startY + (hY / _Height));
+                bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
                 Graphics gfxScreenshot3 = Graphics.FromImage(bmp);
                 gfxScreenshot3.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeTop = new Bitmap(bmp, _Wigth, 1);
                 gfxScreenshot3.Clear(Color.Empty);
 
-                rect = new Rectangle(startX, endY- (hY / _Height), endX, endY);
-                bmp = new Bitmap(hX, hY/ _Height, PixelFormat.Format32bppRgb);
+                rect = new Rectangle(startX, endY - (hY / _Height), endX, endY);
+                bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
                 Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
                 gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeBot = new Bitmap(bmp, _Wigth, 1);
@@ -231,10 +297,10 @@ namespace SynLight.Model
                     scaledBmpScreenshot.SetPixel(n, 0, scalededgeTop.GetPixel(n, 0));
                     scaledBmpScreenshot.SetPixel(n, _Height - 1, scalededgeBot.GetPixel(n, 0));
                 }
-                
-                    //Capturing the very first frame in various formats
-                    if (debug)
-                    {
+
+                //Capturing the very first frame in various formats
+                if (debug)
+                {
                     try
                     {
                         debug = false;
