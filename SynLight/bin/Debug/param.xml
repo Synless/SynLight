@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--SynLight parameters-->
+<SynLight>
+  <!--Subject to check in the code-->
+  <Screens>
+    <Mainscreen>2</Mainscreen>
+    <Screen1>1920x1080</Screen1>
+    <Screen2>2560x1440</Screen2>
+    <Screen3>1600x900</Screen3>
+  </Screens>
+  <LED>
+    <X>18</X>
+    <Y>12</Y>
+    <Corner>1</Corner>
+    <Shifting>0</Shifting>
+    <StartLED>BL</StartLED>
+    <!--First LED shifting from the corner-->
+    <UpDown>0</UpDown>
+    <!--Clockwork = CW | Counter clockwork = CCW-->
+    <Direction>CCW</Direction>
+    <A>1.32</A>
+    <B>1.0</B>
+  </LED>
+  <Network>
+    <AutomaticMode>false</AutomaticMode>
+      <!--Ignored if AutomaticMode="True"-->
+    <IP>192.168.137.175</IP>
+    <Port>8787</Port>
+  </Network>
+  <Filters>
+    <BackGroundFilter>true</BackGroundFilter>
+    <LowPassFilter>true</LowPassFilter>
+    <Flux>false</Flux>
+  </Filters>
+  <Behavior>
+    <Hide>false</Hide>
+    <MobileSharing>false</MobileSharing>
+    <CleanFiles>false</CleanFiles>
+  </Behavior>
+</SynLight>
