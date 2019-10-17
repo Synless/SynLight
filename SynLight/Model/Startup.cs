@@ -154,6 +154,10 @@ namespace SynLight.Model
                             {
                                 return false;
                             }
+                            else if (subLine[0] == "HIDE")
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -180,6 +184,7 @@ namespace SynLight.Model
                             }
                         }
                     }
+                    reader.Close();
                 }
             }
             catch { }
