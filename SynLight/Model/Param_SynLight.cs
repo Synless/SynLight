@@ -1,17 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SynLight.Model
 {
     public class Param_SynLight : AutoNodeMCU
     {
         #region variables
-        public static readonly string param = "param.txt";
+        public static readonly string paramTxt = "param.txt";
+        public static readonly string paramXml = "param.xml";
 
         #region getset
         private string tittle = "SynLight - Disconnected";
@@ -519,144 +522,254 @@ namespace SynLight.Model
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             try
             {
-                using (StreamReader sr = new StreamReader(param))
+                if (File.Exists(paramTxt))
                 {
-                    string[] lines = sr.ReadToEnd().Split('\n');
-                    foreach (string line in lines)
+                    using (StreamReader sr = new StreamReader(paramTxt))
                     {
-                        try
+                        string[] lines = sr.ReadToEnd().Split('\n');
+                        foreach (string line in lines)
                         {
-                            string[] subLine = line.ToUpper().Trim('\r').Split('=');
-                            if (subLine[0] == "MAINSCREEN")
+                            try
                             {
-                                if (subLine[1] == "1")
+                                string[] subLine = line.ToUpper().Trim('\r').Split('=');
+                                if (subLine[0] == "MAINSCREEN")
                                 {
-                                    Screen1 = true;
+                                    if (subLine[1] == "1")
+                                    {
+                                        Screen1 = true;
+                                    }
+                                    else if (subLine[1] == "2")
+                                    {
+                                        Screen2 = true;
+                                    }
+                                    else if (subLine[1] == "3")
+                                    {
+                                        Screen3 = true;
+                                    }
+                                    else
+                                    {
+                                        ScreenFull = true;
+                                    }
+                                    screen1Size.Width = int.Parse(subLine[1].Split(',')[0]);
+                                    screen1Size.Height = int.Parse(subLine[1].Split(',')[1]);
                                 }
-                                else if (subLine[1] == "2")
+                                else if (subLine[0] == "SCREEN1")
                                 {
-                                    Screen2 = true;
+                                    screen1Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                    //Is Min(24000) correct ?
+                                    screen1Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                                 }
-                                else if (subLine[1] == "3")
+                                else if (subLine[0] == "SCREEN2")
                                 {
-                                    Screen3 = true;
+                                    screen2Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                    screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
+                                    Screen2Visible = true;
                                 }
-                                else
+                                else if (subLine[0] == "SCREEN3")
                                 {
-                                    ScreenFull = true;
+                                    screen3Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
+                                    screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
+                                    Screen3Visible = true;
                                 }
-                                screen1Size.Width = int.Parse(subLine[1].Split(',')[0]);
-                                screen1Size.Height = int.Parse(subLine[1].Split(',')[1]);
-                            }
-                            else if (subLine[0] == "SCREEN1")
-                            {
-                                screen1Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                //Is Min(24000) correct ?
-                                screen1Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
-                            }
-                            else if (subLine[0] == "SCREEN2")
-                            {
-                                screen2Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
-                                Screen2Visible = true;
-                            }
-                            else if (subLine[0] == "SCREEN3")
-                            {
-                                screen3Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
-                                Screen3Visible = true;
-                            }
-                            else if (subLine[0] == "IP")
-                            {
-                                try
+                                else if (subLine[0] == "IP")
                                 {
-                                    nodeMCU = IPAddress.Parse(subLine[1]);
-                                    endPoint = new IPEndPoint(nodeMCU, UDPPort);
-                                    Tittle = "Synlight - " + subLine[1];
-                                    staticConnected = true;
+                                    try
+                                    {
+                                        nodeMCU = IPAddress.Parse(subLine[1]);
+                                        endPoint = new IPEndPoint(nodeMCU, UDPPort);
+                                        Tittle = "Synlight - " + subLine[1];
+                                        staticConnected = true;
+                                    }
+                                    catch
+                                    {
+                                    }
                                 }
-                                catch
+                                else if (subLine[0] == "X")
                                 {
+                                    Width = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "Y")
+                                {
+                                    Height = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "S")
+                                {
+                                    Shifting = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "UDPPort")
+                                {
+                                    UDPPort = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "TL")
+                                {
+                                    TopLeft = true;
+                                }
+                                else if (subLine[0] == "BL")
+                                {
+                                    BotLeft = true;
+                                }
+                                else if (subLine[0] == "BR")
+                                {
+                                    BotRight = true;
+                                }
+                                else if (subLine[0] == "TR")
+                                {
+                                    TopRight = true;
+                                }
+                                else if (subLine[0] == "CW")
+                                {
+                                    Clockwise = true;
+                                }
+                                else if (subLine[0] == "CCW")
+                                {
+                                    Clockwise = false;
+                                }
+                                else if (subLine[0] == "A")
+                                {
+                                    A = Convert.ToDouble(subLine[1]);
+                                }
+                                else if (subLine[0] == "B")
+                                {
+                                    B = Convert.ToDouble(subLine[1]);
+                                }
+                                else if (subLine[0] == "LPF")
+                                {
+                                    LPF = true;
+                                }
+                                else if (subLine[0] == "BGF")
+                                {
+                                    BGF = true;
+                                }
+                                else if (subLine[0] == "CORNERS")
+                                {
+                                    Corner = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "UPDOWN")
+                                {
+                                    UpDown = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "CONTRAST")
+                                {
+                                    Contrast = int.Parse(subLine[1]);
+                                }
+                                else if (subLine[0] == "MOBILESHARING")
+                                {
+                                    Startup.MobileHotstop();
+                                }
+                                else if (subLine[0] == "CLEANFILES")
+                                {
+                                    Startup.CleanFiles();
                                 }
                             }
-                            else if (subLine[0] == "X")
+                            catch (Exception e) { }
+                        }
+                    }
+                }
+                else if(File.Exists(paramXml))
+                {
+                    XmlTextReader reader = new XmlTextReader(paramXml);                    
+                    while (reader.Read())
+                    {
+                        if(reader.NodeType == XmlNodeType.Element)
+                        {
+                            string r = reader.Name.ToUpper();
+                            reader.Read();
+                            string v = reader.Value;
+                            switch (r.ToUpper())
                             {
-                                Width = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "Y")
-                            {
-                                Height = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "S")
-                            {
-                                Shifting = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "UDPPort")
-                            {
-                                UDPPort = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "TL")
-                            {
-                                TopLeft = true;
-                            }
-                            else if (subLine[0] == "BL")
-                            {
-                                BotLeft = true;
-                            }
-                            else if (subLine[0] == "BR")
-                            {
-                                BotRight = true;
-                            }
-                            else if (subLine[0] == "TR")
-                            {
-                                TopRight = true;
-                            }
-                            else if (subLine[0] == "CW")
-                            {
-                                Clockwise = true;
-                            }
-                            else if (subLine[0] == "CCW")
-                            {
-                                Clockwise = false;
-                            }
-                            else if (subLine[0] == "A")
-                            {
-                                A = Convert.ToDouble(subLine[1]);
-                            }
-                            else if (subLine[0] == "B")
-                            {
-                                B = Convert.ToDouble(subLine[1]);
-                            }
-                            else if (subLine[0] == "LPF")
-                            {
-                                LPF = true;
-                            }
-                            else if (subLine[0] == "BGF")
-                            {
-                                BGF = true;
-                            }
-                            else if (subLine[0] == "CORNERS")
-                            {
-                                Corner = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "UPDOWN")
-                            {
-                                UpDown = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "CONTRAST")
-                            {
-                                Contrast = int.Parse(subLine[1]);
-                            }
-                            else if (subLine[0] == "MOBILESHARING")
-                            {
-                                Startup.MobileHotstop();
-                            }
-                            else if (subLine[0] == "CLEANFILES")
-                            {
-                                Startup.CleanFiles();
+                                case "MAINSCREEN":
+                                    if (v == "1")       { Screen1 = true; }
+                                    else if (v == "2")  { Screen2 = true; }
+                                    else if (v == "3")  { Screen3 = true; }
+                                    else                { ScreenFull = true; }
+                                    //screen1Size.Width = int.Parse(v.Split('x')[0]);
+                                    //screen1Size.Height = int.Parse(v.Split('x')[1]);
+                                    break;
+                                case "SCREEN1":
+                                    screen1Size.Width = Math.Min(30720, Math.Max(800, int.Parse(v.Split('x')[0])));
+                                    screen1Size.Height = Math.Min(17280, Math.Max(600, int.Parse(v.Split('x')[1])));
+                                    break;
+                                case "SCREEN2":
+                                    screen2Size.Width = Math.Min(30720, Math.Max(800, int.Parse(v.Split('x')[0])));
+                                    screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(v.Split('x')[1])));
+                                    break;
+                                case "SCREEN3":
+                                    screen3Size.Width = Math.Min(30720, Math.Max(800, int.Parse(v.Split('x')[0])));
+                                    screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(v.Split('x')[1])));
+                                    break;
+                                case "IP":
+                                    try
+                                    {
+                                        nodeMCU = IPAddress.Parse(v);
+                                        endPoint = new IPEndPoint(nodeMCU, UDPPort);
+                                        Tittle = "Synlight - " + v;
+                                        staticConnected = true;
+                                    }
+                                    catch { }
+                                    break;
+                                case "UDPPORT":
+                                case "PORT":
+                                    try
+                                    {
+                                        UDPPort = int.Parse(v);
+                                        endPoint = new IPEndPoint(nodeMCU, UDPPort);
+                                    }
+                                    catch { }
+                                    break;
+                                case "X":
+                                    Width = int.Parse(v);
+                                    break;
+                                case "Y":
+                                    Height = int.Parse(v);
+                                    break;
+                                case "CORNER":
+                                    Corner = int.Parse(v);
+                                    break;
+                                case "SHIFTING":
+                                    Shifting = int.Parse(v);
+                                    break;
+                                case "UPDOWN":
+                                    UpDown = int.Parse(v);
+                                    break;
+                                case "START":
+                                case "STARTLED":
+                                    if (v == "TL")      { TopLeft  = true; }
+                                    else if (v == "BL") { BotLeft  = true; }
+                                    else if (v == "BR") { BotRight = true; }
+                                    else if (v == "TR") { TopRight = true; }
+                                    break;
+                                case "DIRECTION":
+                                    if (v == "CW") { Clockwise = true; }
+                                    else if (v == "CCW") { Clockwise = false; }
+                                    break;
+                                case "A":
+                                    A = Convert.ToDouble(v);
+                                    break;
+                                case "B":
+                                    B = Convert.ToDouble(v);
+                                    break;
+                                case "BACKGROUNDFILTER":
+                                    BGF = bool.Parse(v);
+                                    break;
+                                case "LOWPASSFILTER":
+                                    LPF = bool.Parse(v);
+                                    break;
+                                case "CONTRAST":
+                                    Contrast = int.Parse(v);
+                                    break;
+                                case "MOBILESHARING":
+                                    if (bool.Parse(v)) { Startup.MobileHotstop(); }
+                                    break;
+                                case "CLEANFILES":
+                                    if (bool.Parse(v)) { Startup.CleanFiles(); }
+                                    break;
+                                case "FLUX":
+                                    UsingFlux = bool.Parse(v);
+                                    break;
+                                default:
+                                    break;
                             }
                         }
-                        catch (Exception e) { }
                     }
                 }
             }
