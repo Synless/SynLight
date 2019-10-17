@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace SynLight.Model
 {
@@ -141,21 +142,48 @@ namespace SynLight.Model
         {
             try
             {
-                using (StreamReader sr = new StreamReader(Param_SynLight.param))
+                if (File.Exists(Param_SynLight.paramTxt))
                 {
-                    string[] lines = sr.ReadToEnd().Split('\n');
-                    foreach (string line in lines)
+                    using (StreamReader sr = new StreamReader(Param_SynLight.paramTxt))
                     {
-                        string[] subLine = line.Trim('\r').Split('=');
-                        if (subLine[0] == "SHOW")
+                        string[] lines = sr.ReadToEnd().Split('\n');
+                        foreach (string line in lines)
                         {
-                            return false;
+                            string[] subLine = line.Trim('\r').Split('=');
+                            if (subLine[0] == "SHOW")
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                else if (File.Exists(Param_SynLight.paramXml))
+                {
+                    XmlTextReader reader = new XmlTextReader(Param_SynLight.paramXml);
+                    string r;
+                    string v;
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                        {
+                            r = reader.Name.ToUpper();
+                            reader.Read();
+                            v = reader.Value;
+                            switch (r.ToUpper())
+                            {
+                                case "HIDE":
+                                    return bool.Parse(v);
+                                case "SHOW":
+                                    return !bool.Parse(v);
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
             }
             catch { }
-            return true;
+            return false;
         }
     }
 }
