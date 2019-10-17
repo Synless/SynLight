@@ -30,26 +30,7 @@ namespace SynLight.Model
                 OnPropertyChanged("Tittle");
             }
         }
-
-        private int index = 0;
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-            set
-            {
-                index = value;
-                staticColorChanged = true;
-                if (value == 1)
-                {
-                    SendPayload(PayloadType.fixedColor, new List<byte>() { Red, Green, Blue });
-                }
-                OnPropertyChanged("Index");
-            }
-        }
-
+        
         private bool screenFull = false;
         public bool ScreenFull
         {
