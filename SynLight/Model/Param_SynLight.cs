@@ -100,22 +100,10 @@ namespace SynLight.Model
         }
         private void ScreenSelectionUpdated()
         {
-            if (screenFull)
-            {
-                scannedArea = new Rectangle(0, 0, screensSize.Width, screensSize.Height);
-            }
-            if (screen1)
-            {
-                scannedArea = new Rectangle(0, 0, screen1Size.Width, screen1Size.Height);
-            }
-            if (screen2)
-            {
-                scannedArea = new Rectangle(screen1Size.Width, 0, screen1Size.Width + screen2Size.Width, screen2Size.Height);
-            }
-            if (screen3)
-            {
-                scannedArea = new Rectangle(screen1Size.Width + screen2Size.Width, 0, screen1Size.Width + screen2Size.Width + screen3Size.Width, screen3Size.Height);
-            }
+            if (screenFull) { scannedArea = new Rectangle(0, 0, screensSize.Width, screensSize.Height); }
+            if (screen1) { scannedArea = new Rectangle(0, 0, screen1Size.Width, screen1Size.Height); }
+            if (screen2) { scannedArea = new Rectangle(screen1Size.Width, 0, screen1Size.Width + screen2Size.Width, screen2Size.Height); }
+            if (screen3) { scannedArea = new Rectangle(screen1Size.Width + screen2Size.Width, 0, screen1Size.Width + screen2Size.Width + screen3Size.Width, screen3Size.Height); }
             OnPropertyChanged("Screen1");
             OnPropertyChanged("Screen2");
             OnPropertyChanged("Screen3");
