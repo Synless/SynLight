@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -142,7 +142,26 @@ namespace SynLight.Model
         {
             try
             {
-                if(File.Exists(Param_SynLight.paramXml))
+                if (File.Exists(Param_SynLight.paramTxt))
+                {
+                    using (StreamReader sr = new StreamReader(Param_SynLight.paramTxt))
+                    {
+                        string[] lines = sr.ReadToEnd().Split('\n');
+                        foreach (string line in lines)
+                        {
+                            string[] subLine = line.Trim('\r').Split('=');
+                            if (subLine[0] == "SHOW")
+                            {
+                                return false;
+                            }
+                            else if (subLine[0] == "HIDE")
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                else if (File.Exists(Param_SynLight.paramXml))
                 {
                     XmlTextReader reader = new XmlTextReader(Param_SynLight.paramXml);
                     string r;
@@ -166,25 +185,6 @@ namespace SynLight.Model
                         }
                     }
                     reader.Close();
-                }
-                else if (File.Exists(Param_SynLight.paramTxt))
-                {
-                    using (StreamReader sr = new StreamReader(Param_SynLight.paramTxt))
-                    {
-                        string[] lines = sr.ReadToEnd().Split('\n');
-                        foreach (string line in lines)
-                        {
-                            string[] subLine = line.Trim('\r').Split('=');
-                            if (subLine[0] == "SHOW")
-                            {
-                                return false;
-                            }
-                            else if (subLine[0] == "HIDE")
-                            {
-                                return true;
-                            }
-                        }
-                    }
                 }
             }
             catch { }

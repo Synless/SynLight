@@ -9,15 +9,15 @@ namespace SynLight.Model
     public class AutoNodeMCU : ModelBase
     {
         #region Variables
-        protected static Socket sock = new Socket(SocketType.Dgram, ProtocolType.Udp);
-        protected static List<Socket> sockList;
-        protected static IPEndPoint endPoint;
-        protected static IPAddress nodeMCU;
-        protected static int UDPPort = 8787; //Must match the next line UdpClient port and the ESP listenning port
-        protected static UdpClient Client= new UdpClient(8787);
+        protected Socket sock = new Socket(SocketType.Dgram, ProtocolType.Udp);
+        protected List<Socket> sockList;
+        protected IPEndPoint endPoint;
+        protected IPAddress nodeMCU;
+        protected int UDPPort = 8787; //Must match the next line UdpClient port and the ESP listenning port
+        protected UdpClient Client= new UdpClient(8787);
 
-        protected static readonly string querry = "ping";
-        protected static readonly string answer = "pong"; //a0
+        protected readonly string querry = "ping";
+        protected readonly string answer = "pong"; //a0
         #endregion  
 
         protected static bool staticConnected = false;
@@ -71,7 +71,7 @@ namespace SynLight.Model
             }
         }
 
-        private static void Recv(IAsyncResult res)
+        private void Recv(IAsyncResult res)
         {
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
@@ -95,8 +95,8 @@ namespace SynLight.Model
             multiplePayload = 2,
             terminalPayload = 3,
         }
-        private static bool once = true;
-        protected static void SendPayload(PayloadType plt, List<byte> payload)
+        private bool once = true;
+        protected void SendPayload(PayloadType plt, List<byte> payload)
         {
             payload.Insert(0, (byte)plt);
             payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
@@ -117,7 +117,7 @@ namespace SynLight.Model
             //}
             //Console.WriteLine();
         }
-        protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
+        protected void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
         {
             payload.Insert(0, (byte)plt);
             payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
@@ -138,7 +138,7 @@ namespace SynLight.Model
             //}
             //Console.WriteLine();
         }
-        protected static void SendPayload(PayloadType plt, byte r=0)
+        protected void SendPayload(PayloadType plt, byte r=0)
         {
             List<byte> payload = new List<byte>();
             payload.Insert(0, r);
@@ -153,7 +153,7 @@ namespace SynLight.Model
             }
             catch { }
         }
-        protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
+        protected void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
         {
             List<byte> payload = new List<byte>();
             payload.Insert(0, b);

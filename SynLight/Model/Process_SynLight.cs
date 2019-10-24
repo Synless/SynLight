@@ -26,12 +26,14 @@ namespace SynLight.Model
                 //If not connected, try to reconnect
                 Tittle = "SynLight - Trying to connect ...";
                 FindNodeMCU();
+                if(staticConnected) { break; }
                 Thread.Sleep(2000);
             }
             CanPlayPause = true;
             PlayPause = true;
             processMainLoop.Start();
         }
+
         #region Privates methodes
         private void CheckMethod()
         {
@@ -602,6 +604,9 @@ namespace SynLight.Model
         private bool black = false;
         private void Send()
         {
+            Screen2Visible = true;
+            Screen3Visible = true;
+
             //Old stuff. Latests W10 builds seem to support in-game screenshot ...
             #region If the screen is black ...
             black = true;
@@ -621,8 +626,7 @@ namespace SynLight.Model
                     sock.SendTo(new byte[] { (byte)('A'), (byte)PayloadType.fixedColor, 5 }, endPoint);
                 }
             }
-            #endregion
-
+            #endregion   
             else
             {
                 newByteToSend = new List<byte>(0);
