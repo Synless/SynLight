@@ -36,6 +36,7 @@ namespace SynLight.Model
 
         #region Privates methodes
         Stopwatch watch;
+        int Hz;
         private void CheckMethod()
         {            
             while (PlayPause)
@@ -63,7 +64,7 @@ namespace SynLight.Model
 
                 //[1] ... to here
                 watch.Stop();
-                int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+                Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                 Tittle = "Synlight - " + Hz.ToString() + "Hz";
             }
             //Immediately turns of the LEDS after pressing the Stop button
