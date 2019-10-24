@@ -35,9 +35,9 @@ namespace SynLight.Model
         }
 
         #region Privates methodes
+        Stopwatch watch;
         private void CheckMethod()
-        {
-            Stopwatch watch;
+        {            
             while (PlayPause)
             {
                 //Start measuring how much time it takes to complete the task from here ... [1]
@@ -52,9 +52,9 @@ namespace SynLight.Model
                 else if (Mix == 100)
                 {
                     //Only send the static color payload once in a while, or if the selected color has changed
-                    for(int n=0;((n< 1000) && (!staticColorChanged));n++)
+                    for(int n=0;((n< 100) && (!staticColorChanged));n++)
                     {
-                        Thread.Sleep(1);
+                        Thread.Sleep(10);
                     }
                     SingleColor();
                 }
@@ -713,7 +713,7 @@ namespace SynLight.Model
 
             if(lastDifference != -1) //Skips if first time
             {
-                difference = (difference + lastDifference) / 2;
+                difference = (difference + lastDifference) >> 1;
             }
 
             lastDifference = difference;
