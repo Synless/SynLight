@@ -17,7 +17,6 @@ namespace SynLight.View
             Model.Startup.StartOrKill();
             if (Model.Startup.ShowOrHide())
                 Hide();
-
             SetLanguageDictionary();
             InitializeComponent();
         }

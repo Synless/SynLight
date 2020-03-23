@@ -6,7 +6,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace SynLight.Model
 {
@@ -45,19 +44,18 @@ namespace SynLight.Model
                 {
                     try
                     {
-                        p.Kill();
+                        //p.Kill();
                     }
                     catch
                     {
-
                     }
                 }
             }
             string procName = Process.GetCurrentProcess().ProcessName;
             List<Process> processes = Process.GetProcessesByName(procName).ToList();
-            while (processes.Count > 1)
+            while (processes.Count> 1)
             {
-                if (processes[0].StartTime > processes[1].StartTime)
+                if (processes[0].StartTime> processes[1].StartTime)
                 {
                     processes[1].Kill();
                     processes[0].Kill();
@@ -142,53 +140,21 @@ namespace SynLight.Model
         {
             try
             {
-                if (File.Exists(Param_SynLight.paramTxt))
+                using (StreamReader sr = new StreamReader(Param_SynLight.param))
                 {
-                    using (StreamReader sr = new StreamReader(Param_SynLight.paramTxt))
+                    string[] lines = sr.ReadToEnd().Split('\n');
+                    foreach (string line in lines)
                     {
-                        string[] lines = sr.ReadToEnd().Split('\n');
-                        foreach (string line in lines)
+                        string[] subLine = line.Trim('\r').Split('=');
+                        if (subLine[0] == "SHOW")
                         {
-                            string[] subLine = line.Trim('\r').Split('=');
-                            if (subLine[0] == "SHOW")
-                            {
-                                return false;
-                            }
-                            else if (subLine[0] == "HIDE")
-                            {
-                                return true;
-                            }
+                            return false;
                         }
                     }
-                }
-                else if (File.Exists(Param_SynLight.paramXml))
-                {
-                    XmlTextReader reader = new XmlTextReader(Param_SynLight.paramXml);
-                    string r;
-                    string v;
-                    while (reader.Read())
-                    {
-                        if (reader.NodeType == XmlNodeType.Element)
-                        {
-                            r = reader.Name.ToUpper();
-                            reader.Read();
-                            v = reader.Value;
-                            switch (r.ToUpper())
-                            {
-                                case "HIDE":
-                                    return bool.Parse(v);
-                                case "SHOW":
-                                    return !bool.Parse(v);
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                    reader.Close();
                 }
             }
             catch { }
-            return false;
+            return true;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace SynLight.Model
             processFindESP.Start();
         }
 
+        #region Handlers
         private void FindESP()
         {
             while (!staticConnected)
@@ -26,26 +27,21 @@ namespace SynLight.Model
                 //If not connected, try to reconnect
                 Tittle = "SynLight - Trying to connect ...";
                 FindNodeMCU();
-                if(staticConnected) { break; }
                 Thread.Sleep(2000);
             }
             CanPlayPause = true;
             PlayPause = true;
             processMainLoop.Start();
         }
-
-        #region Privates methodes
-        Stopwatch watch;
-        int Hz;
         private void CheckMethod()
-        {            
+        {
+            Stopwatch watch;
             while (PlayPause)
             {
                 //Start measuring how much time it takes to complete the task from here ... [1]
                 watch = Stopwatch.StartNew();
 
-                //Soon to be changed for a version where a static color can be added on top of the screen capture with an alpha channel
-                if (Mix < 100)
+                if (Mix < 100) //Continuous operaration
                 {
                     Tick();
                     Thread.Sleep(difference);
@@ -53,21 +49,25 @@ namespace SynLight.Model
                 else if (Mix == 100)
                 {
                     //Only send the static color payload once in a while, or if the selected color has changed
-                    for(int n=0;((n< 100) && (!staticColorChanged));n++)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    for (int n = 0; ((n < 1000) && (!staticColorChanged)); n++)
+                        Thread.Sleep(1);
+
                     SingleColor();
+                }
+
+                if (!networkReachable)
+                {
+                    Thread.Sleep(500);
                 }
 
                 GC.Collect(); //Saves a couple MB
 
                 //[1] ... to here
                 watch.Stop();
-                Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+                int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                 Tittle = "Synlight - " + Hz.ToString() + "Hz";
             }
-            //Immediately turns of the LEDS after pressing the Stop button
+            //Immediately turns off the LEDS after pressing the Stop button
             SendPayload(PayloadType.fixedColor, 0);
             processMainLoop = new Thread(CheckMethod);
 
@@ -78,7 +78,7 @@ namespace SynLight.Model
         private int _Wigth;
         private int _Corner;
         private int _Shifting;
-        private bool tryGetAndProcessScreenPart = true;
+        //private bool tryGetAndProcessScreenPart = false;
         private void Tick()
         {
             //Freezing the values for this loop
@@ -86,44 +86,47 @@ namespace SynLight.Model
             _Wigth = Width;
             _Corner = Corner;
             _Shifting = Shifting;
-            
+
             //GetScreenShot(); //Old method
             GetScreenShotedges();
 
             //Test for standalone beacon
-            if (tryGetAndProcessScreenPart)
-            {
-                Rectangle rect = new Rectangle(10, 10, 500, 500); //Paramters : X,Y,Width,Height - 0,0 is the top-left corner
-                GetAndProcessScreenPart(rect);
-                tryGetAndProcessScreenPart = false; //To execute only once, remove for continuous operation
-            }
-            
+            //if (tryGetAndProcessScreenPart)
+            //{
+            //    Rectangle rect = new Rectangle(10, 10, 500, 500); //Paramters : X,Y,Width,Height - 0,0 is the top-left corner
+            //    GetAndProcessScreenPart(rect);
+            //    tryGetAndProcessScreenPart = false; //To execute only once, remove for continuous operation
+            //}
+
             if (Contrast > 0)
-            {
                 scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
-            }
+
             ProcessScreenShot();
-            if(Mix > 0)
+
+            if (Mix > 0)
             {
                 int bl = Mix;
                 List<byte> bts = new List<byte>(byteToSend);
                 for (int n = 0; n < byteToSend.Count - 2; n += 3)
                 {
-                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl)/100.0) + Red * (bl/100.0));
-                    bts[n+1] = (byte)(byteToSend[n+1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
-                    bts[n+2] = (byte)(byteToSend[n+2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
+                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl) / 100.0) + Red * (bl / 100.0));
+                    bts[n + 1] = (byte)(byteToSend[n + 1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
+                    bts[n + 2] = (byte)(byteToSend[n + 2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
                 }
                 byteToSend = new List<byte>(bts);
             }
+
             Send();
         }
-        #region Legacy
+        #endregion
+
+        #region Helpers [Legacy]
         private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Pasted from stackoverflow
         {
             Value = (100.0f + Value) / 100.0f;
             Value *= Value;
             Bitmap NewBitmap = (Bitmap)Image.Clone();
-            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height),ImageLockMode.ReadWrite,NewBitmap.PixelFormat);
+            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height), ImageLockMode.ReadWrite, NewBitmap.PixelFormat);
             int Height = NewBitmap.Height;
             int Width = NewBitmap.Width;
 
@@ -169,7 +172,6 @@ namespace SynLight.Model
 
             return NewBitmap;
         }
-
         private void GetScreenShot()
         {
             //This method is much slower since it captures the whole screen
@@ -189,7 +191,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool saveBmpBeacon = true;
+        private bool saveBmpBeacon = false;
         private void GetAndProcessScreenPart(Rectangle _rect)
         {
             try
@@ -225,7 +227,7 @@ namespace SynLight.Model
                 //Network parameters
                 System.Net.IPAddress ip = System.Net.IPAddress.Parse("192.168.1.123");
                 int port = 8787;
-                System.Net.IPEndPoint edp = new System.Net.IPEndPoint(ip,port);
+                System.Net.IPEndPoint edp = new System.Net.IPEndPoint(ip, port);
 
                 //Sending with custom Endpoint
                 SendPayload(PayloadType.fixedColor, screenPartToSend, edp);
@@ -600,122 +602,110 @@ namespace SynLight.Model
         }
         #endregion
 
-        //Send
+        #region Helpers
         private ushort justBlack = 0;
         private bool black = false;
         private void Send()
         {
-            Screen2Visible = true;
-            Screen3Visible = true;
-
             //Old stuff. Latests W10 builds seem to support in-game screenshot ...
-            #region If the screen is black ...
-            black = true;
-            foreach (byte b in byteToSend)
+            //#region If the screen is black ...
+            //black = true;
+            //foreach (byte b in byteToSend)
+            //{
+            //    if (b != 0)
+            //    {
+            //        black = false;
+            //        break;
+            //    }
+            //}
+            //if (black)
+            //{
+            //    if (justBlack++ > 5)
+            //    {
+            //        justBlack = 0;
+            //        sock.SendTo(new byte[] { (byte)('A'), (byte)PayloadType.fixedColor, 5 }, endPoint);
+            //    }
+            //}
+            //#endregion
+            //else
+            //{
+            newByteToSend = new List<byte>(0);
+
+            if (LPF) //Low-pass filtering
             {
-                if (b != 0)
+                while (lastByteToSend.Count < byteToSend.Count)
+                    lastByteToSend.Add(0); //In case X/Y increased
+
+                int odd; //Rounding errorlastByteToSend.Add(0);
+                for (int n = 0; n < byteToSend.Count; n++)
                 {
-                    black = false;
-                    break;
+                    odd = byteToSend[n] + lastByteToSend[n];
+
+                    //To correct the -1 error rounding
+                    if (odd % 2 != 0)
+                        odd++;
+                    odd /= 2;
+
+                    newByteToSend.Add((byte)odd); //newByteToSend[n] = rounded sum
                 }
+                //lastByteToSend = new List<byte>(byteToSend);
+                lastByteToSend = new List<byte>(newByteToSend);
             }
-            if (black)
-            {
-                if (justBlack++ > 5)
-                {
-                    justBlack = 0;
-                    sock.SendTo(new byte[] { (byte)('A'), (byte)PayloadType.fixedColor, 5 }, endPoint);
-                }
-            }
-            #endregion   
             else
+                lastByteToSend = newByteToSend = byteToSend;
+
+            if(BGF)
             {
-                newByteToSend = new List<byte>(0);
-
-                if (LPF) //Low-pass filtering
-                {
-                    while (lastByteToSend.Count < byteToSend.Count) { lastByteToSend.Add(0); } //In case X/Y increased
-
-                    int odd; //Rounding errorlastByteToSend.Add(0);
-                    for (int n = 0; n < byteToSend.Count; n++)
-                    {
-                        odd = byteToSend[n] + lastByteToSend[n];
-
-                        //To correct the -1 error rounding
-                        if (odd % 2 != 0)
-                        {
-                            odd++;
-                        }
-                        odd /= 2;
-
-                        newByteToSend.Add((byte)odd); //newByteToSend[n] = rounded sum
-                    }
-                    //lastByteToSend = new List<byte>(byteToSend);
-                    lastByteToSend = new List<byte>(newByteToSend);
-                }
-                else
-                {
-                    lastByteToSend = newByteToSend = byteToSend;
-                }
-
-                if (UpDown != 0)
-                {
-                    RotateArray();
-                }
-
-                if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
-                {
-                    Flux();
-                }
-
-                if (staticColorChanged) //When changing tab, one frame could still be processing, so it is discarded here
-                {
-                    //return;??
-                }
-
-                CalculateSleepTime();
-                //Console.Write("difference :" + difference + "  -  ");
-
-                //Send standard packets if needed, then send the terminal payload
-                for (int n = 0; n + packetSize <= byteToSend.Count; n += packetSize)
-                {
-                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
-                }
-                int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
-                SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
+                //REMOVED BECAUSE OF RESSOURCE USAGE, MIGHT MAKE A COMEBACK
             }
+
+            if (UpDown != 0)
+                RotateArray();
+
+            if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
+                Flux();
+
+
+            CalculateSleepTime();
+            //Console.Write("difference :" + difference + "  -  ");
+
+            //Send standard packets if needed, then send the terminal payload
+            for (int n = 0; n + packetSize <= byteToSend.Count; n += packetSize)
+                SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
+            int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
+            SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
+            //}
         }
 
         //Difference
         private int difference = 0;
         private int lastDifference = -1; //Used for low-pass filtering
         private const int minDif = 100;
-        private const int maxDif = 3600;
+        private const int maxDif = 4000;
         private void CalculateSleepTime()
         {
             if (lastByteToSend.Count != byteToSend.Count)
-            {
                 difference = maxDif;
-            }
             else
             {
                 difference = 0;
                 for (int n = 0; n < byteToSend.Count; n++)
-                {
                     difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
-                }
             }
 
-            difference = Math.Min(difference, maxDif);
-            difference = Math.Max(difference, minDif);
+            difference = Math.Min(Math.Max(difference, minDif), maxDif);
             difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif-minDif, minDif, 0));
-            difference += (int)Math.Round(cpuCounter.NextValue());
+            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
 
-            if(lastDifference != -1) //Skips if first time
-            {
-                difference = (difference + lastDifference) >> 1;
-            }
+            if (cpuCounter != null)
+                difference += (int)Math.Round(cpuCounter.NextValue());
+            else
+                difference += 5;
+
+            difference += 100;
+
+            if (lastDifference != -1) //Skips if first time            
+                difference = (difference + lastDifference) / 2;
 
             lastDifference = difference;
         }
@@ -754,17 +744,17 @@ namespace SynLight.Model
 
             for (int n = 0; n < byteToSend.Count - 2; n += 3)
             {
-                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.',',').Split(',')[0];
+                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
                 newByteToSend[n] = b;
 
-                s = (newByteToSend[n+1] * ((0.6+fluxRatio)/1.6)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 1] * ((0.6 + fluxRatio) / 1.6)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+1] = b;
+                newByteToSend[n + 1] = b;
 
-                s = (newByteToSend[n+2] * (fluxRatio/1.2)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 2] * (fluxRatio / 1.2)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+2] = b;
+                newByteToSend[n + 2] = b;
             }
         }
         #endregion
