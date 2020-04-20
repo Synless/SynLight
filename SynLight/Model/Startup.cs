@@ -44,18 +44,19 @@ namespace SynLight.Model
                 {
                     try
                     {
-                        //p.Kill();
+                        p.Kill();
                     }
                     catch
                     {
+
                     }
                 }
             }
             string procName = Process.GetCurrentProcess().ProcessName;
             List<Process> processes = Process.GetProcessesByName(procName).ToList();
-            while (processes.Count> 1)
+            while (processes.Count > 1)
             {
-                if (processes[0].StartTime> processes[1].StartTime)
+                if (processes[0].StartTime > processes[1].StartTime)
                 {
                     processes[1].Kill();
                     processes[0].Kill();

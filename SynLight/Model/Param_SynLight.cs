@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -174,7 +175,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value> 0) && (value < 500))
+                if ((value > 0) && (value < 500))
                 {
                     width = value;
                     EdgesComp();
@@ -192,14 +193,14 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value> 0) && (value < 500) && (value> shifting * 2))
+                if ((value > 0) && (value < 500) && (value > shifting * 2))
                 {
                     height = value;
                     fromWidth = true;
                     Ratio = ratio;
                     fromWidth = false;
                 }
-                else if ((value> 0) && (value < 50) && (value <= shifting * 2))
+                else if ((value > 0) && (value < 50) && (value <= shifting * 2))
                 {
                     height = value;
                     Shifting = Math.Max((value / 2) - 1, 0);
@@ -219,7 +220,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value>= 0) && (value < 200) && (value < height / 2))
+                if ((value >= 0) && (value < 200) && (value < height / 2))
                 {
                     corner = value;
                 }
@@ -236,7 +237,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value>= 0) && (value < 200) && (value < height / 2))
+                if ((value >= 0) && (value < 200) && (value < height / 2))
                 {
                     shifting = value;
                 }
@@ -350,6 +351,7 @@ namespace SynLight.Model
                 if (playPause && !processMainLoop.IsAlive && !processFindESP.IsAlive)
                 {
                     processMainLoop.Start();
+                    debug = true;
                 }
                 OnPropertyChanged("PlayPause");
             }
@@ -493,7 +495,7 @@ namespace SynLight.Model
         protected Bitmap scalededgeTop;
         protected Bitmap scalededgeBot;
         protected bool screenConfigured = false;
-        protected bool debug = false;
+        protected bool debug = true;
         protected int startX;
         protected int startY;
         protected int endX;
@@ -507,7 +509,8 @@ namespace SynLight.Model
         protected List<byte> newByteToSend = new List<byte>(0);
         protected List<byte> byteToSend;
 
-        protected PerformanceCounter cpuCounter = null;
+        protected PerformanceCounter cpuCounter;
+        protected bool usePerformanceCounter = true;
         protected System.Threading.Thread processFindESP;
         protected System.Threading.Thread processMainLoop;
 
@@ -516,11 +519,12 @@ namespace SynLight.Model
         public Param_SynLight()
         {
             try
-            {   //In case of falty Windows Update (LODCTR /r)
+            {
                 cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             }
             catch
             {
+                usePerformanceCounter = false;
             }
             try
             {
@@ -577,7 +581,7 @@ namespace SynLight.Model
                                 {
                                     nodeMCU = IPAddress.Parse(subLine[1]);
                                     endPoint = new IPEndPoint(nodeMCU, UDPPort);
-                                    Tittle = "Synlight - " + subLine[1];
+                                    Tittle = "Synlight - " + nodeMCU.ToString() + " - " + subLine[1];
                                     staticConnected = true;
                                 }
                                 catch
@@ -661,16 +665,17 @@ namespace SynLight.Model
                                 Startup.CleanFiles();
                             }
                         }
-                        catch{}
+                        catch (Exception e) { }
                     }
                 }
             }
             catch { }
         }
+
         private void EdgesComp()
         {
             double ratio = screensSize.Width / screensSize.Height;
-            bool multipleScreen = ratio> (21.0 / 9.0);
+            bool multipleScreen = ratio > (21.0 / 9.0);
 
             if (multipleScreen && !Screen2Visible)
             {
@@ -686,6 +691,7 @@ namespace SynLight.Model
                 Screen2Visible = false;
             }
         }
+
         public static void Close()
         {
             if (endPoint != null)
