@@ -2,7 +2,7 @@
 
 **[Ambient lighting system](https://en.wikipedia.org/wiki/Ambilight) for Windows**
 
-![](https://raw.githubusercontent.com/Synless/SynLight/master/SynLight/Images/demo.png)
+![](https://raw.githubusercontent.com/Synless/SynLight/master/SynLight/Images/demo2.png)
 
 
 
