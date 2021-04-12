@@ -692,8 +692,12 @@ namespace SynLight.Model
                             {
                                 Startup.CleanFiles();
                             }
+                            else if (subLine[0] == "FLUX")
+                            {
+                                UsingFlux = bool.Parse(subLine[1]);
+                            }
                         }
-                        catch (Exception e) { }
+                        catch{ }
                     }
                 }
             }

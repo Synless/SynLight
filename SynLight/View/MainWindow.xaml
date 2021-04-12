@@ -7,6 +7,7 @@
     WindowStyle="None"
 	xmlns:System="clr-namespace:System;assembly=mscorlib"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Closing="OnClose" StateChanged="OnStateChanged" IsVisibleChanged="OnIsVisibleChanged"
 	Width="440" Height="561" MinWidth="440" MinHeight="561" MaxWidth="440" MaxHeight="561" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <local:MainViewModel/>
@@ -645,7 +646,7 @@
                             <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
                                 <CheckBox Padding="3" IsChecked="{Binding SynLight.KeyboardLight}"/>
                             </Viewbox>
-                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding SynLight.PlayPause}" />
+                            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding SynLight.PlayPause}"/>
                         </Grid>
                     </Grid>
                 </Viewbox>
