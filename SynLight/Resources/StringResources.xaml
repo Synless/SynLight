@@ -6,6 +6,7 @@
     <system:String x:Key="tittle">SynLight</system:String>
     <system:String x:Key="ambiant">Ambiant</system:String>
     <system:String x:Key="static">Static</system:String>
+    <system:String x:Key="contrast">Contrast :</system:String>
     <system:String x:Key="x">X :</system:String>
     <system:String x:Key="y">Y :</system:String>
     <system:String x:Key="corners">Corners :</system:String>
@@ -20,6 +21,8 @@
     <system:String x:Key="screen2">Screen 2</system:String>
     <system:String x:Key="screen3">Screen 3</system:String>
     <system:String x:Key="LPF">Low-pass temporal filter :</system:String>
+    <system:String x:Key="BGF">Full picture average :</system:String>
+    <system:String x:Key="KBL">Keyboard light :</system:String>
     <system:String x:Key="color">Color</system:String>
     <!-- All StringResources Goes Here -->
 </ResourceDictionary> 

@@ -1,7 +1,10 @@
 ﻿ using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Windows.Forms;
 
 namespace SynLight.Model
@@ -21,7 +24,6 @@ namespace SynLight.Model
         #endregion  
 
         protected static bool staticConnected = false;
-        private readonly bool multipleESP = false;
         
         public AutoNodeMCU()
         {
@@ -33,73 +35,60 @@ namespace SynLight.Model
             if (!staticConnected)
             {
                 staticConnected = false; //If we are here, it means we haven't found the ESP. But if 'staticConnected' is true we should not be here too so ...
+                
+                
+                byte[] ping = Encoding.ASCII.GetBytes(querry);
+                //Client.BeginReceive(new AsyncCallback(Recv), null);
 
-                if (Init())
+                byte[] currentIP = GetLocalIPAddress().GetAddressBytes();
+                Client.BeginReceive(new AsyncCallback(Recv), null); //Subscribe to the even "data received" : recv
+                
+                for (byte n = 2; n < 254; n++) //Checking local IP from 1 to 254
                 {
-                    byte[] ping = System.Text.Encoding.ASCII.GetBytes(querry); //"ping" -> [p,i,n,g]
-                    Client.BeginReceive(new AsyncCallback(Recv), null); //Subscribe to the even "data received" : recv
+                    if (n == currentIP[3])
+                        continue;
+                    
+                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
 
-                    for (byte n = 1; n < 254; n++) //Checking local IP from 1 to 254
+                    if(n == 175)
                     {
-                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 0, n }), UDPPort); //Try with 192.168.0.N
-                        try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
-                        catch { }
-                        System.Threading.Thread.Sleep(10); //Wait for a short while for the ESP to answer and give the time to 'recv ' to trigger
 
-                        if (staticConnected) //If we received "pong"
-                        {
-                            if (multipleESP) //Can be added to a list of ESP, maybe supported in the futur
-                                sockList.Add(sock);
-                            else //We found the single ESP, the current IP address if the ESP IP address, just return;
-                                break;
-                        }
+                    }
 
-                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 1, n }), UDPPort); //Try with 192.168.1.N
-                        try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
-                        catch { }
-                        System.Threading.Thread.Sleep(10);
+                    try
+                    {
+                        SendPayload(PayloadType.ping, new List<byte>(ping));
+                    }
+                    catch { }
+                    System.Threading.Thread.Sleep(8);
 
-                        if (staticConnected)
-                        {
-                            if (multipleESP)
-                                sockList.Add(sock);
-                            else
-                                break;
-                        }
-
-                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { 192, 168, 8, n }), UDPPort); //Try with 192.168.1.N
-                        try { SendPayload(PayloadType.ping, new List<byte>(ping)); }
-                        catch { }
-                        System.Threading.Thread.Sleep(10);
-
-                        if (staticConnected)
-                        {
-                            if (multipleESP)
-                                sockList.Add(sock);
-                            else
-                                break;
-                        }
+                    if (staticConnected)
+                    {
+                        break;
                     }
                 }
             }
         }
-
         private static void Recv(IAsyncResult res)
         {
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
-            if (System.Text.Encoding.UTF8.GetString(received).Contains(answer))
+            if (Encoding.UTF8.GetString(received).Contains(answer))
             {
                 Client.BeginReceive(new AsyncCallback(Recv), null);
+                nodeMCU = endPoint.Address;
                 staticConnected = true;
             }
         }
-        public bool Init()
+        public static IPAddress GetLocalIPAddress()
         {
-            //This function may become a check for the manual IP
-            //For now, no check is being done when using manual IP address for the ESP
-
-            return true;
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    return ip;
+            }
+            return null;
         }
         protected enum PayloadType
         {
@@ -108,7 +97,6 @@ namespace SynLight.Model
             multiplePayload = 2,
             terminalPayload = 3,
         }
-        private static bool once = true;
         protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
             payload.Insert(0, (byte)plt);

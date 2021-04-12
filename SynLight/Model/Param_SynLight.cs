@@ -220,7 +220,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value >= 0) && (value < 200) && (value < height / 2))
+                if ((value >= 0) && (value < 200) && (value <= height / 2))
                 {
                     corner = value;
                 }
@@ -459,6 +459,26 @@ namespace SynLight.Model
                 OnPropertyChanged("UsingFlux");
             }
         }
+        private bool turbo = false;
+        public bool Turbo
+        {
+            get { return turbo; }
+            set
+            {
+                turbo = value;
+                OnPropertyChanged("Turbo");
+            }
+        }
+        private bool keyboardLight = false;
+        public bool KeyboardLight
+        {
+            get { return keyboardLight; }
+            set
+            {
+                keyboardLight = value;
+                OnPropertyChanged("KeyboardLight");
+            }
+        }
         private int mix = 0;
         public int Mix
         {
@@ -495,7 +515,7 @@ namespace SynLight.Model
         protected Bitmap scalededgeTop;
         protected Bitmap scalededgeBot;
         protected bool screenConfigured = false;
-        protected bool debug = true;
+        public static bool debug = true;
         protected int startX;
         protected int startY;
         protected int endX;
@@ -643,6 +663,14 @@ namespace SynLight.Model
                             else if (subLine[0] == "BGF")
                             {
                                 BGF = true;
+                            }
+                            else if (subLine[0] == "TURBO")
+                            {
+                                Turbo = true;
+                            }
+                            else if (subLine[0] == "KBLIGHT")
+                            {
+                                KeyboardLight = true;
                             }
                             else if (subLine[0] == "CORNERS")
                             {
