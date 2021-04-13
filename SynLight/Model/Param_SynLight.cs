@@ -537,13 +537,17 @@ namespace SynLight.Model
 
         public Param_SynLight()
         {
+            usePerformanceCounter = false;
             try
             {
-                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                new System.Threading.Thread(delegate ()
+                {
+                    cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                    usePerformanceCounter = true;
+                }).Start();
             }
             catch
             {
-                usePerformanceCounter = false;
             }
 
             try
