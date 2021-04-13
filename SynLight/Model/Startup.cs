@@ -5,14 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace SynLight.Model
 {
     public static class Startup
     {
         /// <summary>
-        /// //Starting Mobile hotstop using Powershell
+        /// Starting Mobile hotstop using Powershell
         /// </summary>
         public static void MobileHotstop()
         {
@@ -48,7 +47,6 @@ namespace SynLight.Model
                     }
                     catch
                     {
-
                     }
                 }
             }
@@ -75,63 +73,60 @@ namespace SynLight.Model
         /// </summary>
         public static void CleanFiles()
         {
-            //Do not clean if not on /bin/Debug
-            var tmp = Directory.GetCurrentDirectory();
-            string tmp2 = tmp.Split('\\')[tmp.Split('\\').Length-1].ToLower();
-            if(tmp2 != "debug")
+            //Do not clean if not on /bin
+            var currentDir = Directory.GetCurrentDirectory().Split('\\').Last().ToLower();
+            if(currentDir == "debug" || currentDir == "release")
             {
-                return;
-            }
-            //.vs
-            try
-            {
-                string[] vsPathSplits = Directory.GetCurrentDirectory().Split('\\');
-                string vsPath = "";
-                for(int n = 0; n < vsPathSplits.Length-3;n++)
+                //.vs
+                try
                 {
-                    vsPath += vsPathSplits[n] + '\\';
-                }
-                Directory.Delete(vsPath + ".vs", true);
-                File.Delete(vsPath + "README.md");
-            }
-            catch{ }
-
-            //obj
-            try
-            {
-                string[] objPathSplits = Directory.GetCurrentDirectory().Split('\\');
-                string objPath = "";
-                for (int n = 0; n < objPathSplits.Length - 2; n++)
-                {
-                    objPath += objPathSplits[n] + '\\';
-                }
-                objPath += "obj";
-                Directory.Delete(objPath, true);
-            }
-            catch { }
-
-            //bin
-            try
-            {
-                string process = Process.GetCurrentProcess().ToString().Split('(')[1];
-                process = process.Remove(process.Length - 2) + ".exe";
-                string[] fileList = Directory.GetFiles(Directory.GetCurrentDirectory());
-                foreach (string file in fileList)
-                {
-                    string[] fileSplit = file.Split('\\');
-                    string split = fileSplit[fileSplit.Length - 1];
-                    
-                    if (split != "param.txt" && split != process && split.Contains(".ps1"))
+                    string[] vsPathSplits = Directory.GetCurrentDirectory().Split('\\');
+                    string vsPath = "";
+                    for (int n = 0; n < vsPathSplits.Length - 3; n++)
                     {
-                        try
+                        vsPath += vsPathSplits[n] + '\\';
+                    }
+                    Directory.Delete(vsPath + ".vs", true);
+                    File.Delete(vsPath + "README.md");
+                }
+                catch { }
+
+                //obj
+                try
+                {
+                    string[] objPathSplits = Directory.GetCurrentDirectory().Split('\\');
+                    string objPath = "";
+                    for (int n = 0; n < objPathSplits.Length - 2; n++)
+                    {
+                        objPath += objPathSplits[n] + '\\';
+                    }
+                    objPath += "obj";
+                    Directory.Delete(objPath, true);
+                }
+                catch { }
+
+                //bin
+                try
+                {
+                    string process = AppDomain.CurrentDomain.FriendlyName;
+                    string[] fileList = Directory.GetFiles(Directory.GetCurrentDirectory());
+
+                    foreach (string file in fileList)
+                    {
+                        string split = file.Split('\\').Last();
+
+                        if ((!split.ToLower().Contains("param")) && (split != process) && (split.Contains(".ps1")))
                         {
-                            File.Delete(file);
+                            try
+                            {
+                                File.Delete(file);
+                            }
+                            catch { }
                         }
-                        catch { }
                     }
                 }
+                catch { }
             }
-            catch { }
         }
         /// <summary>
         /// Check if the MainForm is to be shown or not

@@ -1,11 +1,8 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -25,47 +22,29 @@ namespace SynLight.Model
 
         protected static bool staticConnected = false;
         
-        public AutoNodeMCU()
-        {
-            //Disabled while working in static IP mode
-            //FindNodeMCU();
-        }
         public void FindNodeMCU()
         {
             if (!staticConnected)
             {
-                staticConnected = false; //If we are here, it means we haven't found the ESP. But if 'staticConnected' is true we should not be here too so ...
-                
-                
                 byte[] ping = Encoding.ASCII.GetBytes(querry);
-                //Client.BeginReceive(new AsyncCallback(Recv), null);
 
                 byte[] currentIP = GetLocalIPAddress().GetAddressBytes();
-                Client.BeginReceive(new AsyncCallback(Recv), null); //Subscribe to the even "data received" : recv
+
+                Client.BeginReceive(new AsyncCallback(Recv), null);
                 
-                for (byte n = 2; n < 254; n++) //Checking local IP from 1 to 254
+                for (byte n = 2; n < 254; n++)
                 {
                     if (n == currentIP[3])
                         continue;
                     
                     endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
+                    
+                    SendPayload(PayloadType.ping, new List<byte>(ping));                   
 
-                    if(n == 175)
-                    {
-
-                    }
-
-                    try
-                    {
-                        SendPayload(PayloadType.ping, new List<byte>(ping));
-                    }
-                    catch { }
-                    System.Threading.Thread.Sleep(8);
+                    System.Threading.Thread.Sleep(10);
 
                     if (staticConnected)
-                    {
                         break;
-                    }
                 }
             }
         }
@@ -102,43 +81,15 @@ namespace SynLight.Model
             payload.Insert(0, (byte)plt);
             payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
 
-            try
-            {
-                sock.SendTo(payload.ToArray(), endPoint);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
-
-            //for (int n = 2; n < payload.Count-2;n+=3)
-            //{
-            //    int i = payload[n] + payload[n+1] + payload[n+2];
-            //    Console.Write(i.ToString() + "|");
-            //}
-            //Console.WriteLine();
+            sock.SendTo(payload.ToArray(), endPoint);
         }
-        protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
+        /*protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
         {
             payload.Insert(0, (byte)plt);
-            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+            payload.Insert(0, (byte)('A'));
 
-            try
-            {
-                sock.SendTo(payload.ToArray(), edp);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
-
-            //for (int n = 2; n < payload.Count-2;n+=3)
-            //{
-            //    int i = payload[n] + payload[n+1] + payload[n+2];
-            //    Console.Write(i.ToString() + "|");
-            //}
-            //Console.WriteLine();
-        }
+            sock.SendTo(payload.ToArray(), edp);
+        }*/
         protected static void SendPayload(PayloadType plt, byte r=0)
         {
             List<byte> payload = new List<byte>();
@@ -146,25 +97,21 @@ namespace SynLight.Model
             payload.Insert(0, r);
             payload.Insert(0, r);
             payload.Insert(0, (byte)plt);
-            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+            payload.Insert(0, (byte)('A'));
 
-            try //If terminating without the ESP being found
-            {
-                sock.SendTo(payload.ToArray(), endPoint);
-            }
-            catch { }
+            sock.SendTo(payload.ToArray(), endPoint);
         }
-        protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
+        /*protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
         {
             List<byte> payload = new List<byte>();
             payload.Insert(0, b);
             payload.Insert(0, g);
             payload.Insert(0, r);
             payload.Insert(0, (byte)plt);
-            payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+            payload.Insert(0, (byte)('A'));
 
             sock.SendTo(payload.ToArray(), endPoint);
-        }
+        }*/
         ~AutoNodeMCU()
         {
             Client.Close();

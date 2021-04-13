@@ -498,7 +498,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
-                                <RowDefinition Height="7"/>
+                                <RowDefinition Height="10"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -511,7 +511,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="20,0,0,0" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
+                            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="20,-4,0,4" Visibility="{Binding SynLight.Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
                                 <RadioButton Margin="2" GroupName ="screen0" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.ScreenFull}" />
                                 <RadioButton Margin="2" GroupName ="screen1" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.Screen1}" />
                                 <RadioButton Margin="2" GroupName ="screen2" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding SynLight.Screen2}" />

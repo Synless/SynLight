@@ -32,6 +32,7 @@ namespace SynLight.Model
             PlayPause = true;
             processMainLoop.Start();
         }
+
         #region Privates methodes
         private void CheckMethod()
         {
@@ -110,8 +111,7 @@ namespace SynLight.Model
             }
 
             Send();
-        }
-        #region Legacy
+        }        
         private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Pasted from stackoverflow
         {
             Value = (100.0f + Value) / 100.0f;
@@ -163,7 +163,7 @@ namespace SynLight.Model
 
             return NewBitmap;
         }
-
+        
         private byte minBrightnessForKeyboard = 80;
         private void GetScreenShotedges()
         {
@@ -275,7 +275,7 @@ namespace SynLight.Model
             using (Graphics gr = Graphics.FromImage(newImage))
             {
                 gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.NearestNeighbor;
+                gr.InterpolationMode = InterpolationMode.Bilinear;
                 gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 gr.DrawImage(srcImage, new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth / Width, (int)SystemParameters.PrimaryScreenHeight));
             }
@@ -287,7 +287,7 @@ namespace SynLight.Model
             using (Graphics gr = Graphics.FromImage(newImage))
             {
                 gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.NearestNeighbor;
+                gr.InterpolationMode = InterpolationMode.Bilinear;
                 gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 gr.DrawImage(srcImage, new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight / Height));
             }
@@ -317,8 +317,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
@@ -347,8 +349,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
@@ -377,8 +381,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
@@ -407,8 +413,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
@@ -440,8 +448,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
@@ -470,8 +480,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
@@ -500,8 +512,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
@@ -530,8 +544,10 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
+
                     if (!processedHeight)
                         return;
+
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
                     {
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
@@ -553,111 +569,81 @@ namespace SynLight.Model
             staticColorChanged = false;
             SendPayload(PayloadType.fixedColor, byteToSend);
         }
-        #endregion
 
+        #region Legacy
         //Send
         private ushort justBlack = 0;
         private bool black = false;
         private void Send()
         {
-            //Old stuff. Latests W10 builds seem to support in-game screenshot ...
-            #region If the screen is black ...
-            black = true;
-            foreach (byte b in byteToSend)
-            {
-                if (b != 0)
-                {
-                    black = false;
-                    break;
-                }
-            }
-            if (black)
-            {
-                if (justBlack++ > 5)
-                {
-                    justBlack = 0;
-                    sock.SendTo(new byte[] { (byte)('A'), (byte)PayloadType.fixedColor, 5 }, endPoint);
-                }
-            }
-            #endregion
+            newByteToSend = new List<byte>(0);
 
+            if (LPF) //Low-pass filtering
+            {
+                while (lastByteToSend.Count < byteToSend.Count)//In case X/Y increased
+                    lastByteToSend.Add(0); 
+
+                int odd; //To correct the -1 error rounding
+                for (int n = 0; n < byteToSend.Count; n++)
+                {
+                    odd = byteToSend[n] + lastByteToSend[n];                    
+                    if (odd % 2 != 0)
+                        odd++;                        
+                    odd /= 2;
+                    newByteToSend.Add((byte)odd);
+                }
+                lastByteToSend = new List<byte>(newByteToSend);
+            }
             else
+                lastByteToSend = newByteToSend = byteToSend;
+                
+            if (UpDown != 0)
+                RotateArray();                
+
+            if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
+                Flux();
+                
+            if (BGF)
             {
-                newByteToSend = new List<byte>(0);
+                long meanR = 0;
+                long meanG = 0;
+                long meanB = 0;
 
-                if (LPF) //Low-pass filtering
+                int p = 11;
+                int q = p + 1;
+
+                for (int n = 0; n < newByteToSend.Count; n += 3)
                 {
-                    while (lastByteToSend.Count < byteToSend.Count)//In case X/Y increased
-                        lastByteToSend.Add(0); 
-
-                    int odd; //Rounding errorlastByteToSend.Add(0);
-                    for (int n = 0; n < byteToSend.Count; n++)
-                    {
-                        odd = byteToSend[n] + lastByteToSend[n];
-
-                        //To correct the -1 error rounding
-                        if (odd % 2 != 0)
-                            odd++;
-                        
-                        odd /= 2;
-
-                        newByteToSend.Add((byte)odd); //newByteToSend[n] = rounded sum
-                    }
-                    //lastByteToSend = new List<byte>(byteToSend);
-                    lastByteToSend = new List<byte>(newByteToSend);
-                }
-                else
-                    lastByteToSend = newByteToSend = byteToSend;
-                
-                if (UpDown != 0)
-                    RotateArray();                
-
-                if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
-                    Flux();
-                
-                if (BGF)
-                {
-                    long meanR = 0;
-                    long meanG = 0;
-                    long meanB = 0;
-
-                    int p = 11;
-                    int q = p + 1;
-
-                    for (int n = 0; n < newByteToSend.Count; n += 3)
-                    {
-                        meanR += newByteToSend[n];
-                        meanG += newByteToSend[n + 1];
-                        meanB += newByteToSend[n + 2];
-                    }
-
-                    meanR = 3 * meanR / newByteToSend.Count;
-                    meanG = 3 * meanG / newByteToSend.Count;
-                    meanB = 3 * meanB / newByteToSend.Count;
-
-                    for (int n = 0; n < newByteToSend.Count; n += 3)
-                    {
-                        newByteToSend[n] = (byte)(p * (newByteToSend[n] / q) + (meanR / p));
-                        newByteToSend[n + 1] = (byte)(p * (newByteToSend[n + 1] / q) + (meanG / p));
-                        newByteToSend[n + 2] = (byte)(p * (newByteToSend[n + 2] / q) + (meanB / p));
-                    }
+                    meanR += newByteToSend[n];
+                    meanG += newByteToSend[n + 1];
+                    meanB += newByteToSend[n + 2];
                 }
 
-                CalculateSleepTime();
+                meanR = 3 * meanR / newByteToSend.Count;
+                meanG = 3 * meanG / newByteToSend.Count;
+                meanB = 3 * meanB / newByteToSend.Count;
 
-
-                //Send standard packets if needed, then send the terminal payload
-                for (int n = 0; n + packetSize <= byteToSend.Count; n += packetSize)
-                    SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
-
-                int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
-                SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
+                for (int n = 0; n < newByteToSend.Count; n += 3)
+                {
+                    newByteToSend[n] = (byte)(p * (newByteToSend[n] / q) + (meanR / p));
+                    newByteToSend[n + 1] = (byte)(p * (newByteToSend[n + 1] / q) + (meanG / p));
+                    newByteToSend[n + 2] = (byte)(p * (newByteToSend[n + 2] / q) + (meanB / p));
+                }
             }
+
+            CalculateSleepTime();
+
+            //Send standard packets if needed, then send the terminal payload
+            for (int n = 0; n + packetSize <= byteToSend.Count; n += packetSize)
+                SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
+
+            int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
+            SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
+            
         }
 
         //Difference
         private int difference = 0;
-        //private int lastDifference = -1; //Used for low-pass filtering
         private const int minDif = 100;
         private const int maxDif = 3600;
         private void CalculateSleepTime()
@@ -684,13 +670,6 @@ namespace SynLight.Model
 
             if (Turbo)
                 difference /= 20;
-
-            /*if(lastDifference != -1) //Skips if first time
-            {
-                difference = (difference + lastDifference) / 2;
-            }
-
-            lastDifference = difference;*/
         }
         private double Map(double s, double a1, double a2, double b1, double b2)
         {
@@ -738,6 +717,7 @@ namespace SynLight.Model
                 newByteToSend[n+2] = b;
             }
         }
+        #endregion
         #endregion
     }
 }

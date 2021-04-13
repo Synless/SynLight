@@ -19,9 +19,6 @@ namespace SynLight.ViewModel
                 OnPropertyChanged("SynLight");
             }
         }
-        public MainViewModel()
-        {
-        }
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

@@ -15,8 +15,8 @@ namespace SynLight.View
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
         public MainWindow()
         {
-            Model.Startup.StartOrKill();
-            if (Model.Startup.ShowOrHide())
+            Startup.StartOrKill();
+            if (Startup.ShowOrHide())
                 Hide();
 
             SetLanguageDictionary();
@@ -27,8 +27,7 @@ namespace SynLight.View
             m_notifyIcon.BalloonTipText = "SynLight has been minimised. Click the tray icon to show.";
             m_notifyIcon.BalloonTipTitle = "SynLight";
             m_notifyIcon.Text = "SynLight";System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
-            Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/SynLight;component/SY.ico")).Stream;
-            m_notifyIcon.Icon = new Icon(iconStream);
+            m_notifyIcon.Icon = new Icon(Application.GetResourceStream(new Uri("pack://application:,,,/SynLight;component/SY.ico")).Stream);
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
 
@@ -132,7 +131,7 @@ namespace SynLight.View
         // State change\\\\\\\
         private void MainWindowStateChangeRaised(object sender, EventArgs e)
         {
-            if (WindowState == System.Windows.WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
                 MainWindowBorder.BorderThickness = new Thickness(8);
             else
                 MainWindowBorder.BorderThickness = new Thickness(0);
