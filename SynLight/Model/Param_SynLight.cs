@@ -24,26 +24,7 @@ namespace SynLight.Model
             set
             {
                 tittle = value;
-                OnPropertyChanged("Tittle");
-            }
-        }
-
-        private int index = 0;
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-            set
-            {
-                index = value;
-                staticColorChanged = true;
-
-                if (value == 1)
-                    SendPayload(PayloadType.fixedColor, new List<byte>() { Red, Green, Blue });
-                
-                OnPropertyChanged("Index");
+                OnPropertyChanged(nameof(Tittle));
             }
         }
 
@@ -128,10 +109,10 @@ namespace SynLight.Model
             if (screen3)            
                 scannedArea = new Rectangle(screen1Size.Width + screen2Size.Width, 0, screen1Size.Width + screen2Size.Width + screen3Size.Width, screen3Size.Height);
             
-            OnPropertyChanged("Screen1");
-            OnPropertyChanged("Screen2");
-            OnPropertyChanged("Screen3");
-            OnPropertyChanged("ScreenFull");
+            OnPropertyChanged(nameof(Screen1));
+            OnPropertyChanged(nameof(Screen2));
+            OnPropertyChanged(nameof(Screen3));
+            OnPropertyChanged(nameof(ScreenFull));
         }
 
         private bool screen2Visible = false;
@@ -144,7 +125,7 @@ namespace SynLight.Model
             set
             {
                 screen2Visible = value;
-                OnPropertyChanged("Screen2Visible");
+                OnPropertyChanged(nameof(Screen2Visible));
             }
         }
 
@@ -158,7 +139,7 @@ namespace SynLight.Model
             set
             {
                 screen3Visible = value;
-                OnPropertyChanged("Screen3Visible");
+                OnPropertyChanged(nameof(Screen3Visible));
             }
         }
 
@@ -177,7 +158,7 @@ namespace SynLight.Model
                     EdgesComp();
                 }
 
-                OnPropertyChanged("Width");
+                OnPropertyChanged(nameof(Width));
             }
         }
 
@@ -205,7 +186,7 @@ namespace SynLight.Model
 
                 EdgesComp();
 
-                OnPropertyChanged("Height");
+                OnPropertyChanged(nameof(Height));
             }
         }
         private bool fromWidth = false;
@@ -222,7 +203,7 @@ namespace SynLight.Model
                 if ((value >= 0) && (value < 200) && (value <= height / 2))
                     corner = value;
                 
-                OnPropertyChanged("Corner");
+                OnPropertyChanged(nameof(Corner));
             }
         }
 
@@ -238,7 +219,7 @@ namespace SynLight.Model
                 if ((value >= 0) && (value < 200) && (value < height / 2))
                     shifting = value;
                 
-                OnPropertyChanged("Shifting");
+                OnPropertyChanged(nameof(Shifting));
             }
         }
 
@@ -252,7 +233,7 @@ namespace SynLight.Model
             set
             {
                 upDown = value;
-                OnPropertyChanged("UpDown");
+                OnPropertyChanged(nameof(UpDown));
             }
         }
 
@@ -279,7 +260,7 @@ namespace SynLight.Model
                     Shifting = 0;
                 }
 
-                OnPropertyChanged("Ratio");
+                OnPropertyChanged(nameof(Ratio));
             }
         }
 
@@ -290,7 +271,7 @@ namespace SynLight.Model
             set
             {
                 clockwise = value;
-                OnPropertyChanged("Clockwise");
+                OnPropertyChanged(nameof(Clockwise));
             }
         }
 
@@ -301,7 +282,7 @@ namespace SynLight.Model
             set
             {
                 topLeft = value;
-                OnPropertyChanged("TopLeft");
+                OnPropertyChanged(nameof(TopLeft));
             }
         }
 
@@ -312,7 +293,7 @@ namespace SynLight.Model
             set
             {
                 topRight = value;
-                OnPropertyChanged("TopRight");
+                OnPropertyChanged(nameof(TopRight));
             }
         }
 
@@ -323,7 +304,7 @@ namespace SynLight.Model
             set
             {
                 botRight = value;
-                OnPropertyChanged("BotRight");
+                OnPropertyChanged(nameof(BotRight));
             }
         }
 
@@ -334,7 +315,7 @@ namespace SynLight.Model
             set
             {
                 botLeft = value;
-                OnPropertyChanged("BotLeft");
+                OnPropertyChanged(nameof(BotLeft));
             }
         }
 
@@ -352,7 +333,7 @@ namespace SynLight.Model
                     debug = true;
                 }
 
-                OnPropertyChanged("PlayPause");
+                OnPropertyChanged(nameof(PlayPause));
             }
         }
         private bool canPlayPause = false;
@@ -362,7 +343,7 @@ namespace SynLight.Model
             set
             {
                 canPlayPause = value;
-                OnPropertyChanged("CanPlayPause");
+                OnPropertyChanged(nameof(CanPlayPause));
             }
         }
 
@@ -376,7 +357,7 @@ namespace SynLight.Model
             set
             {
                 lpf = value;
-                OnPropertyChanged("LPF");
+                OnPropertyChanged(nameof(LPF));
             }
         }
 
@@ -390,7 +371,7 @@ namespace SynLight.Model
             set
             {
                 bgf = value;
-                OnPropertyChanged("BGF");
+                OnPropertyChanged(nameof(BGF));
             }
         }
         private byte red = 100;
@@ -404,7 +385,7 @@ namespace SynLight.Model
             {
                 red = value;
                 staticColorChanged = true;
-                OnPropertyChanged("Red");
+                OnPropertyChanged(nameof(Red));
             }
         }
         private byte green = 60;
@@ -418,7 +399,7 @@ namespace SynLight.Model
             {
                 green = value;
                 staticColorChanged = true;
-                OnPropertyChanged("Green");
+                OnPropertyChanged(nameof(Green));
             }
         }
         private byte blue = 0;
@@ -432,7 +413,7 @@ namespace SynLight.Model
             {
                 blue = value;
                 staticColorChanged = true;
-                OnPropertyChanged("Blue");
+                OnPropertyChanged(nameof(Blue));
             }
         }
         private int contrast = 0;
@@ -445,7 +426,7 @@ namespace SynLight.Model
             set
             {
                 contrast = value;
-                OnPropertyChanged("Contrast");
+                OnPropertyChanged(nameof(Contrast));
             }
         }
         private bool usingFlux = true;
@@ -455,7 +436,7 @@ namespace SynLight.Model
             set
             {
                 usingFlux = value;
-                OnPropertyChanged("UsingFlux");
+                OnPropertyChanged(nameof(UsingFlux));
             }
         }
         private bool turbo = false;
@@ -465,7 +446,7 @@ namespace SynLight.Model
             set
             {
                 turbo = value;
-                OnPropertyChanged("Turbo");
+                OnPropertyChanged(nameof(Turbo));
             }
         }
         private bool keyboardLight = false;
@@ -475,7 +456,7 @@ namespace SynLight.Model
             set
             {
                 keyboardLight = value;
-                OnPropertyChanged("KeyboardLight");
+                OnPropertyChanged(nameof(KeyboardLight));
             }
         }
         private int mix = 0;
@@ -486,7 +467,7 @@ namespace SynLight.Model
             {
                 mix = value;
                 staticColorChanged = true;
-                OnPropertyChanged("Mix");
+                OnPropertyChanged(nameof(Mix));
             }
         }
         #endregion

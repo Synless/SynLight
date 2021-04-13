@@ -164,7 +164,7 @@ namespace SynLight.Model
             return NewBitmap;
         }
         
-        private byte minBrightnessForKeyboard = 80;
+        private readonly byte minBrightnessForKeyboard = 80;
         private void GetScreenShotedges()
         {
             //MULTIPLE MONITORS
@@ -572,8 +572,6 @@ namespace SynLight.Model
 
         #region Legacy
         //Send
-        private ushort justBlack = 0;
-        private bool black = false;
         private void Send()
         {
             newByteToSend = new List<byte>(0);
@@ -656,9 +654,7 @@ namespace SynLight.Model
             {
                 difference = 0;
                 for (int n = 0; n < byteToSend.Count; n++)
-                {
                     difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
-                }
             }
 
             difference = Math.Min(difference, maxDif);
