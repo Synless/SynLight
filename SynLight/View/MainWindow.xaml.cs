@@ -2,7 +2,6 @@ using SynLight.Model;
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -27,7 +26,7 @@ namespace SynLight.View
             m_notifyIcon.BalloonTipText = "SynLight has been minimised. Click the tray icon to show.";
             m_notifyIcon.BalloonTipTitle = "SynLight";
             m_notifyIcon.Text = "SynLight";System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
-            m_notifyIcon.Icon = new Icon(Application.GetResourceStream(new Uri("pack://application:,,,/SynLight;component/SY.ico")).Stream);
+            m_notifyIcon.Icon = new Icon(Application.GetResourceStream(new Uri("..\\Images\\SY.ico", UriKind.Relative)).Stream);
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
         }
 
@@ -84,18 +83,13 @@ namespace SynLight.View
         }
         protected override void OnClosed(EventArgs e)
         {
-            Model.Param_SynLight.Close();
+            Param_SynLight.Close();
             base.OnClosed(e);
             Environment.Exit(0);
         }
         private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex(@"\-*\d+");
             e.Handled = regex.IsMatch(e.Text);
         }
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -127,14 +121,6 @@ namespace SynLight.View
         private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);
-        }
-        // State change\\\\\\\
-        private void MainWindowStateChangeRaised(object sender, EventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-                MainWindowBorder.BorderThickness = new Thickness(8);
-            else
-                MainWindowBorder.BorderThickness = new Thickness(0);
         }
     }
 }

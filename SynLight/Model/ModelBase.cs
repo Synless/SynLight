@@ -4,8 +4,6 @@ namespace SynLight.Model
 {
     public abstract class ModelBase : INotifyPropertyChanged
     {
-        protected ModelBase() { }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -41,7 +41,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>SY.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>SynLight.App</StartupObject>
@@ -87,17 +88,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converter\BoolToPlayPause.cs" />
     <Compile Include="Converter\BoolToVisib.cs" />
-    <Compile Include="Converter\PurcentInvert.cs" />
+    <Compile Include="Converter\PercentInvert.cs" />
     <Compile Include="Converter\Not.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Param_SynLight.cs" />
     <Compile Include="Model\Process_SynLight.cs" />
-    <Compile Include="ViewModel\Commands.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -151,16 +149,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\background.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="SY.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\SY.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\colorChart.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

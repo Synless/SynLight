@@ -12,7 +12,7 @@
     <system:String x:Key="corners">Corners :</system:String>
     <system:String x:Key="shifting">Shifting :</system:String>
     <system:String x:Key="ratio">Ratio :</system:String>
-    <system:String x:Key="first">LED n°1 :</system:String>
+    <system:String x:Key="first">1st LED :</system:String>
     <system:String x:Key="direction">Direction :</system:String>
     <system:String x:Key="clockwise">Clockwise</system:String>
     <system:String x:Key="cclockwise">C-Clockwise</system:String>
