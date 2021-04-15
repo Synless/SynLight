@@ -629,10 +629,10 @@
                         <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="20,-4,0,4" Visibility="{Binding Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
-                        <RadioButton Margin="2" GroupName ="screen0" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding ScreenFull}" />
-                        <RadioButton Margin="2" GroupName ="screen1" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen1}" />
-                        <RadioButton Margin="2" GroupName ="screen2" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen2}" />
-                        <RadioButton Margin="2" GroupName ="screen3" VerticalAlignment="Top" Content="{DynamicResource screen3}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen3}" Visibility="{Binding Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
+                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding ScreenFull}" />
+                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen1}" />
+                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen2}" />
+                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen3}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen3}" Visibility="{Binding Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <Label Grid.Column="2" Grid.Row="0" Style="{StaticResource Labels}" Content="{DynamicResource x}"/>
                     <Label Grid.Column="2" Grid.Row="1" Style="{StaticResource Labels}" Content="{DynamicResource y}"/>
