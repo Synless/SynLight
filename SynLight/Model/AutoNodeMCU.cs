@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -14,41 +14,45 @@ namespace SynLight.Model
         protected static IPEndPoint endPoint;
         protected static IPAddress nodeMCU;
         protected static int UDPPort = 8787; //Must match the next line UdpClient port and the ESP listenning port
-        protected static UdpClient Client= new UdpClient(8787);
+        protected static UdpClient Client= new UdpClient(UDPPort);
+        private readonly byte[] currentIP = GetLocalIPAddress().GetAddressBytes();
 
-        protected static readonly string querry = "ping";
-        protected static readonly string answer = "pong"; //a0
-        #endregion  
+        private static readonly string querry = "ping";
+        private readonly byte[] ping = Encoding.ASCII.GetBytes(querry);
+        private static readonly string answer = "pong";
+        #endregion
 
-        protected static bool staticConnected = false;
-        
+        private bool staticConnected = false;
+        public bool StaticConnected
+        {
+            get
+            {
+                return staticConnected;
+            }
+            set
+            {
+                staticConnected = value;
+                OnPropertyChanged(nameof(StaticConnected));
+            }
+        }
         public void FindNodeMCU()
         {
-            if (!staticConnected)
+            if (!StaticConnected)
             {
-                byte[] ping = Encoding.ASCII.GetBytes(querry);
-
-                byte[] currentIP = GetLocalIPAddress().GetAddressBytes();
-
                 Client.BeginReceive(new AsyncCallback(Recv), null);
                 
-                for (byte n = 2; n < 254; n++)
+                for (byte n = 2; n < 254 && !StaticConnected; n++)
                 {
                     if (n == currentIP[3])
                         continue;
                     
-                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
-                    
-                    SendPayload(PayloadType.ping, new List<byte>(ping));                   
-
+                    endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);                    
+                    SendPayload(PayloadType.ping, new List<byte>(ping));
                     System.Threading.Thread.Sleep(10);
-
-                    if (staticConnected)
-                        break;
                 }
             }
         }
-        private static void Recv(IAsyncResult res)
+        private void Recv(IAsyncResult res)
         {
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
@@ -56,7 +60,7 @@ namespace SynLight.Model
             {
                 Client.BeginReceive(new AsyncCallback(Recv), null);
                 nodeMCU = endPoint.Address;
-                staticConnected = true;
+                StaticConnected = true;
             }
         }
         public static IPAddress GetLocalIPAddress()
