@@ -683,7 +683,7 @@ namespace SynLight.Model
 
             newByteToSend = new List<byte>(byteToSend2);
         }
-        public static List<T> Rotate<T>(this List<T> list, int offset)
+        public List<T> Rotate<T>(this List<T> list, int offset)
         {
             return list.Skip(offset).Concat(list.Take(offset)).ToList();
         }
