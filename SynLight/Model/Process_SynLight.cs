@@ -6,6 +6,7 @@ using System.Threading;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SynLight.Model
 {
@@ -21,13 +22,14 @@ namespace SynLight.Model
         
         private void FindESP()
         {
-            while (!staticConnected)
+            Tittle = "SynLight - Trying to connect ...";
+
+            while (!StaticConnected)
             {
-                //If not connected, try to reconnect
-                Tittle = "SynLight - Trying to connect ...";
                 FindNodeMCU();
                 Thread.Sleep(200);
             }
+
             CanPlayPause = true;
             PlayPause = true;
             processMainLoop.Start();
@@ -61,6 +63,7 @@ namespace SynLight.Model
                 //[1] ... to here
                 watch.Stop();
                 int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+
                 try
                 {
                     if(nodeMCU != null)
@@ -68,7 +71,6 @@ namespace SynLight.Model
                 }
                 catch
                 {
-
                 }
             }
             //Immediately turns of the LEDS after pressing the Stop button
@@ -82,6 +84,7 @@ namespace SynLight.Model
         private int _Width;
         private int _Corner;
         private int _Shifting;
+        private int _Mix;
         private void Tick()
         {
             //Freezing the values for this loop
@@ -89,25 +92,23 @@ namespace SynLight.Model
             _Width = Width;
             _Corner = Corner;
             _Shifting = Shifting;
+            _Mix = Mix;
 
             GetScreenShotedges();
             
             if (Contrast > 0)
-                scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
+                scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, Contrast);
             
             ProcessScreenShot();
 
-            if(Mix > 0)
+            if(_Mix > 0)
             {
-                int bl = Mix;
-                List<byte> bts = new List<byte>(byteToSend);
                 for (int n = 0; n < byteToSend.Count - 2; n += 3)
                 {
-                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl)/100.0) + Red * (bl/100.0));
-                    bts[n+1] = (byte)(byteToSend[n+1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
-                    bts[n+2] = (byte)(byteToSend[n+2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
+                    byteToSend[n] = (byte)(byteToSend[n] * ((100.0 - _Mix) /100.0) + Red * (_Mix / 100.0));
+                    byteToSend[n+1] = (byte)(byteToSend[n+1] * ((100.0 - _Mix) / 100.0) + Green * (_Mix / 100.0));
+                    byteToSend[n+2] = (byte)(byteToSend[n+2] * ((100.0 - _Mix) / 100.0) + Blue * (_Mix / 100.0));
                 }
-                byteToSend = new List<byte>(bts);
             }
 
             Send();
@@ -681,6 +682,10 @@ namespace SynLight.Model
                 byteToSend2[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count - 1)];
 
             newByteToSend = new List<byte>(byteToSend2);
+        }
+        public static List<T> Rotate<T>(this List<T> list, int offset)
+        {
+            return list.Skip(offset).Concat(list.Take(offset)).ToList();
         }
 
         //Flux
