@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -38,9 +37,6 @@ namespace SynLight.Model
             set
             {
                 screenFull = value;
-                screen1 = !value;
-                screen2 = !value;
-                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -54,10 +50,7 @@ namespace SynLight.Model
             }
             set
             {
-                screenFull = !value;
                 screen1 = value;
-                screen2 = !value;
-                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -71,10 +64,7 @@ namespace SynLight.Model
             }
             set
             {
-                screenFull = !value;
-                screen1 = !value;
                 screen2 = value;
-                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -88,9 +78,6 @@ namespace SynLight.Model
             }
             set
             {
-                screenFull = !value;
-                screen1 = !value;
-                screen2 = !value;
                 screen3 = value;
                 ScreenSelectionUpdated();
             }
@@ -683,9 +670,7 @@ namespace SynLight.Model
             {
                 System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
             }
-            else if (multipleScreen && Screen2Visible)
-            {
-            }
+            else if (multipleScreen && Screen2Visible) { }
             else
             {
                 scannedArea = new Rectangle(0, 0, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -697,9 +682,7 @@ namespace SynLight.Model
         public static void Close()
         {
             if (endPoint != null)
-            {
                 SendPayload(PayloadType.fixedColor, 0);
-            }
         }
     }
 }
