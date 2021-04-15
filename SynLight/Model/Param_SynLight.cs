@@ -570,7 +570,7 @@ namespace SynLight.Model
                                 nodeMCU = IPAddress.Parse(subLine[1]);
                                 endPoint = new IPEndPoint(nodeMCU, UDPPort);
                                 Tittle = "Synlight - " + nodeMCU.ToString() + " - " + subLine[1];
-                                staticConnected = true;
+                                StaticConnected = true;
                             }
                             else if (subLine[0] == "X")
                             {
