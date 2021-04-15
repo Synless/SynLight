@@ -29,8 +29,7 @@ namespace SynLight.Model
                 FindNodeMCU();
                 Thread.Sleep(200);
             }
-
-            CanPlayPause = true;
+            
             PlayPause = true;
             processMainLoop.Start();
         }
