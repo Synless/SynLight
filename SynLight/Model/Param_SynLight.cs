@@ -336,16 +336,6 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(PlayPause));
             }
         }
-        private bool canPlayPause = false;
-        public bool CanPlayPause
-        {
-            get { return canPlayPause; }
-            set
-            {
-                canPlayPause = value;
-                OnPropertyChanged(nameof(CanPlayPause));
-            }
-        }
 
         private bool lpf = false;
         public bool LPF
