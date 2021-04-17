@@ -677,7 +677,7 @@ namespace SynLight.Model
             List<byte> byteToSend2 = new List<byte>(newByteToSend);
 
             for (int n = 0; n < newByteToSend.Count; n++)
-                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count - 1)];
+                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % byteToSend.Count];
 
             newByteToSend = new List<byte>(byteToSend2);
         }
