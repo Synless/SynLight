@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -27,6 +28,20 @@ namespace SynLight.Model
             }
         }
 
+        private bool hotstop = false;
+        public bool Hotstop
+        {
+            get
+            {
+                return hotstop;
+            }
+            set
+            {
+                hotstop = value;
+                OnPropertyChanged(nameof(Hotstop));
+            }
+        }
+
         private bool screenFull = false;
         public bool ScreenFull
         {
@@ -37,6 +52,9 @@ namespace SynLight.Model
             set
             {
                 screenFull = value;
+                screen1 = !value;
+                screen2 = !value;
+                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -50,7 +68,10 @@ namespace SynLight.Model
             }
             set
             {
+                screenFull = !value;
                 screen1 = value;
+                screen2 = !value;
+                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -64,7 +85,10 @@ namespace SynLight.Model
             }
             set
             {
+                screenFull = !value;
+                screen1 = !value;
                 screen2 = value;
+                screen3 = !value;
                 ScreenSelectionUpdated();
             }
         }
@@ -78,6 +102,9 @@ namespace SynLight.Model
             }
             set
             {
+                screenFull = !value;
+                screen1 = !value;
+                screen2 = !value;
                 screen3 = value;
                 ScreenSelectionUpdated();
             }
@@ -323,6 +350,16 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(PlayPause));
             }
         }
+        private bool canPlayPause = false;
+        public bool CanPlayPause
+        {
+            get { return canPlayPause; }
+            set
+            {
+                canPlayPause = value;
+                OnPropertyChanged(nameof(CanPlayPause));
+            }
+        }
 
         private bool lpf = false;
         public bool LPF
@@ -464,7 +501,7 @@ namespace SynLight.Model
         protected Rectangle edgeTop;
         protected Rectangle edgeBot;
         protected Rectangle scannedArea = new Rectangle(0, 0, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
-        protected Bitmap bmpScreenshot;
+        protected Bitmap bmpScreenshot = new Bitmap((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Bitmap scaledBmpScreenshot;
         protected Bitmap secondScaledBmpScreenshot;
         protected Bitmap scalededgeLeft;
@@ -619,7 +656,7 @@ namespace SynLight.Model
                             {
                                 Turbo = true;
                             }
-                            else if (subLine[0] == "KBLIGHT")
+                            else if (subLine[0] == "KBLIGHT" || subLine[0] == "KBL")
                             {
                                 KeyboardLight = true;
                             }
@@ -638,6 +675,7 @@ namespace SynLight.Model
                             else if (subLine[0] == "MOBILESHARING")
                             {
                                 Startup.MobileHotstop();
+                                Hotstop = true;
                             }
                             else if (subLine[0] == "CLEANFILES")
                             {
@@ -646,6 +684,10 @@ namespace SynLight.Model
                             else if (subLine[0] == "FLUX")
                             {
                                 UsingFlux = bool.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "CONTRAST")
+                            {
+                                Contrast = Math.Max(0,Math.Min(120,int.Parse(subLine[1])));
                             }
                         }
                         catch{ }
@@ -670,7 +712,9 @@ namespace SynLight.Model
             {
                 System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
             }
-            else if (multipleScreen && Screen2Visible) { }
+            else if (multipleScreen && Screen2Visible)
+            {
+            }
             else
             {
                 scannedArea = new Rectangle(0, 0, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
@@ -682,7 +726,9 @@ namespace SynLight.Model
         public static void Close()
         {
             if (endPoint != null)
+            {
                 SendPayload(PayloadType.fixedColor, 0);
+            }
         }
     }
 }

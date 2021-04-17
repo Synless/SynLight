@@ -83,7 +83,7 @@ namespace SynLight.View
         }
         protected override void OnClosed(EventArgs e)
         {
-            Param_SynLight.Close();
+            //Param_SynLight.Close();
             base.OnClosed(e);
             Environment.Exit(0);
         }

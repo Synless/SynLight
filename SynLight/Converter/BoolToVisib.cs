@@ -9,11 +9,11 @@ namespace SynLight.Converter
         {
             bool toCompare = true;
 
-            if(parameter != null)            
-                if(bool.TryParse(parameter.ToString(), out bool b_parameter))                
+            if (parameter != null)
+                if (bool.TryParse(parameter.ToString(), out bool b_parameter))
                     toCompare = b_parameter;
-                
-            if(bool.TryParse(value.ToString(), out bool _value))
+
+            if (bool.TryParse(value.ToString(), out bool _value))
                 return _value == toCompare ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
 
             return System.Windows.Visibility.Visible;
