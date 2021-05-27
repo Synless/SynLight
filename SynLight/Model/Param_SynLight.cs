@@ -674,7 +674,7 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "MOBILESHARING")
                             {
-                                Startup.MobileHotstop();
+                                Startup.StartMobileHotstop();
                                 Hotstop = true;
                             }
                             else if (subLine[0] == "CLEANFILES")
