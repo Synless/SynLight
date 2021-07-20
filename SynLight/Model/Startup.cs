@@ -13,38 +13,28 @@ namespace SynLight.Model
         /// <summary>
         /// Starting Mobile hotstop using Powershell
         /// </summary>
-        public static void StartMobileHotstop()
+        public static void MobileHotstop()
         {
-            using (PowerShell PowerShellInstance = PowerShell.Create())
+            new Thread((ThreadStart)delegate
             {
-                string psScript = "$connectionProfile = [Windows.Networking.Connectivity.NetworkInformation,Windows.Networking.Connectivity,ContentType=WindowsRuntime]::GetInternetConnectionProfile()\n$tetheringManager = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager,Windows.Networking.NetworkOperators,ContentType=WindowsRuntime]::CreateFromConnectionProfile($connectionProfile)\n$v1 = 25\n$v2 = 0\nwhile($tetheringManager.TetheringOperationalState -eq \"Off\")\n{\n$a = [\nWindows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()\nStart-Sleep -Seconds 0.5\necho $v2\n    $v2 = $v2 + 1\nif($v2 -le $v1)\n{\nbreak\n}\n}";
-                //PowerShellInstance.AddScript("$a = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()");
-                PowerShellInstance.AddScript(psScript);
-                IAsyncResult result = PowerShellInstance.BeginInvoke();
-                while (result.IsCompleted == false)
+                while(true)
                 {
-                    Console.WriteLine("Waiting for pipeline to finish...");
-                    Thread.Sleep(5);
+                    using (PowerShell PowerShellInstance = PowerShell.Create())
+                    {
+                        string psScript = "$connectionProfile = [Windows.Networking.Connectivity.NetworkInformation,Windows.Networking.Connectivity,ContentType=WindowsRuntime]::GetInternetConnectionProfile()\n$tetheringManager = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager,Windows.Networking.NetworkOperators,ContentType=WindowsRuntime]::CreateFromConnectionProfile($connectionProfile)\n$v1 = 25\n$v2 = 0\nwhile($tetheringManager.TetheringOperationalState -eq \"Off\")\n{\n$a = [\nWindows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()\nStart-Sleep -Seconds 0.5\necho $v2\n    $v2 = $v2 + 1\nif($v2 -le $v1)\n{\nbreak\n}\n}";
+                        //PowerShellInstance.AddScript("$a = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()");
+                        PowerShellInstance.AddScript(psScript);
+                        IAsyncResult result = PowerShellInstance.BeginInvoke();
+                        while (result.IsCompleted == false)
+                        {
+                            Console.WriteLine("Waiting for pipeline to finish...");
+                            Thread.Sleep(5);
+                        }
+                        Console.WriteLine("Modile Hotstop started!");
+                    }
+                    Thread.Sleep(8000);
                 }
-                Console.WriteLine("Modile Hotstop started!");
-            }
-        }
-        
-        public static void StopMobileHotstop()
-        {
-            using (PowerShell PowerShellInstance = PowerShell.Create())
-            {
-                string psScript = "$connectionProfile = [Windows.Networking.Connectivity.NetworkInformation,Windows.Networking.Connectivity,ContentType=WindowsRuntime]::GetInternetConnectionProfile()\n$tetheringManager = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager,Windows.Networking.NetworkOperators,ContentType=WindowsRuntime]::CreateFromConnectionProfile($connectionProfile)\n$v1 = 25\n$v2 = 0\nwhile($tetheringManager.TetheringOperationalState -eq \"On\")\n{\n$a = [\nWindows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StopTetheringAsync()\nStart-Sleep -Seconds 0.5\necho $v2\n    $v2 = $v2 + 1\nif($v2 -le $v1)\n{\nbreak\n}\n}";
-                //PowerShellInstance.AddScript("$a = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()");
-                PowerShellInstance.AddScript(psScript);
-                IAsyncResult result = PowerShellInstance.BeginInvoke();
-                while (result.IsCompleted == false)
-                {
-                    Console.WriteLine("Waiting for pipeline to finish...");
-                    Thread.Sleep(5);
-                }
-                Console.WriteLine("Modile Hotstop started!");
-            }
+            }).Start();
         }
 
 
@@ -53,7 +43,37 @@ namespace SynLight.Model
         /// </summary>
         public static void StartOrKill()
         {
-            Process[] xaml = Process.GetProcesses();
+            //new Thread((ThreadStart)delegate
+            //{
+            //    Process[] killEagleSignIn;
+
+            //    while(true)
+            //    {
+            //        try
+            //        {
+            //            killEagleSignIn = Process.GetProcesses();
+
+            //            foreach (Process p in killEagleSignIn)
+            //                if (p.ProcessName.ToLower().Contains("eagle"))
+            //                    if (p.MainWindowTitle.ToLower().Contains("sign in"))
+            //                    {
+            //                        Thread.Sleep(1200);
+            //                        p.Kill();
+            //                    }
+
+            //            Thread.Sleep(100);
+            //        }
+            //        catch
+            //        {
+
+            //        }
+            //    }  
+            
+            
+            //}).Start();
+
+            Process[] xaml = Process.GetProcesses().OrderBy(m => m.ProcessName).ToArray();
+
             foreach (Process p in xaml)
             {
                 if (p.ProcessName.Contains("XAML Designer") || p.ProcessName.Contains("XDesProc"))
@@ -66,24 +86,33 @@ namespace SynLight.Model
                     {
                     }
                 }
+
             }
             string procName = Process.GetCurrentProcess().ProcessName;
+            int procID = Process.GetCurrentProcess().Id;
             List<Process> processes = Process.GetProcessesByName(procName).ToList();
-            while (processes.Count > 1)
+            foreach(Process p in processes)
             {
+                if (p.Id != procID)
+                    p.Kill();
+            }
+            
+            /*while (processes.Count > 1)
+            {
+
                 if (processes[0].StartTime > processes[1].StartTime)
                 {
                     processes[1].Kill();
-                    processes[0].Kill();
+                    //processes[0].Kill();
                 }
                 else
                 {
                     processes[0].Kill();
-                    processes[1].Kill();
+                    //processes[1].Kill();
                 }
                 processes = Process.GetProcessesByName(procName).ToList();
-            }
-            processes[0].PriorityClass = ProcessPriorityClass.Idle;
+            }*/
+            //processes[0].PriorityClass = ProcessPriorityClass.Idle;
         }
         /// <summary>
         /// Removing some files from the project

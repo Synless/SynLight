@@ -6,6 +6,7 @@ using System.Threading;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace SynLight.Model
 {
@@ -17,7 +18,7 @@ namespace SynLight.Model
             processMainLoop = new Thread(CheckMethod);
             processFindESP.Start();
         }
-        
+
         private void FindESP()
         {
             while (!StaticConnected)
@@ -62,8 +63,20 @@ namespace SynLight.Model
                 int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                 try
                 {
-                    if(nodeMCU != null)
-                        Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
+                    if(!UseComPort)
+                    {
+                        if (nodeMCU != null)
+                        {
+                            Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
+                        }
+                    }
+                    else
+                    {
+                        if(StaticConnected)
+                        {
+                            Tittle = "Synlight - " + nodeMCU_com.PortName + " - " + Hz.ToString() + "Hz";
+                        }
+                    }
                 }
                 catch
                 {
@@ -163,86 +176,90 @@ namespace SynLight.Model
             return NewBitmap;
         }
         
-        private readonly byte minBrightnessForKeyboard = 80;
+        private readonly byte BrightnessForKeyboard = 15;
         private void GetScreenShotedges()
         {
-            //MULTIPLE MONITORS
-            startX = scannedArea.X;
-            startY = scannedArea.Y;
-            endX = scannedArea.Width;
-            endY = scannedArea.Height;
-            hX = endX - startX;
-            hY = endY - startY;
-
-            startY += ((_Shifting * hY) / _Height) / 2;
-            endY -= ((_Shifting * hY) / _Height) / 2;
-
-            rect = new Rectangle(startX, startY, startX + (hX / _Width), endY);
-            bmp = new Bitmap(hX / _Width, hY, PixelFormat.Format32bppRgb);
-            Graphics gfxScreenshot = Graphics.FromImage(bmp);
-            gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);//CANARD
-            scalededgeLeft = RescaleImage(bmp, new System.Drawing.Size(1, _Height));
-            gfxScreenshot.Clear(Color.Empty);
-
-            rect = new Rectangle(endX - (hX / _Width), startY, startX + (hX / _Width), endY);
-            bmp = new Bitmap(hX / _Width, hY, PixelFormat.Format32bppRgb);
-            Graphics gfxScreenshot2 = Graphics.FromImage(bmp);
-            gfxScreenshot2.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
-            scalededgeRight = RescaleImage(bmp, new System.Drawing.Size(1, _Height));
-            gfxScreenshot2.Clear(Color.Empty);
-
-            rect = new Rectangle(startX, startY, endX, startY + (hY / _Height));
-            bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
-            Graphics gfxScreenshot3 = Graphics.FromImage(bmp);
-            gfxScreenshot3.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
-            scalededgeTop = RescaleImage(bmp, new System.Drawing.Size(_Width, 1));
-            gfxScreenshot3.Clear(Color.Empty);
-
-            rect = new Rectangle(startX, endY - (hY / _Height), endX, endY);
-            bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
-            Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
-            gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
-            scalededgeBot = RescaleImage(bmp, new System.Drawing.Size(_Width, 1));
-            gfxScreenshot4.Clear(Color.Empty);
-
-            scaledBmpScreenshot = new Bitmap(_Width, _Height);
-
-            for (int n = 0; n < scalededgeLeft.Height; n++)
+            try
             {
-                scaledBmpScreenshot.SetPixel(0, n, scalededgeLeft.GetPixel(0, n));
-                scaledBmpScreenshot.SetPixel(_Width - 1, n, scalededgeRight.GetPixel(0, n));
-            }
-            for (int n = 1; n < scalededgeTop.Width - 1; n++)
-            {
-                if(KeyboardLight)
-                    scaledBmpScreenshot.SetPixel(n, _Height - 1, Color.FromArgb(255,
-                                                                                Math.Max(scalededgeBot.GetPixel(n, 0).R, minBrightnessForKeyboard),
-                                                                                Math.Max(scalededgeBot.GetPixel(n, 0).G, minBrightnessForKeyboard),
-                                                                                Math.Max(scalededgeBot.GetPixel(n, 0).B, minBrightnessForKeyboard)));
-                else
+                //MULTIPLE MONITORS
+                startX = scannedArea.X;
+                startY = scannedArea.Y;
+                endX = scannedArea.Width;
+                endY = scannedArea.Height;
+                hX = endX - startX;
+                hY = endY - startY;
+
+                startY += ((_Shifting * hY) / _Height) / 2;
+                endY -= ((_Shifting * hY) / _Height) / 2;
+
+                rect = new Rectangle(startX, startY, startX + (hX / _Width), endY);
+                bmp = new Bitmap(hX / _Width, hY, PixelFormat.Format32bppRgb);
+                Graphics gfxScreenshot = Graphics.FromImage(bmp);
+                gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);//CANARD
+                scalededgeLeft = RescaleImage(bmp, new System.Drawing.Size(1, _Height));
+                gfxScreenshot.Clear(Color.Empty);
+
+                rect = new Rectangle(endX - (hX / _Width), startY, startX + (hX / _Width), endY);
+                bmp = new Bitmap(hX / _Width, hY, PixelFormat.Format32bppRgb);
+                Graphics gfxScreenshot2 = Graphics.FromImage(bmp);
+                gfxScreenshot2.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeRight = RescaleImage(bmp, new System.Drawing.Size(1, _Height));
+                gfxScreenshot2.Clear(Color.Empty);
+
+                rect = new Rectangle(startX, startY, endX, startY + (hY / _Height));
+                bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
+                Graphics gfxScreenshot3 = Graphics.FromImage(bmp);
+                gfxScreenshot3.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeTop = RescaleImage(bmp, new System.Drawing.Size(_Width, 1));
+                gfxScreenshot3.Clear(Color.Empty);
+
+                rect = new Rectangle(startX, endY - (hY / _Height), endX, endY);
+                bmp = new Bitmap(hX, hY / _Height, PixelFormat.Format32bppRgb);
+                Graphics gfxScreenshot4 = Graphics.FromImage(bmp);
+                gfxScreenshot4.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
+                scalededgeBot = RescaleImage(bmp, new System.Drawing.Size(_Width, 1));
+                gfxScreenshot4.Clear(Color.Empty);
+
+                scaledBmpScreenshot = new Bitmap(_Width, _Height);
+
+                for (int n = 0; n < scalededgeLeft.Height; n++)
                 {
-                    scaledBmpScreenshot.SetPixel(Math.Max(0, Math.Min(n, scaledBmpScreenshot.Width - 1)), _Height - 1, scalededgeBot.GetPixel(n, 0));
+                    scaledBmpScreenshot.SetPixel(0, n, scalededgeLeft.GetPixel(0, n));
+                    scaledBmpScreenshot.SetPixel(_Width - 1, n, scalededgeRight.GetPixel(0, n));
+                }
+                for (int n = 1; n < scalededgeTop.Width - 1; n++)
+                {
+                    if (KeyboardLight)
+                        scaledBmpScreenshot.SetPixel(n, _Height - 1, Color.FromArgb(255,
+                                                                                    Math.Min(scalededgeBot.GetPixel(n, 0).R + BrightnessForKeyboard, byte.MaxValue),
+                                                                                    Math.Min(scalededgeBot.GetPixel(n, 0).G + BrightnessForKeyboard, byte.MaxValue),
+                                                                                    Math.Min(scalededgeBot.GetPixel(n, 0).B + BrightnessForKeyboard, byte.MaxValue)));
+                    else
+                    {
+                        scaledBmpScreenshot.SetPixel(Math.Max(0, Math.Min(n, scaledBmpScreenshot.Width - 1)), _Height - 1, scalededgeBot.GetPixel(n, 0));
+                    }
+
+                    scaledBmpScreenshot.SetPixel(Math.Max(0, Math.Min(n, scaledBmpScreenshot.Width - 1)), 0, scalededgeTop.GetPixel(n, 0));
                 }
 
-                scaledBmpScreenshot.SetPixel(Math.Max(0, Math.Min(n, scaledBmpScreenshot.Width - 1)), 0, scalededgeTop.GetPixel(n, 0));
-            }
-
-            //Capturing the very first frame in various formats
-            if (debug)
-            {
-                try
+                //Capturing the very first frame in various formats
+                if (debug)
                 {
-                    debug = false;
-                    ResizeLeftRight(scalededgeLeft).Save("1Left.png", ImageFormat.Png);
-                    ResizeLeftRight(scalededgeRight).Save("3Right.png", ImageFormat.Png);
-                    ResizeTopBot(scalededgeTop).Save("2Top.png", ImageFormat.Png);
-                    ResizeTopBot(scalededgeBot).Save("4Bot.png", ImageFormat.Png);
-                    Resize(scaledBmpScreenshot).Save("5full.png", ImageFormat.Png);
-                }
-                catch
-                {
+                    try
+                    {
+                        debug = false;
+                        ResizeLeftRight(scalededgeLeft).Save("1Left.png", ImageFormat.Png);
+                        ResizeLeftRight(scalededgeRight).Save("3Right.png", ImageFormat.Png);
+                        ResizeTopBot(scalededgeTop).Save("2Top.png", ImageFormat.Png);
+                        ResizeTopBot(scalededgeBot).Save("4Bot.png", ImageFormat.Png);
+                        Resize(scaledBmpScreenshot).Save("5full.png", ImageFormat.Png);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
+            catch { }
         }
         private Bitmap Resize(Bitmap srcImage)
         {
@@ -606,7 +623,7 @@ namespace SynLight.Model
                 long meanG = 0;
                 long meanB = 0;
 
-                int p = 11;
+                int p = 8;
                 int q = p + 1;
 
                 for (int n = 0; n < newByteToSend.Count; n += 3)
@@ -677,7 +694,7 @@ namespace SynLight.Model
             List<byte> byteToSend2 = new List<byte>(newByteToSend);
 
             for (int n = 0; n < newByteToSend.Count; n++)
-                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % byteToSend.Count];
+                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count)];
 
             newByteToSend = new List<byte>(byteToSend2);
         }

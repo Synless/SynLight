@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using SynLight.Model;
 using System;
 using System.ComponentModel;
@@ -15,12 +16,10 @@ namespace SynLight.View
         public MainWindow()
         {
             Startup.StartOrKill();
-            if (Startup.ShowOrHide())
-                Hide();
-
+            
             SetLanguageDictionary();
             InitializeComponent();
-
+            
             // System tray stuff here
             m_notifyIcon = new System.Windows.Forms.NotifyIcon();
             m_notifyIcon.BalloonTipText = "SynLight has been minimised. Click the tray icon to show.";
@@ -28,6 +27,22 @@ namespace SynLight.View
             m_notifyIcon.Text = "SynLight";System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
             m_notifyIcon.Icon = new Icon(Application.GetResourceStream(new Uri("..\\Images\\SY.ico", UriKind.Relative)).Stream);
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
+
+            if (Startup.ShowOrHide())
+            {
+                SystemCommands.MinimizeWindow(this);
+                this.WindowState = (WindowState)System.Windows.Forms.FormWindowState.Minimized;
+                //Hide();
+            }
+
+            SystemEvents.PowerModeChanged += OnPowerChange;
+        }
+
+        void OnPowerChange(Object sender, PowerModeChangedEventArgs e)
+        {
+            switch (e.Mode)
+            {
+            }
         }
 
         #region System tray
@@ -84,7 +99,7 @@ namespace SynLight.View
         protected override void OnClosed(EventArgs e)
         {
             //Param_SynLight.Close();
-            base.OnClosed(e);
+            //base.OnClosed(e);
             Environment.Exit(0);
         }
         private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
@@ -105,7 +120,7 @@ namespace SynLight.View
         private void CommandBinding_Executed_Minimize(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MinimizeWindow(this);
-            Param_SynLight.debug = true;
+            //Param_SynLight.debug = true;
         }
         // Maximize
         private void CommandBinding_Executed_Maximize(object sender, ExecutedRoutedEventArgs e)

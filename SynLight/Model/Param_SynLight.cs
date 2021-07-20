@@ -343,7 +343,15 @@ namespace SynLight.Model
                 System.Threading.Thread.Sleep(1);
                 if (playPause && !processMainLoop.IsAlive && !processFindESP.IsAlive)
                 {
-                    processMainLoop.Start();
+                    if(UseComPort)
+                    {
+                        processMainLoop.Start();
+                    }
+                    else
+                    {
+                        StaticConnected = false;
+                        processFindESP.Start();
+                    }
                     debug = true;
                 }
 
@@ -674,8 +682,11 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "MOBILESHARING")
                             {
-                                Startup.StartMobileHotstop();
-                                Hotstop = true;
+                                if(!UseComPort)
+                                {
+                                    Startup.MobileHotstop();
+                                    Hotstop = true;
+                                }
                             }
                             else if (subLine[0] == "CLEANFILES")
                             {
