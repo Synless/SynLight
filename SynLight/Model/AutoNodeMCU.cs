@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
+using System.Linq;
 
 namespace SynLight.Model
 {
@@ -69,39 +70,21 @@ namespace SynLight.Model
                 }
                 else
                 {
-                    nodeMCU_com.BaudRate = 115200;
+                    List<string> allPorts = SerialPort.GetPortNames().ToList();
 
-                    string[] allPorts = SerialPort.GetPortNames();
-
-                    if(allPorts.Length > 0)
+                    if (allPorts.Count == 0)
                     {
-                        nodeMCU_com.PortName = allPorts[0];
-                        nodeMCU_com.Open();
-                        StaticConnected = true;
-                    }
-                    else
-                    {
-                        MessageBox.Show("No COM port to send payload to");
+                        MessageBox.Show("No COM port to send payload to. Exiting.");
                         Environment.Exit(0);
-
-                        //NOT EXECUTED
-                        byte[] ping = Encoding.ASCII.GetBytes(querry);
-
-                        foreach (string port in allPorts)
-                        {
-                            nodeMCU_com.PortName = port;
-                            nodeMCU_com.Open();
-                            SendPayload(PayloadType.ping, new List<byte>(ping));
-                            System.Threading.Thread.Sleep(50);
-
-                            string received = nodeMCU_com.ReadExisting();
-                            if (received.Contains(answer))
-                            {
-                                StaticConnected = true;
-                                return;
-                            }
-                        }
                     }
+                    if(!allPorts.Contains(nodeMCU_com.PortName))
+                    {
+                        MessageBox.Show("Port " + nodeMCU_com.PortName + " not found. Using port " + allPorts[0] + ".");
+                        nodeMCU_com.PortName = allPorts[0];
+                    }
+
+                    nodeMCU_com.BaudRate = 115200;
+                    nodeMCU_com.Open();
                 }
             }
         }
