@@ -83,6 +83,7 @@ namespace SynLight.Model
                         nodeMCU_com.PortName = allPorts[0];
                     }
 
+                    StaticConnected = true;
                     nodeMCU_com.BaudRate = 115200;
                     nodeMCU_com.Open();
                 }
