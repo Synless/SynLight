@@ -8,7 +8,7 @@
 	xmlns:System="clr-namespace:System;assembly=mscorlib"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Closing="OnClose" StateChanged="OnStateChanged" IsVisibleChanged="OnIsVisibleChanged"
-	Width="440" Height="561" Topmost="True" MinWidth="440" MinHeight="561" MaxWidth="440" MaxHeight="561" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
+	Width="440" Height="561" Topmost="False" MinWidth="440" MinHeight="561" MaxWidth="440" MaxHeight="561" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <local:Process_SynLight/>
     </Window.DataContext>
@@ -144,7 +144,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid x:Name="LayoutRoot" Background="Transparent" MinWidth="45">
-                            <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                            <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="12"
                                    Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
                                    RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased"  TextOptions.TextFormattingMode="Display"/>
                         </Grid>
@@ -609,7 +609,7 @@
         </Grid>
         <Grid Grid.Row="1" Background="White"/>
         <!--App content-->
-        <Grid Grid.Row="2" x:Name="AppArea" Background="#F6101010">
+        <Grid Grid.Row="2" x:Name="AppArea" Background="#F6202020">
             <Grid Margin="0,15,0,8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -111,18 +110,18 @@ namespace SynLight.Model
         }
         private void ScreenSelectionUpdated()
         {
-            if (screenFull)            
+            if (screenFull)
                 scannedArea = new Rectangle(0, 0, screensSize.Width, screensSize.Height);
-            
-            if (screen1)            
+
+            if (screen1)
                 scannedArea = new Rectangle(0, 0, screen1Size.Width, screen1Size.Height);
-            
-            if (screen2)            
+
+            if (screen2)
                 scannedArea = new Rectangle(screen1Size.Width, 0, screen1Size.Width + screen2Size.Width, screen2Size.Height);
-            
-            if (screen3)            
+
+            if (screen3)
                 scannedArea = new Rectangle(screen1Size.Width + screen2Size.Width, 0, screen1Size.Width + screen2Size.Width + screen3Size.Width, screen3Size.Height);
-            
+
             OnPropertyChanged(nameof(Screen1));
             OnPropertyChanged(nameof(Screen2));
             OnPropertyChanged(nameof(Screen3));
@@ -216,7 +215,7 @@ namespace SynLight.Model
             {
                 if ((value >= 0) && (value < 200) && (value <= height / 2))
                     corner = value;
-                
+
                 OnPropertyChanged(nameof(Corner));
             }
         }
@@ -232,7 +231,7 @@ namespace SynLight.Model
             {
                 if ((value >= 0) && (value < 200) && (value < height / 2))
                     shifting = value;
-                
+
                 OnPropertyChanged(nameof(Shifting));
             }
         }
@@ -495,7 +494,7 @@ namespace SynLight.Model
         protected Size screen1Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Size screen2Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Size screen3Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
-        protected Size currentScreen=new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+        protected Size currentScreen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Rectangle edgeLeft;
         protected Rectangle edgeRight;
         protected Rectangle edgeTop;
@@ -567,7 +566,7 @@ namespace SynLight.Model
                                     Screen3 = true;
                                 else
                                     ScreenFull = true;
-                                
+
                                 screen1Size.Width = int.Parse(subLine[1].Split(',')[0]);
                                 screen1Size.Height = int.Parse(subLine[1].Split(',')[1]);
                             }
@@ -594,7 +593,18 @@ namespace SynLight.Model
                                 nodeMCU = IPAddress.Parse(subLine[1]);
                                 endPoint = new IPEndPoint(nodeMCU, UDPPort);
                                 Tittle = "Synlight - " + nodeMCU.ToString() + " - " + subLine[1];
+                                UseComPort = false;
                                 StaticConnected = true;
+                            }
+                            else if (subLine[0].ToUpper().Contains("COM"))
+                            {
+                                nodeMCU_com.PortName = subLine[0];
+                                Tittle = "Synlight - " + nodeMCU_com.PortName;
+                                nodeMCU_com.BaudRate = 115200;
+                                nodeMCU_com.Open();
+                                UseComPort = true;
+                                StaticConnected = true;
+
                             }
                             else if (subLine[0] == "X")
                             {
@@ -687,10 +697,10 @@ namespace SynLight.Model
                             }
                             else if (subLine[0] == "CONTRAST")
                             {
-                                Contrast = Math.Max(0,Math.Min(120,int.Parse(subLine[1])));
+                                Contrast = Math.Max(0, Math.Min(120, int.Parse(subLine[1])));
                             }
                         }
-                        catch{ }
+                        catch { }
                     }
                 }
             }

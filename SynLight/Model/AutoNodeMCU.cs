@@ -17,12 +17,12 @@ namespace SynLight.Model
         protected static IPEndPoint endPoint;
         protected static IPAddress nodeMCU;
         protected static int UDPPort = 8787; //Must match the next line UdpClient port and the ESP listenning port
-        protected static UdpClient Client= new UdpClient(8787);
+        protected static UdpClient Client = new UdpClient(8787);
 
         protected static readonly string querry = "ping";
         protected static readonly string answer = "pong"; //a0
 
-        protected static bool UseComPort = true;
+        protected static bool UseComPort = false;
         protected static SerialPort nodeMCU_com = new SerialPort();
         #endregion  
 
@@ -40,12 +40,11 @@ namespace SynLight.Model
             }
         }
 
-
         public void FindNodeMCU()
         {
             if (!StaticConnected)
             {
-                if(!UseComPort)
+                if (!UseComPort)
                 {
                     byte[] ping = Encoding.ASCII.GetBytes(querry);
 
@@ -53,12 +52,12 @@ namespace SynLight.Model
 
                     Client.BeginReceive(new AsyncCallback(Recv), null);
 
-                    for (byte n = 2; n < 254; n++)
+                    for (byte n = 2; n < 255; n++)
                     {
                         if (n == currentIP[3])
                             continue;
 
-                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], /*currentIP[2]*/137, n }), UDPPort);
+                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
 
                         SendPayload(PayloadType.ping, new List<byte>(ping));
 
@@ -74,17 +73,26 @@ namespace SynLight.Model
 
                     if (allPorts.Count == 0)
                     {
-                        MessageBox.Show("No COM port to send payload to. Exiting.");
-                        Environment.Exit(0);
+                        //MessageBox.Show("No COM port to send payload to. Exiting.");
+                        return;
+                        //Environment.Exit(0);
                     }
-                    if(!allPorts.Contains(nodeMCU_com.PortName))
+                    else if (allPorts.Count == 1)
                     {
-                        MessageBox.Show("Port " + nodeMCU_com.PortName + " not found. Using port " + allPorts[0] + ".");
                         nodeMCU_com.PortName = allPorts[0];
+                    }
+                    else
+                    {
+                        if (!allPorts.Contains(nodeMCU_com.PortName))
+                        {
+                            //MessageBox.Show("Port " + nodeMCU_com.PortName + " not found. Using port " + allPorts[0] + ".");
+                            //nodeMCU_com.PortName = allPorts[0];
+                        }
                     }
 
                     nodeMCU_com.BaudRate = 115200;
                     nodeMCU_com.Open();
+                    StaticConnected = true;
                 }
             }
         }
@@ -118,53 +126,48 @@ namespace SynLight.Model
         }
         protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
-            if (!UseComPort)
+            try
             {
-                payload.Insert(0, (byte)plt);
-                payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
-                sock.SendTo(payload.ToArray(), endPoint);
+                if (!UseComPort)
+                {
+                    payload.Insert(0, (byte)plt);
+                    payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+                    sock.SendTo(payload.ToArray(), endPoint);
+                }
+                else
+                {
+                    nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
+                }
             }
-            else
+            catch
             {
-                nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
-            }
-        }
-        /*protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
-        {
-            payload.Insert(0, (byte)plt);
-            payload.Insert(0, (byte)('A'));
-
-            sock.SendTo(payload.ToArray(), edp);
-        }*/
-        protected static void SendPayload(PayloadType plt, byte r=0)
-        {
-            List<byte> payload = new List<byte>();
-
-            if (!UseComPort)
-            {
-                payload.Insert(0, r);
-                payload.Insert(0, r);
-                payload.Insert(0, r);
-                payload.Insert(0, (byte)plt);
-                payload.Insert(0, (byte)('A'));
-                sock.SendTo(payload.ToArray(), endPoint);
-            }
-            else
-            {
-                nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
             }
         }
-        /*protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
+        protected static void SendPayload(PayloadType plt, byte r = 0)
         {
-            List<byte> payload = new List<byte>();
-            payload.Insert(0, b);
-            payload.Insert(0, g);
-            payload.Insert(0, r);
-            payload.Insert(0, (byte)plt);
-            payload.Insert(0, (byte)('A'));
+            try
+            {
+                List<byte> payload = new List<byte>();
 
-            sock.SendTo(payload.ToArray(), endPoint);
-        }*/
+                payload.Insert(0, r);
+                payload.Insert(0, r);
+                payload.Insert(0, r);
+
+                if (!UseComPort)
+                {
+                    payload.Insert(0, (byte)plt);
+                    payload.Insert(0, (byte)('A'));
+                    sock.SendTo(payload.ToArray(), endPoint);
+                }
+                else
+                {
+                    nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
+                }
+            }
+            catch
+            {
+            }
+        }
         ~AutoNodeMCU()
         {
             if (!UseComPort)

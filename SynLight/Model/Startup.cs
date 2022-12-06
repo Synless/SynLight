@@ -29,7 +29,7 @@ namespace SynLight.Model
                 Console.WriteLine("Modile Hotstop started!");
             }
         }
-        
+
         public static void StopMobileHotstop()
         {
             using (PowerShell PowerShellInstance = PowerShell.Create())
@@ -46,7 +46,6 @@ namespace SynLight.Model
                 Console.WriteLine("Modile Hotstop started!");
             }
         }
-
 
         /// <summary>
         /// Start anew or Kill the old process
@@ -85,6 +84,7 @@ namespace SynLight.Model
             }
             processes[0].PriorityClass = ProcessPriorityClass.Idle;
         }
+
         /// <summary>
         /// Removing some files from the project
         /// </summary>
@@ -92,7 +92,7 @@ namespace SynLight.Model
         {
             //Do not clean if not on /bin
             var currentDir = Directory.GetCurrentDirectory().Split('\\').Last().ToLower();
-            if(currentDir == "debug" || currentDir == "release")
+            if (currentDir == "debug" || currentDir == "release")
             {
                 //.vs
                 try
@@ -145,10 +145,11 @@ namespace SynLight.Model
                 catch { }
             }
         }
+
         /// <summary>
         /// Check if the MainForm is to be shown or not
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Hide (true) or show (false)</returns>
         public static bool ShowOrHide()
         {
             try

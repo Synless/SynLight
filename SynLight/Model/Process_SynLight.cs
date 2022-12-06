@@ -17,15 +17,25 @@ namespace SynLight.Model
             processMainLoop = new Thread(CheckMethod);
             processFindESP.Start();
         }
-        
+
         private void FindESP()
         {
+            bool flipMethod = true;
+            int flipMethodCount = 0;
             while (!StaticConnected)
             {
                 //If not connected, try to reconnect
                 Tittle = "SynLight - Trying to connect ...";
+
+                //if (++flipMethodCount >= 1)
+                //{
+                    //flipMethodCount = 0;
+                    flipMethod = !flipMethod;
+                    UseComPort = flipMethod;
+                //}
+
                 FindNodeMCU();
-                Thread.Sleep(200);
+                Thread.Sleep(100);
             }
             CanPlayPause = true;
             PlayPause = true;
@@ -40,16 +50,16 @@ namespace SynLight.Model
             {
                 //Start measuring how much time it takes to complete the task from here ... [1]
                 watch = Stopwatch.StartNew();
-                
+
                 if (Mix < 100)
                 {
                     Tick();
-                    Thread.Sleep(difference);
+                    //Thread.Sleep(difference);
                 }
                 else if (Mix == 100)
                 {
                     //Only send the static color payload once in a while, or if the selected color has changed
-                    for(int n=0;((n< 1000) && (!staticColorChanged));n++)
+                    for (int n = 0; ((n < 1000) && (!staticColorChanged)); n++)
                         Thread.Sleep(1);
 
                     SingleColor();
@@ -62,8 +72,16 @@ namespace SynLight.Model
                 int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                 try
                 {
-                    if(nodeMCU != null)
-                        Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
+                    if (!UseComPort)
+                    {
+                        if (nodeMCU != null)
+                            Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
+                    }
+                    else
+                    {
+                        if (nodeMCU_com != null)
+                            Tittle = "Synlight - " + nodeMCU_com.PortName + " - " + Hz.ToString() + "Hz";
+                    }
                 }
                 catch
                 {
@@ -90,33 +108,33 @@ namespace SynLight.Model
             _Shifting = Shifting;
 
             GetScreenShotedges();
-            
+
             if (Contrast > 0)
                 scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
-            
+
             ProcessScreenShot();
 
-            if(Mix > 0)
+            if (Mix > 0)
             {
                 int bl = Mix;
                 List<byte> bts = new List<byte>(byteToSend);
                 for (int n = 0; n < byteToSend.Count - 2; n += 3)
                 {
-                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl)/100.0) + Red * (bl/100.0));
-                    bts[n+1] = (byte)(byteToSend[n+1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
-                    bts[n+2] = (byte)(byteToSend[n+2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
+                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl) / 100.0) + Red * (bl / 100.0));
+                    bts[n + 1] = (byte)(byteToSend[n + 1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
+                    bts[n + 2] = (byte)(byteToSend[n + 2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
                 }
                 byteToSend = new List<byte>(bts);
             }
 
             Send();
-        }        
+        }
         private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Pasted from stackoverflow
         {
             Value = (100.0f + Value) / 100.0f;
             Value *= Value;
             Bitmap NewBitmap = (Bitmap)Image.Clone();
-            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height),ImageLockMode.ReadWrite,NewBitmap.PixelFormat);
+            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height), ImageLockMode.ReadWrite, NewBitmap.PixelFormat);
             int Height = NewBitmap.Height;
             int Width = NewBitmap.Width;
 
@@ -162,7 +180,7 @@ namespace SynLight.Model
 
             return NewBitmap;
         }
-        
+
         private readonly byte minBrightnessForKeyboard = 80;
         private void GetScreenShotedges()
         {
@@ -214,7 +232,7 @@ namespace SynLight.Model
             }
             for (int n = 1; n < scalededgeTop.Width - 1; n++)
             {
-                if(KeyboardLight)
+                if (KeyboardLight)
                     scaledBmpScreenshot.SetPixel(n, _Height - 1, Color.FromArgb(255,
                                                                                 Math.Max(scalededgeBot.GetPixel(n, 0).R, minBrightnessForKeyboard),
                                                                                 Math.Max(scalededgeBot.GetPixel(n, 0).G, minBrightnessForKeyboard),
@@ -578,14 +596,14 @@ namespace SynLight.Model
             if (LPF) //Low-pass filtering
             {
                 while (lastByteToSend.Count < byteToSend.Count)//In case X/Y increased
-                    lastByteToSend.Add(0); 
+                    lastByteToSend.Add(0);
 
                 int odd; //To correct the -1 error rounding
                 for (int n = 0; n < byteToSend.Count; n++)
                 {
-                    odd = byteToSend[n] + lastByteToSend[n];                    
+                    odd = byteToSend[n] + lastByteToSend[n];
                     if (odd % 2 != 0)
-                        odd++;                        
+                        odd++;
                     odd /= 2;
                     newByteToSend.Add((byte)odd);
                 }
@@ -593,13 +611,13 @@ namespace SynLight.Model
             }
             else
                 lastByteToSend = newByteToSend = byteToSend;
-                
+
             if (UpDown != 0)
-                RotateArray();                
+                RotateArray();
 
             if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
                 Flux();
-                
+
             if (BGF)
             {
                 long meanR = 0;
@@ -636,7 +654,7 @@ namespace SynLight.Model
 
             int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
             SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
-            
+
         }
 
         //Difference
@@ -659,8 +677,8 @@ namespace SynLight.Model
             difference = Math.Min(difference, maxDif);
             difference = Math.Max(difference, minDif);
             difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif-minDif, minDif, 0));
-            if(usePerformanceCounter)
+            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
+            if (usePerformanceCounter)
                 difference += (int)Math.Round(cpuCounter.NextValue());
 
             if (Turbo)
@@ -699,17 +717,17 @@ namespace SynLight.Model
 
             for (int n = 0; n < byteToSend.Count - 2; n += 3)
             {
-                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.',',').Split(',')[0];
+                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
                 newByteToSend[n] = b;
 
-                s = (newByteToSend[n+1] * ((0.6+fluxRatio)/1.6)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 1] * ((0.6 + fluxRatio) / 1.6)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+1] = b;
+                newByteToSend[n + 1] = b;
 
-                s = (newByteToSend[n+2] * (fluxRatio/1.2)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 2] * (fluxRatio / 1.2)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+2] = b;
+                newByteToSend[n + 2] = b;
             }
         }
         #endregion
