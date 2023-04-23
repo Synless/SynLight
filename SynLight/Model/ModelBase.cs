@@ -9,7 +9,7 @@ namespace SynLight.Model
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = this.PropertyChanged;
-            if (handler != null)
+            if(handler != null)
             {
                 var e = new PropertyChangedEventArgs(propertyName);
                 handler(this, e);

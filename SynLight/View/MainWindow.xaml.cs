@@ -1,7 +1,11 @@
+﻿using Microsoft.Win32;
+using SynLight.Keyboard;
 using SynLight.Model;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -11,12 +15,17 @@ namespace SynLight.View
 {
     public partial class MainWindow : Window
     {
+
+
+
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
+
         public MainWindow()
         {
+            //SetCurrentLayout(1032); //Ελληνικά
+            //SetCurrentLayout(1033); //en-US
+
             Startup.StartOrKill();
-            if (Startup.ShowOrHide())
-                Hide();
 
             SetLanguageDictionary();
             InitializeComponent();
@@ -25,9 +34,27 @@ namespace SynLight.View
             m_notifyIcon = new System.Windows.Forms.NotifyIcon();
             m_notifyIcon.BalloonTipText = "SynLight has been minimised. Click the tray icon to show.";
             m_notifyIcon.BalloonTipTitle = "SynLight";
-            m_notifyIcon.Text = "SynLight";System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
+            m_notifyIcon.Text = "SynLight"; System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
             m_notifyIcon.Icon = new Icon(Application.GetResourceStream(new Uri("..\\Images\\SY.ico", UriKind.Relative)).Stream);
             m_notifyIcon.Click += new EventHandler(m_notifyIcon_Click);
+
+            if (Startup.ShowOrHide())
+            {
+                SystemCommands.MinimizeWindow(this);
+                this.WindowState = (WindowState)System.Windows.Forms.FormWindowState.Minimized;
+                //Hide();
+            }
+
+            Hook.Start();
+
+            return;
+        }
+
+        private void SetCurrentLayout(ushort layout)
+        {
+            var tmp = API.GetKeyboardLayout();
+            uint recipients = API.BSM_APPLICATIONS;
+            API.BroadcastSystemMessage(API.BSF_POSTMESSAGE, ref recipients, API.WM_INPUTLANGCHANGEREQUEST, IntPtr.Zero, new IntPtr(layout));
         }
 
         #region System tray
@@ -84,7 +111,7 @@ namespace SynLight.View
         protected override void OnClosed(EventArgs e)
         {
             //Param_SynLight.Close();
-            base.OnClosed(e);
+            //base.OnClosed(e);
             Environment.Exit(0);
         }
         private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
@@ -105,7 +132,7 @@ namespace SynLight.View
         private void CommandBinding_Executed_Minimize(object sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MinimizeWindow(this);
-            Param_SynLight.debug = true;
+            //Param_SynLight.debug = true;
         }
         // Maximize
         private void CommandBinding_Executed_Maximize(object sender, ExecutedRoutedEventArgs e)

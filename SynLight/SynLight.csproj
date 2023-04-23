@@ -47,10 +47,14 @@
   <PropertyGroup>
     <StartupObject>SynLight.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
     </Reference>
@@ -91,7 +95,12 @@
     <Compile Include="Converter\BoolToVisib.cs" />
     <Compile Include="Converter\PercentInvert.cs" />
     <Compile Include="Converter\Not.cs" />
+    <Compile Include="Keyboard\Hook.cs" />
+    <Compile Include="Keyboard\API.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
+    <Compile Include="Model\ProcessUtils.cs" />
+    <Compile Include="Keyboard\RAWINPUTDEVICE.cs" />
+    <Compile Include="Keyboard\RAWINPUTHEADER.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Param_SynLight.cs" />
@@ -138,12 +147,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Tethering.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

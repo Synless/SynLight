@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Windows.Forms;
 
 namespace SynLight.Model
 {
@@ -110,18 +111,18 @@ namespace SynLight.Model
         }
         private void ScreenSelectionUpdated()
         {
-            if (screenFull)
+            if(screenFull)            
                 scannedArea = new Rectangle(0, 0, screensSize.Width, screensSize.Height);
-
-            if (screen1)
+            
+            if(screen1)            
                 scannedArea = new Rectangle(0, 0, screen1Size.Width, screen1Size.Height);
-
-            if (screen2)
+            
+            if(screen2)            
                 scannedArea = new Rectangle(screen1Size.Width, 0, screen1Size.Width + screen2Size.Width, screen2Size.Height);
-
-            if (screen3)
+            
+            if(screen3)            
                 scannedArea = new Rectangle(screen1Size.Width + screen2Size.Width, 0, screen1Size.Width + screen2Size.Width + screen3Size.Width, screen3Size.Height);
-
+            
             OnPropertyChanged(nameof(Screen1));
             OnPropertyChanged(nameof(Screen2));
             OnPropertyChanged(nameof(Screen3));
@@ -165,7 +166,7 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value > 0) && (value < 500))
+                if((value > 0) && (value < 500))
                 {
                     width = value;
                     EdgesComp();
@@ -184,14 +185,14 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value > 0) && (value < 500) && (value > shifting * 2))
+                if((value > 0) && (value < 500) && (value > shifting * 2))
                 {
                     height = value;
                     fromWidth = true;
                     Ratio = ratio;
                     fromWidth = false;
                 }
-                else if ((value > 0) && (value < 50) && (value <= shifting * 2))
+                else if((value > 0) && (value < 50) && (value <= shifting * 2))
                 {
                     height = value;
                     Shifting = Math.Max((value / 2) - 1, 0);
@@ -213,9 +214,9 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value >= 0) && (value < 200) && (value <= height / 2))
+                if((value >= 0) && (value < 200) && (value <= height / 2))
                     corner = value;
-
+                
                 OnPropertyChanged(nameof(Corner));
             }
         }
@@ -229,9 +230,9 @@ namespace SynLight.Model
             }
             set
             {
-                if ((value >= 0) && (value < 200) && (value < height / 2))
+                if((value >= 0) && (value < 200) && (value < height / 2))
                     shifting = value;
-
+                
                 OnPropertyChanged(nameof(Shifting));
             }
         }
@@ -259,11 +260,11 @@ namespace SynLight.Model
             }
             set
             {
-                if (!fromWidth)
+                if(!fromWidth)
                 {
                     ratio = !ratio;
                 }
-                if (!ratio)
+                if(!ratio)
                 {
                     double tmp = Height / A;
                     Shifting = (int)(((double)Height / 2) - (tmp / 2) + B);
@@ -340,9 +341,17 @@ namespace SynLight.Model
             {
                 playPause = value;
                 System.Threading.Thread.Sleep(1);
-                if (playPause && !processMainLoop.IsAlive && !processFindESP.IsAlive)
+                if(playPause && !processMainLoop.IsAlive && !processFindESP.IsAlive)
                 {
-                    processMainLoop.Start();
+                    if(UseComPort)
+                    {
+                        processMainLoop.Start();
+                    }
+                    else
+                    {
+                        StaticConnected = false;
+                        processFindESP.Start();
+                    }
                     debug = true;
                 }
 
@@ -387,7 +396,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(BGF));
             }
         }
-        private byte red = 100;
+        private byte red = 255;
         public byte Red
         {
             get
@@ -401,7 +410,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Red));
             }
         }
-        private byte green = 60;
+        private byte green = 255;
         public byte Green
         {
             get
@@ -415,7 +424,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Green));
             }
         }
-        private byte blue = 0;
+        private byte blue = 255;
         public byte Blue
         {
             get
@@ -494,7 +503,7 @@ namespace SynLight.Model
         protected Size screen1Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Size screen2Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Size screen3Size = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
-        protected Size currentScreen = new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
+        protected Size currentScreen=new Size((int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
         protected Rectangle edgeLeft;
         protected Rectangle edgeRight;
         protected Rectangle edgeTop;
@@ -556,151 +565,143 @@ namespace SynLight.Model
                         {
                             string[] subLine = line.ToUpper().Trim('\r').Split('=');
 
-                            if (subLine[0] == "MAINSCREEN")
+                            if(subLine[0] == "MAINSCREEN")
                             {
-                                if (subLine[1] == "1")
+                                if(subLine[1] == "1")
                                     Screen1 = true;
-                                else if (subLine[1] == "2")
+                                else if(subLine[1] == "2")
                                     Screen2 = true;
-                                else if (subLine[1] == "3")
+                                else if(subLine[1] == "3")
                                     Screen3 = true;
                                 else
                                     ScreenFull = true;
-
+                                
                                 screen1Size.Width = int.Parse(subLine[1].Split(',')[0]);
                                 screen1Size.Height = int.Parse(subLine[1].Split(',')[1]);
                             }
-                            else if (subLine[0] == "SCREEN1")
+                            else if(subLine[0] == "SCREEN1")
                             {
                                 screen1Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
                                 //Is Min(24000) correct ?
                                 screen1Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                             }
-                            else if (subLine[0] == "SCREEN2")
+                            else if(subLine[0] == "SCREEN2")
                             {
                                 screen2Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
                                 screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
                                 Screen2Visible = true;
                             }
-                            else if (subLine[0] == "SCREEN3")
+                            else if(subLine[0] == "SCREEN3")
                             {
                                 screen3Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
                                 screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
                                 Screen3Visible = true;
                             }
-                            else if (subLine[0] == "IP")
+                            else if(subLine[0] == "IP")
                             {
                                 nodeMCU = IPAddress.Parse(subLine[1]);
                                 endPoint = new IPEndPoint(nodeMCU, UDPPort);
                                 Tittle = "Synlight - " + nodeMCU.ToString() + " - " + subLine[1];
-                                UseComPort = false;
                                 StaticConnected = true;
                             }
-                            else if (subLine[0].ToUpper().Contains("COM"))
-                            {
-                                nodeMCU_com.PortName = subLine[0];
-                                Tittle = "Synlight - " + nodeMCU_com.PortName;
-                                nodeMCU_com.BaudRate = 115200;
-                                nodeMCU_com.Open();
-                                UseComPort = true;
-                                StaticConnected = true;
-
-                            }
-                            else if (subLine[0] == "X")
+                            else if(subLine[0] == "X")
                             {
                                 Width = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "Y")
+                            else if(subLine[0] == "Y")
                             {
                                 Height = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "S")
+                            else if(subLine[0] == "S")
                             {
                                 Shifting = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "UDPPort")
+                            else if(subLine[0] == "UDPPort")
                             {
                                 UDPPort = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "TL")
+                            else if(subLine[0] == "TL")
                             {
                                 TopLeft = true;
                             }
-                            else if (subLine[0] == "BL")
+                            else if(subLine[0] == "BL")
                             {
                                 BotLeft = true;
                             }
-                            else if (subLine[0] == "BR")
+                            else if(subLine[0] == "BR")
                             {
                                 BotRight = true;
                             }
-                            else if (subLine[0] == "TR")
+                            else if(subLine[0] == "TR")
                             {
                                 TopRight = true;
                             }
-                            else if (subLine[0] == "CW")
+                            else if(subLine[0] == "CW")
                             {
                                 Clockwise = true;
                             }
-                            else if (subLine[0] == "CCW")
+                            else if(subLine[0] == "CCW")
                             {
                                 Clockwise = false;
                             }
-                            else if (subLine[0] == "A")
+                            else if(subLine[0] == "A")
                             {
                                 A = Convert.ToDouble(subLine[1]);
                             }
-                            else if (subLine[0] == "B")
+                            else if(subLine[0] == "B")
                             {
                                 B = Convert.ToDouble(subLine[1]);
                             }
-                            else if (subLine[0] == "LPF")
+                            else if(subLine[0] == "LPF")
                             {
                                 LPF = true;
                             }
-                            else if (subLine[0] == "BGF")
+                            else if(subLine[0] == "BGF")
                             {
                                 BGF = true;
                             }
-                            else if (subLine[0] == "TURBO")
+                            else if(subLine[0] == "TURBO")
                             {
                                 Turbo = true;
                             }
-                            else if (subLine[0] == "KBLIGHT" || subLine[0] == "KBL")
+                            else if(subLine[0] == "KBLIGHT" || subLine[0] == "KBL")
                             {
                                 KeyboardLight = true;
                             }
-                            else if (subLine[0] == "CORNERS")
+                            else if(subLine[0] == "CORNERS")
                             {
                                 Corner = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "UPDOWN")
+                            else if(subLine[0] == "UPDOWN")
                             {
                                 UpDown = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "CONTRAST")
+                            else if(subLine[0] == "CONTRAST")
                             {
                                 Contrast = int.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "MOBILESHARING")
+                            else if(subLine[0] == "MOBILESHARING")
                             {
-                                Startup.StartMobileHotstop();
-                                Hotstop = true;
+                                if(!UseComPort)
+                                {
+                                    Startup.MobileHotstop();
+                                    Hotstop = true;
+                                }
                             }
-                            else if (subLine[0] == "CLEANFILES")
+                            else if(subLine[0] == "CLEANFILES")
                             {
                                 Startup.CleanFiles();
                             }
-                            else if (subLine[0] == "FLUX")
+                            else if(subLine[0] == "FLUX")
                             {
                                 UsingFlux = bool.Parse(subLine[1]);
                             }
-                            else if (subLine[0] == "CONTRAST")
+                            else if(subLine[0] == "CONTRAST")
                             {
-                                Contrast = Math.Max(0, Math.Min(120, int.Parse(subLine[1])));
+                                Contrast = Math.Max(0,Math.Min(120,int.Parse(subLine[1])));
                             }
                         }
-                        catch { }
+                        catch{ }
                     }
                 }
             }
@@ -710,7 +711,7 @@ namespace SynLight.Model
         private static bool EdgesCompOnce = false;
         private void EdgesComp()
         {
-            if (EdgesCompOnce)
+            if(EdgesCompOnce)
                 return;
 
             EdgesCompOnce = true;
@@ -718,11 +719,11 @@ namespace SynLight.Model
             double ratio = screensSize.Width / screensSize.Height;
             bool multipleScreen = ratio > (21.0 / 9.0);
 
-            if (multipleScreen && !Screen2Visible)
+            if(multipleScreen && !Screen2Visible)
             {
                 System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
             }
-            else if (multipleScreen && Screen2Visible)
+            else if(multipleScreen && Screen2Visible)
             {
             }
             else
@@ -735,7 +736,7 @@ namespace SynLight.Model
 
         public static void Close()
         {
-            if (endPoint != null)
+            if(endPoint != null)
             {
                 SendPayload(PayloadType.fixedColor, 0);
             }

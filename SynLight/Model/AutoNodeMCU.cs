@@ -1,11 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
-using System.Linq;
 
 namespace SynLight.Model
 {
@@ -16,15 +15,17 @@ namespace SynLight.Model
         protected static List<Socket> sockList;
         protected static IPEndPoint endPoint;
         protected static IPAddress nodeMCU;
-        protected static int UDPPort = 8787; //Must match the next line UdpClient port and the ESP listenning port
-        protected static UdpClient Client = new UdpClient(8787);
+        protected static int UDPPort = 8787; //Must match the port the ESP is listenning to
+        protected static UdpClient Client= new UdpClient(UDPPort);
 
         protected static readonly string querry = "ping";
         protected static readonly string answer = "pong"; //a0
 
-        protected static bool UseComPort = false;
+        protected static bool UseComPort = true; //In the end this version is forced to wotk with COM, since I had trouble with Wifi
         protected static SerialPort nodeMCU_com = new SerialPort();
-        #endregion  
+
+        protected static bool BackToAmbiance = false;
+        #endregion
 
         private bool staticConnected = false;
         public bool StaticConnected
@@ -40,11 +41,12 @@ namespace SynLight.Model
             }
         }
 
+
         public void FindNodeMCU()
         {
-            if (!StaticConnected)
+            if(!StaticConnected)
             {
-                if (!UseComPort)
+                if(!UseComPort)
                 {
                     byte[] ping = Encoding.ASCII.GetBytes(querry);
 
@@ -52,47 +54,56 @@ namespace SynLight.Model
 
                     Client.BeginReceive(new AsyncCallback(Recv), null);
 
-                    for (byte n = 2; n < 255; n++)
+                    for (byte n = 2; n < 254; n++)
                     {
-                        if (n == currentIP[3])
+                        if(n == currentIP[3])
                             continue;
 
-                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
+                        endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], /*currentIP[2]*/137, n }), UDPPort);
 
                         SendPayload(PayloadType.ping, new List<byte>(ping));
 
                         System.Threading.Thread.Sleep(10);
 
-                        if (StaticConnected)
+                        if(StaticConnected)
                             break;
                     }
                 }
                 else
                 {
-                    List<string> allPorts = SerialPort.GetPortNames().ToList();
+                    nodeMCU_com.BaudRate = 115200;
 
-                    if (allPorts.Count == 0)
-                    {
-                        //MessageBox.Show("No COM port to send payload to. Exiting.");
-                        return;
-                        //Environment.Exit(0);
-                    }
-                    else if (allPorts.Count == 1)
+                    string[] allPorts = SerialPort.GetPortNames();
+
+                    if(allPorts.Length > 0)
                     {
                         nodeMCU_com.PortName = allPorts[0];
+                        nodeMCU_com.Open();
+                        StaticConnected = true;
                     }
                     else
                     {
-                        if (!allPorts.Contains(nodeMCU_com.PortName))
+                        MessageBox.Show("No COM port to send payload to");
+                        Environment.Exit(0);
+
+                        //NOT EXECUTED
+                        byte[] ping = Encoding.ASCII.GetBytes(querry);
+
+                        foreach (string port in allPorts)
                         {
-                            //MessageBox.Show("Port " + nodeMCU_com.PortName + " not found. Using port " + allPorts[0] + ".");
-                            //nodeMCU_com.PortName = allPorts[0];
+                            nodeMCU_com.PortName = port;
+                            nodeMCU_com.Open();
+                            SendPayload(PayloadType.ping, new List<byte>(ping));
+                            System.Threading.Thread.Sleep(50);
+
+                            string received = nodeMCU_com.ReadExisting();
+                            if(received.Contains(answer))
+                            {
+                                StaticConnected = true;
+                                return;
+                            }
                         }
                     }
-
-                    nodeMCU_com.BaudRate = 115200;
-                    nodeMCU_com.Open();
-                    StaticConnected = true;
                 }
             }
         }
@@ -100,7 +111,7 @@ namespace SynLight.Model
         {
             endPoint = new IPEndPoint(IPAddress.Any, 8787);
             byte[] received = Client.EndReceive(res, ref endPoint);
-            if (Encoding.UTF8.GetString(received).Contains(answer))
+            if(Encoding.UTF8.GetString(received).Contains(answer))
             {
                 Client.BeginReceive(new AsyncCallback(Recv), null);
                 nodeMCU = endPoint.Address;
@@ -112,7 +123,7 @@ namespace SynLight.Model
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                if(ip.AddressFamily == AddressFamily.InterNetwork)
                     return ip;
             }
             return null;
@@ -126,55 +137,82 @@ namespace SynLight.Model
         }
         protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
-            try
+            if(!UseComPort)
             {
-                if (!UseComPort)
-                {
-                    payload.Insert(0, (byte)plt);
-                    payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
-                    sock.SendTo(payload.ToArray(), endPoint);
-                }
-                else
+                payload.Insert(0, (byte)plt);
+                payload.Insert(0, (byte)('A')); //magic number #1, helps eliminate the junk that is broadcasted on the network
+                sock.SendTo(payload.ToArray(), endPoint);
+            }
+            else
+            {
+                try
                 {
                     nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
                 }
-            }
-            catch
-            {
+                catch
+                {
+                    try
+                    {
+                        if(nodeMCU_com.IsOpen)
+                            nodeMCU_com.Close();
+
+                        System.Threading.Thread.Sleep(100);
+
+                        if(!nodeMCU_com.IsOpen)
+                            nodeMCU_com.Open();
+
+                        BackToAmbiance = true;
+                    }
+                    catch
+                    {
+
+                    }
+                }
             }
         }
-        protected static void SendPayload(PayloadType plt, byte r = 0)
+        /*protected static void SendPayload(PayloadType plt, List<byte> payload, EndPoint edp)
         {
-            try
+            payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A'));
+
+            sock.SendTo(payload.ToArray(), edp);
+        }*/
+        protected static void SendPayload(PayloadType plt, byte r=0)
+        {
+            List<byte> payload = new List<byte>();
+
+            if(!UseComPort)
             {
-                List<byte> payload = new List<byte>();
-
                 payload.Insert(0, r);
                 payload.Insert(0, r);
                 payload.Insert(0, r);
-
-                if (!UseComPort)
-                {
-                    payload.Insert(0, (byte)plt);
-                    payload.Insert(0, (byte)('A'));
-                    sock.SendTo(payload.ToArray(), endPoint);
-                }
-                else
-                {
-                    nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
-                }
+                payload.Insert(0, (byte)plt);
+                payload.Insert(0, (byte)('A'));
+                sock.SendTo(payload.ToArray(), endPoint);
             }
-            catch
+            else
             {
+                nodeMCU_com.Write(payload.ToArray(), 0, payload.Count);
             }
         }
+        /*protected static void SendPayload(PayloadType plt, byte r = 0, byte g = 0, byte b = 0)
+        {
+            List<byte> payload = new List<byte>();
+            payload.Insert(0, b);
+            payload.Insert(0, g);
+            payload.Insert(0, r);
+            payload.Insert(0, (byte)plt);
+            payload.Insert(0, (byte)('A'));
+
+            sock.SendTo(payload.ToArray(), endPoint);
+        }*/
         ~AutoNodeMCU()
         {
-            if (!UseComPort)
+            if(!UseComPort)
                 Client.Close();
             else
             {
-                if (nodeMCU_com.IsOpen) { nodeMCU_com.Close(); }
+                if(nodeMCU_com.IsOpen) { nodeMCU_com.Close(); }
             }
         }
     }
