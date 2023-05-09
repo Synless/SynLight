@@ -1,11 +1,8 @@
-﻿using Microsoft.Win32;
-using SynLight.Keyboard;
+﻿
 using SynLight.Model;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -22,9 +19,6 @@ namespace SynLight.View
 
         public MainWindow()
         {
-            //SetCurrentLayout(1032); //Ελληνικά
-            //SetCurrentLayout(1033); //en-US
-
             Startup.StartOrKill();
 
             SetLanguageDictionary();
@@ -45,16 +39,7 @@ namespace SynLight.View
                 //Hide();
             }
 
-            Hook.Start();
-
             return;
-        }
-
-        private void SetCurrentLayout(ushort layout)
-        {
-            var tmp = API.GetKeyboardLayout();
-            uint recipients = API.BSM_APPLICATIONS;
-            API.BroadcastSystemMessage(API.BSF_POSTMESSAGE, ref recipients, API.WM_INPUTLANGCHANGEREQUEST, IntPtr.Zero, new IntPtr(layout));
         }
 
         #region System tray

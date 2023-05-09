@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SynLight</RootNamespace>
     <AssemblyName>SynLight</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -95,12 +95,8 @@
     <Compile Include="Converter\BoolToVisib.cs" />
     <Compile Include="Converter\PercentInvert.cs" />
     <Compile Include="Converter\Not.cs" />
-    <Compile Include="Keyboard\Hook.cs" />
-    <Compile Include="Keyboard\API.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
     <Compile Include="Model\ProcessUtils.cs" />
-    <Compile Include="Keyboard\RAWINPUTDEVICE.cs" />
-    <Compile Include="Keyboard\RAWINPUTHEADER.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Param_SynLight.cs" />
