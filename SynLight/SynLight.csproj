@@ -96,7 +96,6 @@
     <Compile Include="Converter\PercentInvert.cs" />
     <Compile Include="Converter\Not.cs" />
     <Compile Include="Model\AutoNodeMCU.cs" />
-    <Compile Include="Model\ProcessUtils.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\Param_SynLight.cs" />
@@ -150,7 +149,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Tethering.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

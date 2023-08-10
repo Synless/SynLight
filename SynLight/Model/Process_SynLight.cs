@@ -44,19 +44,19 @@ namespace SynLight.Model
             {
                 //Start measuring how much time it takes to complete the task from here ... [1]
                 watch = Stopwatch.StartNew();
-                
-                if(Mix < 100 || true) //Lets not bother ...
+
+                if (Mix < 100 || true) //Lets not bother ...
                 {
                     Tick();
                     Thread.Sleep((int)(difference * game_coef));
 
-                    if(Mix == 100)
+                    if (Mix == 100)
                         Thread.Sleep((int)(difference * game_coef));
                 }
-                else if(Mix == 100)
+                else if (Mix == 100)
                 {
                     //Only send the static color payload once in a while, or if the selected color has changed
-                    for(int n=0;(n< 200) && (!staticColorChanged);n++)
+                    for (int n = 0; (n < 200) && (!staticColorChanged); n++)
                         Thread.Sleep(1);
 
                     SingleColor();
@@ -69,16 +69,16 @@ namespace SynLight.Model
                 int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
                 try
                 {
-                    if(!UseComPort)
+                    if (!UseComPort)
                     {
-                        if(nodeMCU != null)
+                        if (nodeMCU != null)
                         {
                             Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
                         }
                     }
                     else
                     {
-                        if(StaticConnected)
+                        if (StaticConnected)
                         {
                             Tittle = "Synlight - " + nodeMCU_com.PortName + " - " + Hz.ToString() + "Hz";
                         }
@@ -109,127 +109,34 @@ namespace SynLight.Model
             _Shifting = Shifting;
 
             GetScreenShotedges();
-            
-            if(Contrast > 0)
+
+            if (Contrast > 0)
                 scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
-            
+
             ProcessScreenShot();
 
-            if(Mix > 0)
+            if (Mix > 0)
             {
                 int bl = Mix;
                 List<byte> bts = new List<byte>(byteToSend);
                 for (int n = 0; n < byteToSend.Count - 2; n += 3)
                 {
-                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl)/100.0) + Red * (bl/100.0));
-                    bts[n+1] = (byte)(byteToSend[n+1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
-                    bts[n+2] = (byte)(byteToSend[n+2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
+                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl) / 100.0) + Red * (bl / 100.0));
+                    bts[n + 1] = (byte)(byteToSend[n + 1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
+                    bts[n + 2] = (byte)(byteToSend[n + 2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
                 }
                 byteToSend = new List<byte>(bts);
             }
 
             Send();
-
-            NoBlitzForValorant();
         }
 
-
-        /// <summary>
-        /// This function kills Blitz when playing Valorant and
-        /// start it back (in the system tray) task when playing LoL
-        /// </summary>
-        //private Stopwatch counterBlitz = new Stopwatch();
-        //private int counterBlitzThr = 5000;
-        private void NoBlitzForValorant()
-        {
-            try
-            {
-                /*if(counterBlitz.IsRunning)
-                {
-                    if(counterBlitz.ElapsedMilliseconds > counterBlitzThr)
-                    {
-                        counterBlitz.Stop();
-                        counterBlitz.Reset();
-
-                        Process[] processCollection_blitz = Process.GetProcessesByName("Blitz");
-
-                        if(processCollection_blitz.Length > 0)
-                        {
-                            foreach (Process p in processCollection_blitz)
-                            {
-                                p.CloseMainWindow();
-                                p.Close();
-                            }
-                        }
-                    }
-                }*/
-
-                if (BackToAmbiance)
-                {
-                    if (Mix > 0)
-                        Mix = 0;
-
-                    BackToAmbiance = false;
-                }
-
-                game_coef = 1;
-
-                Process fgProc = ProcessUtils.getForegroundProcess();
-                if(fgProc.ProcessName.ToUpper().Contains("VALORANT"))
-                {
-                    game_coef = 0.5;
-                    
-                    if(Mix>0)
-                        Mix = Math.Max(0, (Mix-1)/2);
-
-                    Process[] processCollection_blitz = Process.GetProcessesByName("Blitz");
-
-                    if(processCollection_blitz.Length > 0)
-                        foreach (Process p in processCollection_blitz)
-                            p.Kill();
-                }
-                else if(fgProc.ProcessName.Contains("LeagueClientUx"))
-                {
-                    game_coef = 0.8;
-
-                    /*Process[] processCollection_blitz = Process.GetProcessesByName("Blitz");
-                    Process[] processCollection_val = Process.GetProcessesByName("Valorant");
-
-                    if(processCollection_blitz.Length <= 0 && processCollection_val.Length <= 0)
-                    {
-                        if(!counterBlitz.IsRunning)
-                        {
-                            counterBlitz.Start();
-                            Process.Start(@"C:\Users\Synless\AppData\Local\Programs\Blitz\Blitz.exe");
-                        }
-                    }*/
-                }
-                /*else if(fgProc.ProcessName.Contains("Blitz"))
-                {
-                    Process[] processCollection_blitz = Process.GetProcessesByName("Blitz");
-
-                    if(processCollection_blitz.Length > 0)
-                    {
-                        foreach (Process p in processCollection_blitz)
-                        {
-                            p.CloseMainWindow();
-                            p.Close();
-                        }
-                    }
-                }*/
-            }
-            catch
-            {
-            }
-        }
-        
-        
         private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Pasted from stackoverflow
         {
             Value = (100.0f + Value) / 100.0f;
             Value *= Value;
             Bitmap NewBitmap = (Bitmap)Image.Clone();
-            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height),ImageLockMode.ReadWrite,NewBitmap.PixelFormat);
+            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height), ImageLockMode.ReadWrite, NewBitmap.PixelFormat);
             int Height = NewBitmap.Height;
             int Width = NewBitmap.Width;
 
@@ -275,7 +182,7 @@ namespace SynLight.Model
 
             return NewBitmap;
         }
-        
+
         private readonly byte BrightnessForKeyboard = 15;
         private void GetScreenShotedges()
         {
@@ -295,7 +202,7 @@ namespace SynLight.Model
                 rect = new Rectangle(startX, startY, startX + (hX / _Width), endY);
                 bmp = new Bitmap(hX / _Width, hY, PixelFormat.Format32bppRgb);
                 Graphics gfxScreenshot = Graphics.FromImage(bmp);
-                gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);//CANARD
+                gfxScreenshot.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size);
                 scalededgeLeft = RescaleImage(bmp, new System.Drawing.Size(1, _Height));
                 gfxScreenshot.Clear(Color.Empty);
 
@@ -329,7 +236,7 @@ namespace SynLight.Model
                 }
                 for (int n = 1; n < scalededgeTop.Width - 1; n++)
                 {
-                    if(KeyboardLight)
+                    if (KeyboardLight)
                         scaledBmpScreenshot.SetPixel(n, _Height - 1, Color.FromArgb(255,
                                                                                     Math.Min(scalededgeBot.GetPixel(n, 0).R + BrightnessForKeyboard, byte.MaxValue),
                                                                                     Math.Min(scalededgeBot.GetPixel(n, 0).G + BrightnessForKeyboard, byte.MaxValue),
@@ -343,7 +250,7 @@ namespace SynLight.Model
                 }
 
                 //Capturing the very first frame in various formats
-                if(debug)
+                if (debug)
                 {
                     try
                     {
@@ -416,9 +323,9 @@ namespace SynLight.Model
 
             bool processedHeight = false;
 
-            if(Clockwise)
+            if (Clockwise)
             {
-                if(TopLeft)
+                if (TopLeft)
                 {
                     for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
                     {
@@ -434,7 +341,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
@@ -450,7 +357,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
                 }
-                if(TopRight)
+                if (TopRight)
                 {
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
                     {
@@ -466,7 +373,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
@@ -482,7 +389,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
                 }
-                if(BotRight)
+                if (BotRight)
                 {
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
                     {
@@ -498,7 +405,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
@@ -514,7 +421,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
                 }
-                if(BotLeft)
+                if (BotLeft)
                 {
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
                     {
@@ -530,7 +437,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
@@ -549,7 +456,7 @@ namespace SynLight.Model
             }
             else
             {
-                if(TopLeft)
+                if (TopLeft)
                 {
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
                     {
@@ -565,7 +472,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
@@ -581,7 +488,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
                 }
-                if(TopRight)
+                if (TopRight)
                 {
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
                     {
@@ -597,7 +504,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
@@ -613,7 +520,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
                 }
-                if(BotRight)
+                if (BotRight)
                 {
                     for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
                     {
@@ -629,7 +536,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
@@ -645,7 +552,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
                     }
                 }
-                if(BotLeft)
+                if (BotLeft)
                 {
                     for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
                     {
@@ -661,7 +568,7 @@ namespace SynLight.Model
                         byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
                     }
 
-                    if(!processedHeight)
+                    if (!processedHeight)
                         return;
 
                     for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
@@ -692,17 +599,17 @@ namespace SynLight.Model
         {
             newByteToSend = new List<byte>(0);
 
-            if(LPF) //Low-pass filtering
+            if (LPF) //Low-pass filtering
             {
                 while (lastByteToSend.Count < byteToSend.Count)//In case X/Y increased
-                    lastByteToSend.Add(0); 
+                    lastByteToSend.Add(0);
 
                 int odd; //To correct the -1 error rounding
                 for (int n = 0; n < byteToSend.Count; n++)
                 {
-                    odd = byteToSend[n] + lastByteToSend[n];                    
-                    if(odd % 2 != 0)
-                        odd++;                        
+                    odd = byteToSend[n] + lastByteToSend[n];
+                    if (odd % 2 != 0)
+                        odd++;
                     odd /= 2;
                     newByteToSend.Add((byte)odd);
                 }
@@ -710,14 +617,14 @@ namespace SynLight.Model
             }
             else
                 lastByteToSend = newByteToSend = byteToSend;
-                
-            if(UpDown != 0)
-                RotateArray();                
 
-            if(UsingFlux) //Reducing the temperature of the colors depending on the time of the day
+            if (UpDown != 0)
+                RotateArray();
+
+            if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
                 Flux();
-                
-            if(BGF)
+
+            if (BGF)
             {
                 long meanR = 0;
                 long meanG = 0;
@@ -753,7 +660,7 @@ namespace SynLight.Model
 
             int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
             SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
-            
+
         }
 
         //Difference
@@ -762,7 +669,7 @@ namespace SynLight.Model
         private const int maxDif = 3600;
         private void CalculateSleepTime()
         {
-            if(lastByteToSend.Count != byteToSend.Count)
+            if (lastByteToSend.Count != byteToSend.Count)
             {
                 difference = maxDif;
             }
@@ -776,11 +683,11 @@ namespace SynLight.Model
             difference = Math.Min(difference, maxDif);
             difference = Math.Max(difference, minDif);
             difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif-minDif, minDif, 0));
-            if(usePerformanceCounter)
+            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
+            if (usePerformanceCounter)
                 difference += (int)Math.Round(cpuCounter.NextValue());
 
-            if(Turbo)
+            if (Turbo)
                 difference /= 20;
         }
         private double Map(double s, double a1, double a2, double b1, double b2)
@@ -799,7 +706,7 @@ namespace SynLight.Model
             newByteToSend = new List<byte>(byteToSend2);
         }
 
-        //Flux
+        //Flux - Does not work as intended yet
         private string s;
         private byte b;
         private int hours = 0, minutes = 0, totalMinutes = 0;
@@ -816,17 +723,17 @@ namespace SynLight.Model
 
             for (int n = 0; n < byteToSend.Count - 2; n += 3)
             {
-                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.',',').Split(',')[0];
+                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
                 newByteToSend[n] = b;
 
-                s = (newByteToSend[n+1] * ((0.6+fluxRatio)/1.6)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 1] * ((0.6 + fluxRatio) / 1.6)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+1] = b;
+                newByteToSend[n + 1] = b;
 
-                s = (newByteToSend[n+2] * (fluxRatio/1.2)).ToString().Replace('.', ',').Split(',')[0];
+                s = (newByteToSend[n + 2] * (fluxRatio / 1.2)).ToString().Replace('.', ',').Split(',')[0];
                 b = byte.Parse(s);
-                newByteToSend[n+2] = b;
+                newByteToSend[n + 2] = b;
             }
         }
         #endregion

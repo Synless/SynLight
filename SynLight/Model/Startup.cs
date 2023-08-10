@@ -43,35 +43,6 @@ namespace SynLight.Model
         /// </summary>
         public static void StartOrKill()
         {
-            //new Thread((ThreadStart)delegate
-            //{
-            //    Process[] killEagleSignIn;
-
-            //    while(true)
-            //    {
-            //        try
-            //        {
-            //            killEagleSignIn = Process.GetProcesses();
-
-            //            foreach (Process p in killEagleSignIn)
-            //                if(p.ProcessName.ToLower().Contains("eagle"))
-            //                    if(p.MainWindowTitle.ToLower().Contains("sign in"))
-            //                    {
-            //                        Thread.Sleep(1200);
-            //                        p.Kill();
-            //                    }
-
-            //            Thread.Sleep(100);
-            //        }
-            //        catch
-            //        {
-
-            //        }
-            //    }  
-            
-            
-            //}).Start();
-
             Process[] xaml = Process.GetProcesses().OrderBy(m => m.ProcessName).ToArray();
 
             foreach (Process p in xaml)
@@ -88,32 +59,17 @@ namespace SynLight.Model
                 }
 
             }
+
             string procName = Process.GetCurrentProcess().ProcessName;
-            int procID = Process.GetCurrentProcess().Id;
             List<Process> processes = Process.GetProcessesByName(procName).ToList();
+
             foreach(Process p in processes)
             {
-                if(p.Id != procID)
+                if(p.Id != Process.GetCurrentProcess().Id)
                     p.Kill();
             }
-            
-            /*while (processes.Count > 1)
-            {
-
-                if(processes[0].StartTime > processes[1].StartTime)
-                {
-                    processes[1].Kill();
-                    //processes[0].Kill();
-                }
-                else
-                {
-                    processes[0].Kill();
-                    //processes[1].Kill();
-                }
-                processes = Process.GetProcessesByName(procName).ToList();
-            }*/
-            //processes[0].PriorityClass = ProcessPriorityClass.Idle;
         }
+
         /// <summary>
         /// Removing some files from the project
         /// </summary>
@@ -167,13 +123,18 @@ namespace SynLight.Model
                             {
                                 File.Delete(file);
                             }
-                            catch { }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
+
         /// <summary>
         /// Check if the MainForm is to be shown or not
         /// </summary>
@@ -195,7 +156,10 @@ namespace SynLight.Model
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
+
             return true;
         }
     }
