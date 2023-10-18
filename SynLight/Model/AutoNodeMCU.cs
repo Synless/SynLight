@@ -77,9 +77,16 @@ namespace SynLight.Model
 
                     if(allPorts.Length > 0)
                     {
-                        nodeMCU_com.PortName = allPorts[0];
-                        nodeMCU_com.Open();
-                        StaticConnected = true;
+                        try
+                        {
+                            nodeMCU_com.PortName = allPorts[0];
+                            nodeMCU_com.Open();
+                            StaticConnected = true;
+                        }
+                        catch
+                        {
+
+                        }
                     }
                     else
                     {

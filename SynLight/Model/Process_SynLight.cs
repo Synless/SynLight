@@ -8,7 +8,7 @@ using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Forms;
-
+using System.Linq;
 
 namespace SynLight.Model
 {
@@ -320,270 +320,156 @@ namespace SynLight.Model
         {
             byteToSend = new List<byte>();
             int subCorner = Math.Max(0, _Corner - 1);
-
             bool processedHeight = false;
+            
+            if (TopLeft)
+            {
+                for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
+                {
+                    processedHeight = true;
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+                for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
+                }
+
+                if (!processedHeight)
+                    return;
+
+                for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+                for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
+                }
+            }
+            if (TopRight)
+            {
+                for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
+                }
+                for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
+                {
+                    processedHeight = true;
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+
+                if (!processedHeight)
+                    return;
+
+                for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
+                }
+                for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+            }
+            if (BotRight)
+            {
+                for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
+                {
+                    processedHeight = true;
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+                for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
+                }
+
+                if (!processedHeight)
+                    return;
+
+                for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+                for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
+                }
+            }
+            if (BotLeft)
+            {
+                for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
+                }
+                for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
+                {
+                    processedHeight = true;
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+
+                if (!processedHeight)
+                    return;
+
+                for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
+                }
+                for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
+                {
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
+                    byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                }
+            }
+
 
             if (Clockwise)
             {
-                if (TopLeft)
+                int chunkSize = 3;
+                int numberOfChunks = byteToSend.Count / chunkSize;
+
+                // Create a new list to store the reversed RGB values
+                List<byte> reversedRgbValues = new List<byte>();
+
+                // Reverse each chunk of RGB values and add to the new list
+                for (int i = numberOfChunks - 1; i >= 0; i--)
                 {
-                    for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
+                    for (int j = 0; j < chunkSize; j++)
                     {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
+                        reversedRgbValues.Add(byteToSend[i * chunkSize + j]);
                     }
                 }
-                if (TopRight)
-                {
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
 
-                    if (!processedHeight)
-                        return;
-
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                }
-                if (BotRight)
-                {
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                }
-                if (BotLeft)
-                {
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                }
-            }
-            else
-            {
-                if (TopLeft)
-                {
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x > _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                }
-                if (TopRight)
-                {
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                }
-                if (BotRight)
-                {
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                    for (int x = _Corner; x < scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                }
-                if (BotLeft)
-                {
-                    for (int x = _Corner; x <= scaledBmpScreenshot.Width - 1 - _Corner; x++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, scaledBmpScreenshot.Height - 1).B));
-                    }
-                    for (int y = scaledBmpScreenshot.Height - 1 - subCorner; y > subCorner; y--)
-                    {
-                        processedHeight = true;
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(scaledBmpScreenshot.Width - 1, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-
-                    if (!processedHeight)
-                        return;
-
-                    for (int x = scaledBmpScreenshot.Width - 1 - _Corner; x >= _Corner; x--)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(x, 0).B));
-                    }
-                    for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
-                    {
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).R));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).G));
-                        byteToSend.Add((scaledBmpScreenshot.GetPixel(0, Math.Max(0, Math.Min(y, scaledBmpScreenshot.Height - 1))).B));
-                    }
-                }
+                byteToSend = new List<byte>(reversedRgbValues);
             }
         }
         private void SingleColor()
