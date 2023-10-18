@@ -5,7 +5,7 @@
 const int maxBrightness = 80;
 
 CRGB leds[NUM_LEDS];
-byte buffer[NUM_LEDS];
+byte buffer[NUM_LEDS*3];
 
 int red = 0;
 int green = 0;
@@ -23,7 +23,13 @@ void setup()
     Serial.begin(115200);
     FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
     setBrightness(maxBrightness);
-    //fill(0,NUM_LEDS,100,100,100);
+    fill(0,NUM_LEDS,0,100,0);
+    delay(250);
+    fill(0,NUM_LEDS,0,0,0);
+    delay(250);
+    fill(0,NUM_LEDS,0,100,0);
+    delay(250);
+    fill(0,NUM_LEDS,0,0,0);
 }
 
 long i;
