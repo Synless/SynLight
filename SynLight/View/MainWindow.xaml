@@ -9,762 +9,762 @@
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Closing="OnClose" StateChanged="OnStateChanged" IsVisibleChanged="OnIsVisibleChanged"
 	Width="440" Height="541" Topmost="True" MinWidth="440" MinHeight="541" MaxWidth="440" MaxHeight="541" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
-    <Window.DataContext>
-        <local:Process_SynLight/>
-    </Window.DataContext>
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
-        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
-        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
-        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
-    </Window.CommandBindings>
-    <Window.Resources>
-        <Color x:Key="FilledColor" A="255" B="200" R="200" G="200"/>
-        <Color x:Key="UnfilledColor" A="0" B="160" R="160" G="160"/>
-        <Style x:Key="BusyAnimationStyle" TargetType="Control">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Control">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="Animation0" BeginTime="00:00:00.0" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse0" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+  <Window.DataContext>
+    <local:Process_SynLight/>
+  </Window.DataContext>
+  <Window.CommandBindings>
+    <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
+    <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
+    <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
+    <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
+  </Window.CommandBindings>
+  <Window.Resources>
+    <Color x:Key="FilledColor" A="255" B="200" R="200" G="200"/>
+    <Color x:Key="UnfilledColor" A="0" B="160" R="160" G="160"/>
+    <Style x:Key="BusyAnimationStyle" TargetType="Control">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Control">
+            <ControlTemplate.Resources>
+              <Storyboard x:Key="Animation0" BeginTime="00:00:00.0" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse0" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation1" BeginTime="00:00:00.2" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse1" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation1" BeginTime="00:00:00.2" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse1" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation2" BeginTime="00:00:00.4" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse2" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation2" BeginTime="00:00:00.4" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse2" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation3" BeginTime="00:00:00.6" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse3" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation3" BeginTime="00:00:00.6" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse3" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation4" BeginTime="00:00:00.8" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse4" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation4" BeginTime="00:00:00.8" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse4" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation5" BeginTime="00:00:01.0" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse5" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation5" BeginTime="00:00:01.0" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse5" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation6" BeginTime="00:00:01.2" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse6" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
+              <Storyboard x:Key="Animation6" BeginTime="00:00:01.2" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse6" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
 
-                            <Storyboard x:Key="Animation7" BeginTime="00:00:01.4" RepeatBehavior="Forever">
-                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse7" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                    <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
-                                    <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
-                                </ColorAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
+              <Storyboard x:Key="Animation7" BeginTime="00:00:01.4" RepeatBehavior="Forever">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ellipse7" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                  <SplineColorKeyFrame KeyTime="00:00:00.0" Value="{StaticResource FilledColor}"/>
+                  <SplineColorKeyFrame KeyTime="00:00:01.6" Value="{StaticResource UnfilledColor}"/>
+                </ColorAnimationUsingKeyFrames>
+              </Storyboard>
+            </ControlTemplate.Resources>
 
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsVisible" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation0}" x:Name="Storyboard0" />
-                                    <BeginStoryboard Storyboard="{StaticResource Animation1}" x:Name="Storyboard1"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation2}" x:Name="Storyboard2"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation3}" x:Name="Storyboard3"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation4}" x:Name="Storyboard4"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation5}" x:Name="Storyboard5"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation6}" x:Name="Storyboard6"/>
-                                    <BeginStoryboard Storyboard="{StaticResource Animation7}" x:Name="Storyboard7"/>
-                                </Trigger.EnterActions>
-
-                                <Trigger.ExitActions>
-                                    <StopStoryboard BeginStoryboardName="Storyboard0"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard1"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard2"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard3"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard4"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard5"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard6"/>
-                                    <StopStoryboard BeginStoryboardName="Storyboard7"/>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-
-                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-                            <Viewbox>
-                                <Grid>
-                                    <Canvas Height="60" Width="60">
-                                        <Canvas.Resources>
-                                            <Style TargetType="Ellipse">
-                                                <Setter Property="Width" Value="13"/>
-                                                <Setter Property="Height" Value="13" />
-                                                <Setter Property="Fill" Value="#009B9B9B" />
-                                            </Style>
-                                        </Canvas.Resources>
-                                        <Ellipse x:Name="ellipse0" Canvas.Left="1.75" Canvas.Top="21"/>
-                                        <Ellipse x:Name="ellipse1" Canvas.Top="7" Canvas.Left="6.5"/>
-                                        <Ellipse x:Name="ellipse2" Canvas.Left="20.5" Canvas.Top="0.75"/>
-                                        <Ellipse x:Name="ellipse3" Canvas.Left="34.75" Canvas.Top="6.75"/>
-                                        <Ellipse x:Name="ellipse4" Canvas.Left="40.5" Canvas.Top="20.75" />
-                                        <Ellipse x:Name="ellipse5" Canvas.Left="34.75" Canvas.Top="34.5"/>
-                                        <Ellipse x:Name="ellipse6" Canvas.Left="20.75" Canvas.Top="39.75"/>
-                                        <Ellipse x:Name="ellipse7" Canvas.Top="34.25" Canvas.Left="7" />
-                                        <Ellipse Width="39.5" Height="39.5" Canvas.Left="8.75" Canvas.Top="8" Visibility="Hidden"/>
-                                    </Canvas>
-                                    <Label Content="{Binding Path=Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-                            </Viewbox>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="CaptionButtonStyle" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="LayoutRoot" Background="Transparent" MinWidth="45">
-                            <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="10"
-                                   Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased"  TextOptions.TextFormattingMode="Display"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="LayoutRoot" Property="Background" Value="#DD454545"/>
-                                <Setter TargetName="txt" Property="Foreground" Value="#000000"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="MinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-            <Setter Property="Content" Value="&#xE949;"/>
-        </Style>
-        <Style x:Key="MaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-            <Setter Property="Content" Value="&#xE739;"/>
-        </Style>
-        <Style x:Key="RestoreButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-            <Setter Property="Content" Value="&#xE923;"/>
-        </Style>
-        <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
-            <Setter Property="Content" Value="&#xE106;"/>
-        </Style>
-        <conv:Not x:Key="Not"/>
-        <conv:BoolToVisib x:Key="b2v"/>
-        <conv:PercentInvert x:Key="percentInv"/>
-
-        <System:Double  x:Key="ToggleSwitchCarageWidth">30</System:Double>
-        <System:Double  x:Key="ToggleSwitchWidth">60</System:Double>
-        <System:Double  x:Key="ToggleSwitchHeight">20</System:Double>
-        <System:Double  x:Key="ToggleSwitchBigCarageWidth">90</System:Double>
-        <System:Double  x:Key="ToggleSwitchBigWidth">180</System:Double>
-        <System:Double  x:Key="ToggleSwitcBighHeight">60</System:Double>
-        <Thickness      x:Key="ToggleSwitchBorderThickness">1</Thickness>
-        <CornerRadius   x:Key="ToggleSwitchCornerRadius">0</CornerRadius>
-        <LinearGradientBrush x:Key="CheckedBlue" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FF285AB3" Offset="0" />
-            <GradientStop Color="#FF285AB3" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="CheckedGreen" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#BB3A833A" Offset="0" />
-            <GradientStop Color="#BB3A833A" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="CheckedRed" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFB44A4A" Offset="0" />
-            <GradientStop Color="#FFB44A4A" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="CheckedGrey" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFE5E5E5" Offset="0" />
-            <GradientStop Color="#FFFEFEFE" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFCA6A13" Offset="0" />
-            <GradientStop Color="#FFF67D0C" Offset="0.2" />
-            <GradientStop Color="#FFFE7F0C" Offset="0.2" />
-            <GradientStop Color="#FFFA8E12" Offset="0.5" />
-            <GradientStop Color="#FFFF981D" Offset="0.5" />
-            <GradientStop Color="#FFFCBC5A" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BackGroundBorder" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFBDBDBD" Offset="0" />
-            <GradientStop Color="#FFE7E7E7" Offset="0.1" />
-            <GradientStop Color="#FFF3F3F3" Offset="0.5" />
-            <GradientStop Color="#FFFCFCFC" Offset="0.5" />
-            <GradientStop Color="#FFFEFEFE" Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="Carage" EndPoint="0,1" StartPoint="0,0">
-            <GradientStop Color="#FFF0F0F0" Offset="0" />
-            <GradientStop Color="#FFFBFBFB" Offset="1" />
-        </LinearGradientBrush>
-        <SolidColorBrush x:Key="RegularBorder" Color="#FF737373" />
-        <SolidColorBrush x:Key="DarkerBorder" Color="#FF535353" />
-        <SolidColorBrush x:Key="CheckedOrangeBorder" Color="#BB8E4A1B" />
-        <SolidColorBrush x:Key="CheckedRedBorder" Color="#BB743814" />
-        <SolidColorBrush x:Key="CheckedGreenBorder" Color="#BB147438" />
-        <SolidColorBrush x:Key="CheckedBlueBorder" Color="#BB143874" />
-        <SolidColorBrush x:Key="EasyGrey" Color="#DDFFFFFF" />
-        <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
-            <Border Background="{TemplateBinding Background}" 
-				x:Name="Bd" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" BorderThickness="1" BorderBrush="{StaticResource RegularBorder}" >
-                <ScrollViewer x:Name="PART_ContentHost"/>
-            </Border>
             <ControlTemplate.Triggers>
-                <Trigger Property="IsEnabled" Value="True">
-                    <Setter Property="Background" Value="{StaticResource CheckedGrey}" TargetName="Bd"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FFB1C2D3" TargetName="Bd"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                </Trigger>
+              <Trigger Property="IsVisible" Value="True">
+                <Trigger.EnterActions>
+                  <BeginStoryboard Storyboard="{StaticResource Animation0}" x:Name="Storyboard0" />
+                  <BeginStoryboard Storyboard="{StaticResource Animation1}" x:Name="Storyboard1"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation2}" x:Name="Storyboard2"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation3}" x:Name="Storyboard3"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation4}" x:Name="Storyboard4"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation5}" x:Name="Storyboard5"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation6}" x:Name="Storyboard6"/>
+                  <BeginStoryboard Storyboard="{StaticResource Animation7}" x:Name="Storyboard7"/>
+                </Trigger.EnterActions>
+
+                <Trigger.ExitActions>
+                  <StopStoryboard BeginStoryboardName="Storyboard0"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard1"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard2"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard3"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard4"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard5"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard6"/>
+                  <StopStoryboard BeginStoryboardName="Storyboard7"/>
+                </Trigger.ExitActions>
+              </Trigger>
             </ControlTemplate.Triggers>
-        </ControlTemplate>
-        <Style x:Key="ButtonRoundCorner" TargetType="{x:Type Button}">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Grid x:Name="grid">
-                            <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource DarkerBorder}" BorderThickness="1" Background="{StaticResource Carage}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="Bold">
-                                </ContentPresenter>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ToggleSwitchPlayPause" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="OnChecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="OnUnchecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
-                        <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchBigWidth}">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
-                            <Grid ToolTip="Play - Pause">
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedGreen}" BorderBrush="{StaticResource CheckedGreenBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitcBighHeight}" Width="{StaticResource ToggleSwitchBigWidth}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="0,0,0,0.4"   Padding="0,0,0,4"  x:Name="Off" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="▌▌" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="▶" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
-                                    </Grid>
-                                </Border>
-                                <Border HorizontalAlignment="Left" BorderBrush="{StaticResource RegularBorder}" x:Name="slider" Width="{StaticResource ToggleSwitchBigCarageWidth}" Height="{StaticResource ToggleSwitcBighHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
-                                    <Border.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            <SkewTransform AngleX="0" AngleY="0" />
-                                            <RotateTransform Angle="0" />
-                                            <TranslateTransform X="0" Y="0" />
-                                        </TransformGroup>
-                                    </Border.RenderTransform>
-                                    <Border Background="{StaticResource Carage}"/>
-                                </Border>
-                            </Grid>
-                        </DockPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
-                                </Trigger.ExitActions>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
-                                </Trigger.EnterActions>
-                                <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedRed}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedRedBorder}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <!-- ToDo: Add Style for Isenabled == False -->
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ToggleSwitchOnOff_blue" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="OnChecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="OnUnchecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
-                        <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
-                            <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedRed}" BorderBrush="{StaticResource CheckedRedBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Ellipse x:Name="Off" Width="10" Height="10" Stroke="white" StrokeThickness="1.5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="10" Stroke="white" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Grid>
-                                </Border>
-                                <Border HorizontalAlignment="Left" BorderBrush="{StaticResource RegularBorder}" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
-                                    <Border.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            <SkewTransform AngleX="0" AngleY="0" />
-                                            <RotateTransform Angle="0" />
-                                            <TranslateTransform X="0" Y="0" />
-                                        </TransformGroup>
-                                    </Border.RenderTransform>
-                                    <Border Background="{StaticResource Carage}"/>
-                                </Border>
-                            </Grid>
-                        </DockPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
-                                </Trigger.ExitActions>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
-                                </Trigger.EnterActions>
-                                <Setter TargetName="On" Property="Stroke" Value="White" />
-                                <Setter TargetName="Off" Property="Stroke" Value="White" />
-                                <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedGreen}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedGreenBorder}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <!-- ToDo: Add Style for Isenabled == False -->
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="Labels" TargetType="Label">
-            <Setter Property="FontFamily"           Value="Sherif"/>
-            <Setter Property="Foreground"           Value="{StaticResource EasyGrey}" />
-            <Setter Property="Margin"               Value="2"/>
-            <Setter Property="HorizontalAlignment"  Value="Center"/>
-            <Setter Property="VerticalAlignment"    Value="Center"/>
-            <Setter Property="FontWeight"    Value="DemiBold"/>
-        </Style>
-        <Style x:Key="ToggleSwitch16_21_blue" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="OnChecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="OnUnchecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.06" Value="0"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
-                        <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
-                            <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" Foreground="White"/>
-                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" Foreground="White"/>
-                                    </Grid>
-                                </Border>
-                                <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
-                                    <Border.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            <SkewTransform AngleX="0" AngleY="0" />
-                                            <RotateTransform Angle="0" />
-                                            <TranslateTransform X="0" Y="0" />
-                                        </TransformGroup>
-                                    </Border.RenderTransform>
-                                    <Border Background="{StaticResource Carage}"/>
-                                </Border>
-                            </Grid>
-                        </DockPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
-                                </Trigger.ExitActions>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
-                                </Trigger.EnterActions>
-                                <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <!-- ToDo: Add Style for Isenabled == False -->
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ToggleSwitchCCC" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="OnChecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="OnUnchecking">
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.06" Value="0"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
-                        <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
-                            <Grid>
-                                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="↻"  FontSize="18" Foreground="White" Padding="0,0,0,4" />
-                                        <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="↺"  FontSize="18" Foreground="White" Padding="1.5,0,0,4"/>
-                                    </Grid>
-                                </Border>
-                                <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
-                                    <Border.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1" ScaleY="1" />
-                                            <SkewTransform AngleX="0" AngleY="0" />
-                                            <RotateTransform Angle="0" />
-                                            <TranslateTransform X="0" Y="0" />
-                                        </TransformGroup>
-                                    </Border.RenderTransform>
-                                    <Border Background="{StaticResource Carage}"/>
-                                </Border>
-                            </Grid>
-                        </DockPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
-                                </Trigger.ExitActions>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
-                                </Trigger.EnterActions>
-                                <!-- Change Orange or Blue color here -->
-                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
-                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <!-- ToDo: Add Style for Isenabled == False -->
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="{x:Type TabItem}">
-            <Setter Property="Visibility" Value="Visible" />
-            <Setter Property="Foreground" Value="{StaticResource EasyGrey}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid>
-                            <Border Name="Border" Background="#33000000" BorderBrush="#FFD4B300" Margin="0,0,3.2,0" Padding="2,0,2,2" BorderThickness="2" CornerRadius="1,1,1,1" Grid.Column="0" >
-                                <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="2" />
-                            </Border>
-                            <Border HorizontalAlignment="Stretch" Grid.Column="1" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <!--<Setter Property="Foreground" Value="Gold" />-->
-                                <Setter Property="FontSize" Value="13" />
-                                <Setter Property="CornerRadius" Value="1,1,1,1" TargetName="Border" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#8EFFFFFF" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="{x:Type TabControl}" >
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabControl}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <TabPanel x:Name="HeaderPanel" Grid.Row="0" Panel.ZIndex="1" Margin="0,0,4,3" IsItemsHost="True" Height="25">
-                            </TabPanel>
-                            <Border x:Name="Border" Grid.Row="1" BorderThickness="2" CornerRadius="1,1,1,1" BorderBrush="#8EFFFFFF" Background="Transparent">
-                                <Grid>
-                                    <Border CornerRadius="2" Margin="3,3,0,0">
-                                        <ContentPresenter x:Name="PART_SelectedContentHost" Margin="1" ContentSource="SelectedContent"/>
-                                    </Border>
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="34" />
-    </WindowChrome.WindowChrome>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height ="35"/>
-            <RowDefinition Height ="0.5"/>
-            <RowDefinition Height ="20*"/>
-        </Grid.RowDefinitions>
-        <!--WindowChrome-->
-        <Grid Grid.Row="0" Background="#FF101010">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MaxWidth="285"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Margin="12,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Tittle, UpdateSourceTrigger=PropertyChanged}" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="14"/>
-            <Viewbox Grid.Column="2" Visibility="{Binding Hotstop, Converter={StaticResource b2v}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="("/>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFDD4444" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="Hot" Margin="2,0,1,0"/>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="stop" Margin="0,0,2,0"/>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="15" Text=")"/>
-                </StackPanel>
-            </Viewbox>
-            <Button Grid.Column="4" Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
-            <!--<Button Grid.Column="3" x:Name="RestoreButton" Visibility="Collapsed" Style="{StaticResource RestoreButtonStyle}" MinWidth="50" Width="50" Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" />-->
-            <!--<Button Grid.Column="3" Grid.RowSpan="3" x:Name="MaximizeButton" Visibility="Visible" Style="{StaticResource MaximizeButtonStyle}" Command="{x:Static SystemCommands.MaximizeWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" />-->
-            <Button Grid.Column="5" Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
-        </Grid>
-        <Grid Grid.Row="1" Background="White"/>
-        <!--App content-->
-        <Grid Grid.Row="2" x:Name="AppArea" Background="#F9101010">
-            <Grid Margin="0,15,0,8">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="30"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="20,-4,0,4" Visibility="{Binding Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
-                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding ScreenFull}" />
-                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen1}" />
-                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen2}" />
-                        <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen3}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen3}" Visibility="{Binding Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                    <Label Grid.Column="2" Grid.Row="0" Style="{StaticResource Labels}" Content="{DynamicResource x}" HorizontalAlignment="Right"/>
-                    <Label Grid.Column="2" Grid.Row="1" Style="{StaticResource Labels}" Content="{DynamicResource y}" HorizontalAlignment="Right"/>
-                    <TextBox Grid.Column="3" Grid.Row="0" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold"  Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
-                    <TextBox Grid.Column="3" Grid.Row="1" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" Text="{Binding Height,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
-                    <Label Grid.Column="5" Grid.Row="0" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource corners}"/>
-                    <Label Grid.Column="5" Grid.Row="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource shifting}"/>
-                    <TextBox Grid.Column="6" Grid.Row="0" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding Corner,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
-                    <TextBox Grid.Column="6" Grid.Row="1" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
-                    <Label Grid.Column="2" Grid.Row="7" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource ratio}"/>
-                    <CheckBox Grid.Column="3" Grid.Row="7" Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding Ratio, Converter={StaticResource Not}}"/>
-                    <StackPanel Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="7" Orientation="Horizontal" Margin="15,0,0,0">
-                        <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource contrast}"/>
-                        <Slider VerticalAlignment="Center" Value="{Binding Contrast}" Width="80" HorizontalAlignment="Stretch" Maximum="120"/>
-                        <Label VerticalAlignment="Center" Content="{Binding Contrast}" Foreground="{StaticResource EasyGrey}" FontWeight="Bold"/>
-                    </StackPanel>
+
+            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+              <Viewbox>
+                <Grid>
+                  <Canvas Height="60" Width="60">
+                    <Canvas.Resources>
+                      <Style TargetType="Ellipse">
+                        <Setter Property="Width" Value="13"/>
+                        <Setter Property="Height" Value="13" />
+                        <Setter Property="Fill" Value="#009B9B9B" />
+                      </Style>
+                    </Canvas.Resources>
+                    <Ellipse x:Name="ellipse0" Canvas.Left="1.75" Canvas.Top="21"/>
+                    <Ellipse x:Name="ellipse1" Canvas.Top="7" Canvas.Left="6.5"/>
+                    <Ellipse x:Name="ellipse2" Canvas.Left="20.5" Canvas.Top="0.75"/>
+                    <Ellipse x:Name="ellipse3" Canvas.Left="34.75" Canvas.Top="6.75"/>
+                    <Ellipse x:Name="ellipse4" Canvas.Left="40.5" Canvas.Top="20.75" />
+                    <Ellipse x:Name="ellipse5" Canvas.Left="34.75" Canvas.Top="34.5"/>
+                    <Ellipse x:Name="ellipse6" Canvas.Left="20.75" Canvas.Top="39.75"/>
+                    <Ellipse x:Name="ellipse7" Canvas.Top="34.25" Canvas.Left="7" />
+                    <Ellipse Width="39.5" Height="39.5" Canvas.Left="8.75" Canvas.Top="8" Visibility="Hidden"/>
+                  </Canvas>
+                  <Label Content="{Binding Path=Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
-                <Separator Grid.Row="1" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="70"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="70"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                        <Label Style="{StaticResource Labels}" Content="Ambiant"/>
-                        <StackPanel Margin="0,-12,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Label Style="{StaticResource Labels}" Content="{Binding Mix, Converter={StaticResource percentInv}}" HorizontalAlignment="Right" />
-                            <Label Style="{StaticResource Labels}" Margin="-10,0,0,0" Content="%" HorizontalAlignment="Left" />
-                        </StackPanel>
-                    </StackPanel>
-                    <Slider VerticalAlignment="Center" Grid.Column="2" Width="100" Maximum="100" Minimum="0" Value="{Binding Mix}"/>
-                    <StackPanel Grid.Column="3" HorizontalAlignment="Left">
-                        <Label Style="{StaticResource Labels}" Content="{DynamicResource static}"/>
-                        <StackPanel Margin="0,-12,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Label Style="{StaticResource Labels}" Content="{Binding Mix}"/>
-                            <Label Style="{StaticResource Labels}" Margin="-10,0,0,0" Content="%" HorizontalAlignment="Left" />
-                        </StackPanel>
-                    </StackPanel>
-                    <xctk:DropDownButton Grid.Column="4" x:Name="_dropDownButton" Background="LightGray" Foreground="Black" Width="120" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <xctk:DropDownButton.Content>
-                            <TextBlock Text="{DynamicResource color}" FontFamily="Sherif" FontWeight="DemiBold" Padding="0,2,0,0"/>
-                        </xctk:DropDownButton.Content>
-                        <xctk:DropDownButton.DropDownContent>
-                            <StackPanel>
-                                <xctk:ColorCanvas UsingAlphaChannel="False" R="{Binding Red,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" G="{Binding Green,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" B="{Binding Blue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                                <Button Margin="7" Height="30" Click="Button_Click">OK</Button>
-                            </StackPanel>
-                        </xctk:DropDownButton.DropDownContent>
-                    </xctk:DropDownButton>
-                </Grid>
-                <Separator Grid.Row="3" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
-                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Style="{StaticResource Labels}" Content="{DynamicResource first}"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <RadioButton Grid.Row="0" Grid.Column="0" Name="TL" GroupName="position" Margin="2" IsChecked="{Binding TopLeft}" />
-                            <RadioButton Grid.Row="0" Grid.Column="1" Name="TR" GroupName="position" Margin="2" IsChecked="{Binding TopRight}" />
-                            <RadioButton Grid.Row="1" Grid.Column="0" Name="BL" GroupName="position" Margin="2" IsChecked="{Binding BotLeft}" />
-                            <RadioButton Grid.Row="1" Grid.Column="1" Name="BR" GroupName="position" Margin="2" IsChecked="{Binding BotRight}" />
-                        </Grid>
-                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                            <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Margin="0,2,5,3" Content="↕" FontSize="18"/>
-                            <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Width="50" Padding="0,4,0,0" VerticalAlignment="Center" TextAlignment="Center" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
-                        </StackPanel>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                        <Label Style="{StaticResource Labels}" Content="{DynamicResource direction}" />
-                        <CheckBox Style="{StaticResource ToggleSwitchCCC}" Margin="5,0,0,0" IsChecked="{Binding Clockwise}" />
-                    </StackPanel>
-                </StackPanel>
-                <Separator Grid.Row="5" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
-                <Grid Grid.Row="6">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="5*"/>
-                        <ColumnDefinition Width="4*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource LPF}" />
-                    <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource BGF}" />
-                    <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="Turbo :" />
-                    <Label Grid.Row="4" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource KBL}" />
-                    <Viewbox Grid.Row="0" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
-                        <CheckBox Padding="3" IsChecked="{Binding LPF}"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="1" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
-                        <CheckBox Padding="3" IsChecked="{Binding BGF}"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="2" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
-                        <CheckBox Padding="3" IsChecked="{Binding Turbo}"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
-                        <CheckBox Padding="3" IsChecked="{Binding KeyboardLight}"/>
-                    </Viewbox>
-                    <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding PlayPause}"/>
-                </Grid>
+              </Viewbox>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="CaptionButtonStyle" TargetType="Button">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid x:Name="LayoutRoot" Background="Transparent" MinWidth="45">
+              <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                     Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased"  TextOptions.TextFormattingMode="Display"/>
             </Grid>
-        </Grid>
-        <Grid Grid.Row="2" Background="#B4000000" Visibility="{Binding StaticConnected, Converter={StaticResource b2v}, ConverterParameter=false}">
-            <Viewbox Margin="100">
-                <Control Style="{StaticResource BusyAnimationStyle}" Margin="3,0,-3,0"/>
-            </Viewbox>
-        </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="LayoutRoot" Property="Background" Value="#DD454545"/>
+                <Setter TargetName="txt" Property="Foreground" Value="#000000"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="MinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+      <Setter Property="Content" Value="&#xE949;"/>
+    </Style>
+    <Style x:Key="MaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+      <Setter Property="Content" Value="&#xE739;"/>
+    </Style>
+    <Style x:Key="RestoreButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+      <Setter Property="Content" Value="&#xE923;"/>
+    </Style>
+    <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+      <Setter Property="Content" Value="&#xE106;"/>
+    </Style>
+    <conv:Not x:Key="Not"/>
+    <conv:BoolToVisib x:Key="b2v"/>
+    <conv:PercentInvert x:Key="percentInv"/>
+
+    <System:Double  x:Key="ToggleSwitchCarageWidth">30</System:Double>
+    <System:Double  x:Key="ToggleSwitchWidth">60</System:Double>
+    <System:Double  x:Key="ToggleSwitchHeight">20</System:Double>
+    <System:Double  x:Key="ToggleSwitchBigCarageWidth">90</System:Double>
+    <System:Double  x:Key="ToggleSwitchBigWidth">180</System:Double>
+    <System:Double  x:Key="ToggleSwitcBighHeight">60</System:Double>
+    <Thickness      x:Key="ToggleSwitchBorderThickness">1</Thickness>
+    <CornerRadius   x:Key="ToggleSwitchCornerRadius">0</CornerRadius>
+    <LinearGradientBrush x:Key="CheckedBlue" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#FF285AB3" Offset="0" />
+      <GradientStop Color="#FF285AB3" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CheckedGreen" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#BB3A833A" Offset="0" />
+      <GradientStop Color="#BB3A833A" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CheckedRed" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#FFB44A4A" Offset="0" />
+      <GradientStop Color="#FFB44A4A" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CheckedGrey" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#FFE5E5E5" Offset="0" />
+      <GradientStop Color="#FFFEFEFE" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#FFCA6A13" Offset="0" />
+      <GradientStop Color="#FFF67D0C" Offset="0.2" />
+      <GradientStop Color="#FFFE7F0C" Offset="0.2" />
+      <GradientStop Color="#FFFA8E12" Offset="0.5" />
+      <GradientStop Color="#FFFF981D" Offset="0.5" />
+      <GradientStop Color="#FFFCBC5A" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="BackGroundBorder" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#FFBDBDBD" Offset="0" />
+      <GradientStop Color="#FFE7E7E7" Offset="0.1" />
+      <GradientStop Color="#FFF3F3F3" Offset="0.5" />
+      <GradientStop Color="#FFFCFCFC" Offset="0.5" />
+      <GradientStop Color="#FFFEFEFE" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Carage" EndPoint="0,1" StartPoint="0,0">
+      <GradientStop Color="#FFF0F0F0" Offset="0" />
+      <GradientStop Color="#FFFBFBFB" Offset="1" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="RegularBorder" Color="#FF737373" />
+    <SolidColorBrush x:Key="DarkerBorder" Color="#FF535353" />
+    <SolidColorBrush x:Key="CheckedOrangeBorder" Color="#BB8E4A1B" />
+    <SolidColorBrush x:Key="CheckedRedBorder" Color="#BB743814" />
+    <SolidColorBrush x:Key="CheckedGreenBorder" Color="#BB147438" />
+    <SolidColorBrush x:Key="CheckedBlueBorder" Color="#BB143874" />
+    <SolidColorBrush x:Key="EasyGrey" Color="#DDFFFFFF" />
+    <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
+      <Border Background="{TemplateBinding Background}"
+  x:Name="Bd" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" BorderThickness="1" BorderBrush="{StaticResource RegularBorder}" >
+        <ScrollViewer x:Name="PART_ContentHost"/>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsEnabled" Value="True">
+          <Setter Property="Background" Value="{StaticResource CheckedGrey}" TargetName="Bd"/>
+          <Setter Property="Foreground" Value="Black"/>
+        </Trigger>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="Background" Value="#FFB1C2D3" TargetName="Bd"/>
+          <Setter Property="Foreground" Value="Black"/>
+        </Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style x:Key="ButtonRoundCorner" TargetType="{x:Type Button}">
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Padding" Value="1"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type Button}">
+            <Grid x:Name="grid">
+              <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource DarkerBorder}" BorderThickness="1" Background="{StaticResource Carage}">
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="Bold">
+                </ContentPresenter>
+              </Border>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ToggleSwitchPlayPause" TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type CheckBox}">
+            <ControlTemplate.Resources>
+              <Storyboard x:Key="OnChecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+              <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchBigCarageWidth}" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+            </ControlTemplate.Resources>
+            <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchBigWidth}">
+              <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+              <Grid ToolTip="Play - Pause">
+                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedGreen}" BorderBrush="{StaticResource CheckedGreenBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitcBighHeight}" Width="{StaticResource ToggleSwitchBigWidth}">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition />
+                      <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="0,0,0,0.4"   Padding="0,0,0,4"  x:Name="Off" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="▌▌" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
+                    <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="▶" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                  </Grid>
+                </Border>
+                <Border HorizontalAlignment="Left" BorderBrush="{StaticResource RegularBorder}" x:Name="slider" Width="{StaticResource ToggleSwitchBigCarageWidth}" Height="{StaticResource ToggleSwitcBighHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                  <Border.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                      <SkewTransform AngleX="0" AngleY="0" />
+                      <RotateTransform Angle="0" />
+                      <TranslateTransform X="0" Y="0" />
+                    </TransformGroup>
+                  </Border.RenderTransform>
+                  <Border Background="{StaticResource Carage}"/>
+                </Border>
+              </Grid>
+            </DockPanel>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Trigger.ExitActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                </Trigger.EnterActions>
+                <!-- Change Orange or Blue color here -->
+                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedRed}" />
+                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedRedBorder}" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <!-- ToDo: Add Style for Isenabled == False -->
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ToggleSwitchOnOff_blue" TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type CheckBox}">
+            <ControlTemplate.Resources>
+              <Storyboard x:Key="OnChecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+              <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+            </ControlTemplate.Resources>
+            <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
+              <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+              <Grid>
+                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedRed}" BorderBrush="{StaticResource CheckedRedBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition />
+                      <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Ellipse x:Name="Off" Width="10" Height="10" Stroke="white" StrokeThickness="1.5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="10" Stroke="white" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Grid>
+                </Border>
+                <Border HorizontalAlignment="Left" BorderBrush="{StaticResource RegularBorder}" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                  <Border.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                      <SkewTransform AngleX="0" AngleY="0" />
+                      <RotateTransform Angle="0" />
+                      <TranslateTransform X="0" Y="0" />
+                    </TransformGroup>
+                  </Border.RenderTransform>
+                  <Border Background="{StaticResource Carage}"/>
+                </Border>
+              </Grid>
+            </DockPanel>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Trigger.ExitActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                </Trigger.EnterActions>
+                <Setter TargetName="On" Property="Stroke" Value="White" />
+                <Setter TargetName="Off" Property="Stroke" Value="White" />
+                <!-- Change Orange or Blue color here -->
+                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedGreen}" />
+                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedGreenBorder}" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <!-- ToDo: Add Style for Isenabled == False -->
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="Labels" TargetType="Label">
+      <Setter Property="FontFamily"           Value="Sherif"/>
+      <Setter Property="Foreground"           Value="{StaticResource EasyGrey}" />
+      <Setter Property="Margin"               Value="2"/>
+      <Setter Property="HorizontalAlignment"  Value="Center"/>
+      <Setter Property="VerticalAlignment"    Value="Center"/>
+      <Setter Property="FontWeight"    Value="DemiBold"/>
+    </Style>
+    <Style x:Key="ToggleSwitch16_21_blue" TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type CheckBox}">
+            <ControlTemplate.Resources>
+              <Storyboard x:Key="OnChecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+              <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <EasingDoubleKeyFrame KeyTime="0:0:0.06" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+            </ControlTemplate.Resources>
+            <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
+              <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+              <Grid>
+                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition />
+                      <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="21/9" FontSize="10" Foreground="White"/>
+                    <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="16/9" FontSize="10" Foreground="White"/>
+                  </Grid>
+                </Border>
+                <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                  <Border.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                      <SkewTransform AngleX="0" AngleY="0" />
+                      <RotateTransform Angle="0" />
+                      <TranslateTransform X="0" Y="0" />
+                    </TransformGroup>
+                  </Border.RenderTransform>
+                  <Border Background="{StaticResource Carage}"/>
+                </Border>
+              </Grid>
+            </DockPanel>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Trigger.ExitActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                </Trigger.EnterActions>
+                <!-- Change Orange or Blue color here -->
+                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
+                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <!-- ToDo: Add Style for Isenabled == False -->
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ToggleSwitchCCC" TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type CheckBox}">
+            <ControlTemplate.Resources>
+              <Storyboard x:Key="OnChecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:00.0500000" Value="{StaticResource ToggleSwitchCarageWidth}" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+              <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                  <EasingDoubleKeyFrame KeyTime="0:0:0.06" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard>
+            </ControlTemplate.Resources>
+            <DockPanel x:Name="dockPanel" Width="{StaticResource ToggleSwitchWidth}">
+              <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+              <Grid>
+                <Border x:Name="BackgroundBorder" Background="{StaticResource CheckedBlue}" BorderBrush="{StaticResource CheckedBlueBorder}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" Height="{StaticResource ToggleSwitchHeight}" Width="{StaticResource ToggleSwitchWidth}">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition />
+                      <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="0,0,0,0.4"   x:Name="Off" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Text="↻"  FontSize="18" Foreground="White" Padding="0,0,0,4" />
+                    <TextBlock Margin="0,0,0.8,0.5" x:Name="On"  HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Text="↺"  FontSize="18" Foreground="White" Padding="1.5,0,0,4"/>
+                  </Grid>
+                </Border>
+                <Border HorizontalAlignment="Left"  BorderBrush="#FF636363" x:Name="slider" Width="{StaticResource ToggleSwitchCarageWidth}" Height="{StaticResource ToggleSwitchHeight}" BorderThickness="{StaticResource ToggleSwitchBorderThickness}" CornerRadius="{StaticResource ToggleSwitchCornerRadius}" RenderTransformOrigin="0.5,0.5" Margin="0">
+                  <Border.RenderTransform>
+                    <TransformGroup>
+                      <ScaleTransform ScaleX="1" ScaleY="1" />
+                      <SkewTransform AngleX="0" AngleY="0" />
+                      <RotateTransform Angle="0" />
+                      <TranslateTransform X="0" Y="0" />
+                    </TransformGroup>
+                  </Border.RenderTransform>
+                  <Border Background="{StaticResource Carage}"/>
+                </Border>
+              </Grid>
+            </DockPanel>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Trigger.ExitActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                  <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                </Trigger.EnterActions>
+                <!-- Change Orange or Blue color here -->
+                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedBlue}" />
+                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedBlueBorder}" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <!-- ToDo: Add Style for Isenabled == False -->
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="{x:Type TabItem}">
+      <Setter Property="Visibility" Value="Visible" />
+      <Setter Property="Foreground" Value="{StaticResource EasyGrey}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type TabItem}">
+            <Grid>
+              <Border Name="Border" Background="#33000000" BorderBrush="#FFD4B300" Margin="0,0,3.2,0" Padding="2,0,2,2" BorderThickness="2" CornerRadius="1,1,1,1" Grid.Column="0" >
+                <ContentPresenter x:Name="ContentSite" VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="2" />
+              </Border>
+              <Border HorizontalAlignment="Stretch" Grid.Column="1" />
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="True">
+                <!--<Setter Property="Foreground" Value="Gold" />-->
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="CornerRadius" Value="1,1,1,1" TargetName="Border" />
+              </Trigger>
+              <Trigger Property="IsSelected" Value="False">
+                <Setter TargetName="Border" Property="BorderBrush" Value="#8EFFFFFF" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="{x:Type TabControl}" >
+      <Setter Property="OverridesDefaultStyle" Value="True" />
+      <Setter Property="SnapsToDevicePixels" Value="True" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type TabControl}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <TabPanel x:Name="HeaderPanel" Grid.Row="0" Panel.ZIndex="1" Margin="0,0,4,3" IsItemsHost="True" Height="25">
+              </TabPanel>
+              <Border x:Name="Border" Grid.Row="1" BorderThickness="2" CornerRadius="1,1,1,1" BorderBrush="#8EFFFFFF" Background="Transparent">
+                <Grid>
+                  <Border CornerRadius="2" Margin="3,3,0,0">
+                    <ContentPresenter x:Name="PART_SelectedContentHost" Margin="1" ContentSource="SelectedContent"/>
+                  </Border>
+                </Grid>
+              </Border>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+  <WindowChrome.WindowChrome>
+    <WindowChrome CaptionHeight="34" />
+  </WindowChrome.WindowChrome>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height ="35"/>
+      <RowDefinition Height ="0.5"/>
+      <RowDefinition Height ="20*"/>
+    </Grid.RowDefinitions>
+    <!--WindowChrome-->
+    <Grid Grid.Row="0" Background="#FF101010">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto" MaxWidth="285"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="60"/>
+        <ColumnDefinition Width="12"/>
+        <ColumnDefinition Width="60"/>
+        <ColumnDefinition Width="60"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Margin="12,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Tittle, UpdateSourceTrigger=PropertyChanged}" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="14"/>
+      <Viewbox Grid.Column="2" Visibility="{Binding Hotstop, Converter={StaticResource b2v}}">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="("/>
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFDD4444" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="Hot" Margin="2,0,1,0"/>
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="stop" Margin="0,0,2,0"/>
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="15" Text=")"/>
+        </StackPanel>
+      </Viewbox>
+      <Button Grid.Column="4" Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+      <!--<Button Grid.Column="3" x:Name="RestoreButton" Visibility="Collapsed" Style="{StaticResource RestoreButtonStyle}" MinWidth="50" Width="50" Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" />-->
+      <!--<Button Grid.Column="3" Grid.RowSpan="3" x:Name="MaximizeButton" Visibility="Visible" Style="{StaticResource MaximizeButtonStyle}" Command="{x:Static SystemCommands.MaximizeWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" />-->
+      <Button Grid.Column="5" Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
     </Grid>
+    <Grid Grid.Row="1" Background="White"/>
+    <!--App content-->
+    <Grid Grid.Row="2" x:Name="AppArea" Background="#F9101010">
+      <Grid Margin="0,15,0,8">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="30"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="20,-4,0,4" Visibility="{Binding Screen2Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" >
+            <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screenFull}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding ScreenFull}" />
+            <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen1}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen1}" />
+            <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen2}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen2}" />
+            <RadioButton Margin="2" GroupName ="screen" VerticalAlignment="Top" Content="{DynamicResource screen3}" Foreground="{StaticResource EasyGrey}" IsChecked="{Binding Screen3}" Visibility="{Binding Screen3Visible, Converter={StaticResource b2v}, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+          <Label Grid.Column="2" Grid.Row="0" Style="{StaticResource Labels}" Content="{DynamicResource x}" HorizontalAlignment="Right"/>
+          <Label Grid.Column="2" Grid.Row="1" Style="{StaticResource Labels}" Content="{DynamicResource y}" HorizontalAlignment="Right"/>
+          <TextBox Grid.Column="3" Grid.Row="0" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold"  Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
+          <TextBox Grid.Column="3" Grid.Row="1" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" Text="{Binding Height,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
+          <Label Grid.Column="5" Grid.Row="0" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource corners}"/>
+          <Label Grid.Column="5" Grid.Row="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource shifting}"/>
+          <TextBox Grid.Column="6" Grid.Row="0" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding Corner,      UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
+          <TextBox Grid.Column="6" Grid.Row="1" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
+          <Label Grid.Column="2" Grid.Row="7" Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource ratio}"/>
+          <CheckBox Grid.Column="3" Grid.Row="7" Style="{StaticResource ToggleSwitch16_21_blue}" IsChecked="{Binding Ratio, Converter={StaticResource Not}}"/>
+          <StackPanel Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="7" Orientation="Horizontal" Margin="15,0,0,0">
+            <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource contrast}"/>
+            <Slider VerticalAlignment="Center" Value="{Binding Contrast}" Width="80" HorizontalAlignment="Stretch" Maximum="120"/>
+            <Label VerticalAlignment="Center" Content="{Binding Contrast}" Foreground="{StaticResource EasyGrey}" FontWeight="Bold"/>
+          </StackPanel>
+        </Grid>
+        <Separator Grid.Row="1" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
+        <Grid Grid.Row="2">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="15"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+            <Label Style="{StaticResource Labels}" Content="Ambiant"/>
+            <StackPanel Margin="0,-12,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+              <Label Style="{StaticResource Labels}" Content="{Binding Mix, Converter={StaticResource percentInv}}" HorizontalAlignment="Right" />
+              <Label Style="{StaticResource Labels}" Margin="-10,0,0,0" Content="%" HorizontalAlignment="Left" />
+            </StackPanel>
+          </StackPanel>
+          <Slider VerticalAlignment="Center" Grid.Column="2" Width="100" Maximum="100" Minimum="0" Value="{Binding Mix}"/>
+          <StackPanel Grid.Column="3" HorizontalAlignment="Left">
+            <Label Style="{StaticResource Labels}" Content="{DynamicResource static}"/>
+            <StackPanel Margin="0,-12,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+              <Label Style="{StaticResource Labels}" Content="{Binding Mix}"/>
+              <Label Style="{StaticResource Labels}" Margin="-10,0,0,0" Content="%" HorizontalAlignment="Left" />
+            </StackPanel>
+          </StackPanel>
+          <xctk:DropDownButton Grid.Column="4" x:Name="_dropDownButton" Background="LightGray" Foreground="Black" Width="120" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <xctk:DropDownButton.Content>
+              <TextBlock Text="{DynamicResource color}" FontFamily="Sherif" FontWeight="DemiBold" Padding="0,2,0,0"/>
+            </xctk:DropDownButton.Content>
+            <xctk:DropDownButton.DropDownContent>
+              <StackPanel>
+                <xctk:ColorCanvas UsingAlphaChannel="False" R="{Binding Red,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" G="{Binding Green,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" B="{Binding Blue,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Margin="7" Height="30" Click="Button_Click">OK</Button>
+              </StackPanel>
+            </xctk:DropDownButton.DropDownContent>
+          </xctk:DropDownButton>
+        </Grid>
+        <Separator Grid.Row="3" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
+          <StackPanel Orientation="Horizontal">
+            <Label Style="{StaticResource Labels}" Content="{DynamicResource first}"/>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <RadioButton Grid.Row="0" Grid.Column="0" Name="TL" GroupName="position" Margin="2" IsChecked="{Binding TopLeft}" />
+              <RadioButton Grid.Row="0" Grid.Column="1" Name="TR" GroupName="position" Margin="2" IsChecked="{Binding TopRight}" />
+              <RadioButton Grid.Row="1" Grid.Column="0" Name="BL" GroupName="position" Margin="2" IsChecked="{Binding BotLeft}" />
+              <RadioButton Grid.Row="1" Grid.Column="1" Name="BR" GroupName="position" Margin="2" IsChecked="{Binding BotRight}" />
+            </Grid>
+            <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+              <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Margin="0,2,5,3" Content="↕" FontSize="18"/>
+              <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" Width="50" Padding="0,4,0,0" VerticalAlignment="Center" TextAlignment="Center" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding UpDown,UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
+            </StackPanel>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+            <Label Style="{StaticResource Labels}" Content="{DynamicResource direction}" />
+            <CheckBox Style="{StaticResource ToggleSwitchCCC}" Margin="5,0,0,0" IsChecked="{Binding Clockwise}" />
+          </StackPanel>
+        </StackPanel>
+        <Separator Grid.Row="5" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
+        <Grid Grid.Row="6">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource LPF}" />
+          <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource BGF}" />
+          <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="Turbo :" />
+          <Label Grid.Row="4" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource KBL}" />
+          <Viewbox Grid.Row="0" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
+            <CheckBox Padding="3" IsChecked="{Binding LPF}"/>
+          </Viewbox>
+          <Viewbox Grid.Row="1" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
+            <CheckBox Padding="3" IsChecked="{Binding BGF}"/>
+          </Viewbox>
+          <Viewbox Grid.Row="2" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
+            <CheckBox Padding="3" IsChecked="{Binding Turbo}"/>
+          </Viewbox>
+          <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
+            <CheckBox Padding="3" IsChecked="{Binding KeyboardLight}"/>
+          </Viewbox>
+          <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="10" Style="{StaticResource ToggleSwitchPlayPause}" IsChecked="{Binding PlayPause}"/>
+        </Grid>
+      </Grid>
+    </Grid>
+    <Grid Grid.Row="2" Background="#B4000000" Visibility="{Binding StaticConnected, Converter={StaticResource b2v}, ConverterParameter=false}">
+      <Viewbox Margin="100">
+        <Control Style="{StaticResource BusyAnimationStyle}" Margin="3,0,-3,0"/>
+      </Viewbox>
+    </Grid>
+  </Grid>
 </Window>
