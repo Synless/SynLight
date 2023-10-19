@@ -6,9 +6,6 @@ using System.Threading;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
-using System.Windows.Input;
-using System.Windows.Forms;
-using System.Linq;
 
 namespace SynLight.Model
 {
@@ -16,82 +13,92 @@ namespace SynLight.Model
     {
         public Process_SynLight()
         {
-            processFindESP = new Thread(FindESP);
-            processMainLoop = new Thread(CheckMethod);
-            processFindESP.Start();
+            processFindArduino = new Thread(FindArduinoProcess);
+            processMainLoop = new Thread(CheckMethodProcess);
+            processFindArduino.Start();
         }
 
-        private void FindESP()
+        const int numberOfTries = 10;
+        private void FindArduinoProcess()
         {
             while (!StaticConnected)
             {
-                //If not connected, try to reconnect
-                Tittle = "SynLight - Trying to connect ...";
-                FindNodeMCU();
-                Thread.Sleep(200);
+                Tittle = "SynLight - " + (useComPort ? "[COM]" : "[WIFI]") + " Trying to connect ...";
+                
+                bool found = false;
+
+                for (int i = 0; i < numberOfTries; i++)
+                {
+                    found = useComPort ? arduinoSerial.Setup() : arduinoUDP.Setup();
+
+                    if (found)
+                    {
+                        StaticConnected = true;
+                        return;
+                    }
+                }
+
+                if (!found)
+                {
+                    //MessageBox.Show("Could not find any Arduino on any " + (useComPort ? "COM port" : "IP address"));
+                    useComPort = !useComPort;
+                }
+                
+                Thread.Sleep(2000);
             }
+
             CanPlayPause = true;
             PlayPause = true;
             processMainLoop.Start();
         }
 
         #region Privates methodes
-        private double game_coef = 1.0;
-        private void CheckMethod()
+        private void CheckMethodProcess()
         {
             Stopwatch watch;
+
             while (PlayPause)
             {
-                //Start measuring how much time it takes to complete the task from here ... [1]
                 watch = Stopwatch.StartNew();
 
-                if (Mix < 100 || true) //Lets not bother ...
-                {
-                    Tick();
-                    Thread.Sleep((int)(difference * game_coef));
+                Tick();
 
-                    if (Mix == 100)
-                        Thread.Sleep((int)(difference * game_coef));
-                }
-                else if (Mix == 100)
-                {
-                    //Only send the static color payload once in a while, or if the selected color has changed
-                    for (int n = 0; (n < 200) && (!staticColorChanged); n++)
-                        Thread.Sleep(1);
+                Thread.Sleep(difference);
 
-                    SingleColor();
-                }
+                if (Mix == 100)
+                    Thread.Sleep(500);
 
-                GC.Collect(); //Saves a couple MB
+                GC.Collect();
 
-                //[1] ... to here
                 watch.Stop();
+
                 int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+
                 try
                 {
-                    if (!UseComPort)
+                    if (useComPort)
                     {
-                        if (nodeMCU != null)
+                        if (StaticConnected)
                         {
-                            Tittle = "Synlight - " + nodeMCU.ToString() + " - " + Hz.ToString() + "Hz";
+                            Tittle = "Synlight - " + arduinoSerial.PortName + " - " + Hz.ToString() + "Hz";
                         }
                     }
                     else
                     {
-                        if (StaticConnected)
+                        if (arduinoUDP.EndPoint != null)
                         {
-                            Tittle = "Synlight - " + nodeMCU_com.PortName + " - " + Hz.ToString() + "Hz";
+                            Tittle = "Synlight - " + arduinoUDP.IPAddress.ToString() + " - " + Hz.ToString() + "Hz";
                         }
                     }
                 }
                 catch
                 {
-
                 }
             }
+
             //Immediately turns of the LEDS after pressing the Stop button
             SendPayload(PayloadType.fixedColor, 0);
-            processMainLoop = new Thread(CheckMethod);
+            processMainLoop = new Thread(CheckMethodProcess);
 
             Tittle = "Synlight - Paused";
         }
@@ -110,8 +117,7 @@ namespace SynLight.Model
 
             GetScreenShotedges();
 
-            if (Contrast > 0)
-                scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, (float)Contrast);
+            if (Contrast > 0) { scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, Contrast); }
 
             ProcessScreenShot();
 
@@ -249,7 +255,7 @@ namespace SynLight.Model
                     scaledBmpScreenshot.SetPixel(Math.Max(0, Math.Min(n, scaledBmpScreenshot.Width - 1)), 0, scalededgeTop.GetPixel(n, 0));
                 }
 
-                //Capturing the very first frame in various formats
+                //Capturing the very first frame for debugging purpose
                 if (debug)
                 {
                     try
@@ -321,7 +327,7 @@ namespace SynLight.Model
             byteToSend = new List<byte>();
             int subCorner = Math.Max(0, _Corner - 1);
             bool processedHeight = false;
-            
+
             if (TopLeft)
             {
                 for (int y = subCorner; y < scaledBmpScreenshot.Height - 1 - subCorner; y++)
@@ -451,16 +457,13 @@ namespace SynLight.Model
                 }
             }
 
-
-            if (Clockwise)
+            if (Clockwise) //Revert the array by chunks of 3 for clockwise setup
             {
                 int chunkSize = 3;
                 int numberOfChunks = byteToSend.Count / chunkSize;
 
-                // Create a new list to store the reversed RGB values
                 List<byte> reversedRgbValues = new List<byte>();
 
-                // Reverse each chunk of RGB values and add to the new list
                 for (int i = numberOfChunks - 1; i >= 0; i--)
                 {
                     for (int j = 0; j < chunkSize; j++)
@@ -472,43 +475,35 @@ namespace SynLight.Model
                 byteToSend = new List<byte>(reversedRgbValues);
             }
         }
-        private void SingleColor()
-        {
-            byteToSend = new List<byte>() { Red, Green, Blue };
-            staticColorChanged = false;
-            SendPayload(PayloadType.fixedColor, byteToSend);
-        }
-
-        #region Legacy
-        //Send
         private void Send()
         {
             newByteToSend = new List<byte>(0);
 
             if (LPF) //Low-pass filtering
             {
-                while (lastByteToSend.Count < byteToSend.Count)//In case X/Y increased
-                    lastByteToSend.Add(0);
+                while (lastByteToSend.Count < byteToSend.Count) { lastByteToSend.Add(0); }
 
                 int odd; //To correct the -1 error rounding
                 for (int n = 0; n < byteToSend.Count; n++)
                 {
                     odd = byteToSend[n] + lastByteToSend[n];
-                    if (odd % 2 != 0)
-                        odd++;
+                    if (odd % 2 != 0) { odd++; }
                     odd /= 2;
                     newByteToSend.Add((byte)odd);
                 }
                 lastByteToSend = new List<byte>(newByteToSend);
             }
             else
+            {
                 lastByteToSend = newByteToSend = byteToSend;
+            }
 
             if (UpDown != 0)
-                RotateArray();
-
-            if (UsingFlux) //Reducing the temperature of the colors depending on the time of the day
-                Flux();
+            {
+                List<byte> rotatedByteToSend = new List<byte>(newByteToSend);
+                for (int n = 0; n < newByteToSend.Count; n++) { rotatedByteToSend[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count)]; }
+                newByteToSend = new List<byte>(rotatedByteToSend);
+            }
 
             if (BGF)
             {
@@ -548,7 +543,6 @@ namespace SynLight.Model
             SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
 
         }
-
         //Difference
         private int difference = 0;
         private const int minDif = 100;
@@ -580,49 +574,30 @@ namespace SynLight.Model
         {
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }
-
-        //Rotate
-        private void RotateArray()
+        #endregion
+        protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
-            List<byte> byteToSend2 = new List<byte>(newByteToSend);
-
-            for (int n = 0; n < newByteToSend.Count; n++)
-                byteToSend2[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count)];
-
-            newByteToSend = new List<byte>(byteToSend2);
-        }
-
-        //Flux - Does not work as intended yet
-        private string s;
-        private byte b;
-        private int hours = 0, minutes = 0, totalMinutes = 0;
-        private DateTime now;
-        private double fluxRatio;
-        private void Flux()
-        {
-            now = DateTime.Now;
-            hours = (24 - now.Hour) - 1;
-            minutes = (60 - now.Minute) - 1;
-            totalMinutes = (minutes) + (hours * 60);
-
-            fluxRatio = (Math.Max(Math.Min(totalMinutes, 250.0), 0.0)) / 250.0;
-
-            for (int n = 0; n < byteToSend.Count - 2; n += 3)
+            if (useComPort)
             {
-                s = (newByteToSend[n] * ((1.5 + fluxRatio) / 2.5)).ToString().Replace('.', ',').Split(',')[0];
-                b = byte.Parse(s);
-                newByteToSend[n] = b;
-
-                s = (newByteToSend[n + 1] * ((0.6 + fluxRatio) / 1.6)).ToString().Replace('.', ',').Split(',')[0];
-                b = byte.Parse(s);
-                newByteToSend[n + 1] = b;
-
-                s = (newByteToSend[n + 2] * (fluxRatio / 1.2)).ToString().Replace('.', ',').Split(',')[0];
-                b = byte.Parse(s);
-                newByteToSend[n + 2] = b;
+                arduinoSerial.Send(plt, payload);
+            }
+            else
+            {
+                arduinoUDP.Send(plt, payload);
             }
         }
-        #endregion
-        #endregion
+        protected static void SendPayload(PayloadType plt, byte r = 0)
+        {
+            List<byte> payload = new List<byte> { r };
+
+            if (useComPort)
+            {
+                arduinoSerial.Send(plt, payload);
+            }
+            else
+            {
+                arduinoUDP.Send(plt, payload);
+            }
+        }
     }
 }

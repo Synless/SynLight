@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SynLight.Model.Arduino;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,7 +8,7 @@ using System.Net;
 
 namespace SynLight.Model
 {
-    public class Param_SynLight : AutoNodeMCU
+    public class Param_SynLight : ModelBase
     {
         #region variables
         public static readonly string param = "param.txt";
@@ -340,16 +341,16 @@ namespace SynLight.Model
             {
                 playPause = value;
                 System.Threading.Thread.Sleep(1);
-                if(playPause && !processMainLoop.IsAlive && !processFindESP.IsAlive)
+                if(playPause && !processMainLoop.IsAlive && !processFindArduino.IsAlive)
                 {
-                    if(UseComPort)
+                    if(useComPort)
                     {
                         processMainLoop.Start();
                     }
                     else
                     {
                         StaticConnected = false;
-                        processFindESP.Start();
+                        processFindArduino.Start();
                     }
                     debug = true;
                 }
@@ -491,6 +492,19 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Mix));
             }
         }
+        private bool staticConnected = false;
+        public bool StaticConnected
+        {
+            get
+            {
+                return staticConnected;
+            }
+            set
+            {
+                staticConnected = value;
+                OnPropertyChanged(nameof(StaticConnected));
+            }
+        }
         #endregion
 
         protected double A = 1.32;
@@ -532,14 +546,19 @@ namespace SynLight.Model
 
         protected PerformanceCounter cpuCounter;
         protected bool usePerformanceCounter = true;
-        protected System.Threading.Thread processFindESP;
+        protected System.Threading.Thread processFindArduino;
         protected System.Threading.Thread processMainLoop;
 
+
+        protected static Arduino_Serial arduinoSerial = new Arduino_Serial();
+        protected static Arduino_UDP arduinoUDP = new Arduino_UDP();
+        protected static bool useComPort = true;
         #endregion
 
         public Param_SynLight()
         {
             usePerformanceCounter = false;
+
             try
             {
                 new System.Threading.Thread(delegate ()
@@ -598,10 +617,17 @@ namespace SynLight.Model
                             }
                             else if(subLine[0] == "IP")
                             {
-                                nodeMCU = IPAddress.Parse(subLine[1]);
-                                endPoint = new IPEndPoint(nodeMCU, UDPPort);
-                                Tittle = "Synlight - " + nodeMCU.ToString() + " - " + subLine[1];
+                                arduinoUDP.IPAddress = IPAddress.Parse(subLine[1]);
+                                arduinoUDP.EndPoint = new IPEndPoint(arduinoUDP.IPAddress, Arduino_UDP.UDPPort);
+                                Tittle = "Synlight - " + arduinoUDP.IPAddress.ToString() + " - " + subLine[1];
                                 StaticConnected = true;
+                                useComPort = false;
+                            }
+                            else if (subLine[0] == "UDPPort")
+                            {
+                                Arduino_UDP.UDPPort = int.Parse(subLine[1]);
+                                StaticConnected = true;
+                                useComPort = true;
                             }
                             else if(subLine[0] == "X")
                             {
@@ -614,10 +640,6 @@ namespace SynLight.Model
                             else if(subLine[0] == "S")
                             {
                                 Shifting = int.Parse(subLine[1]);
-                            }
-                            else if(subLine[0] == "UDPPort")
-                            {
-                                UDPPort = int.Parse(subLine[1]);
                             }
                             else if(subLine[0] == "TL")
                             {
@@ -643,6 +665,18 @@ namespace SynLight.Model
                             {
                                 Clockwise = false;
                             }
+                            else if (subLine[0] == "CORNERS")
+                            {
+                                Corner = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "UPDOWN")
+                            {
+                                UpDown = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "CONTRAST")
+                            {
+                                Contrast = int.Parse(subLine[1]);
+                            }
                             else if(subLine[0] == "A")
                             {
                                 A = Convert.ToDouble(subLine[1]);
@@ -667,37 +701,14 @@ namespace SynLight.Model
                             {
                                 KeyboardLight = true;
                             }
-                            else if(subLine[0] == "CORNERS")
+                            else if(subLine[0] == "MOBILESHARING" && !useComPort)
                             {
-                                Corner = int.Parse(subLine[1]);
-                            }
-                            else if(subLine[0] == "UPDOWN")
-                            {
-                                UpDown = int.Parse(subLine[1]);
-                            }
-                            else if(subLine[0] == "CONTRAST")
-                            {
-                                Contrast = int.Parse(subLine[1]);
-                            }
-                            else if(subLine[0] == "MOBILESHARING")
-                            {
-                                if(!UseComPort)
-                                {
-                                    Startup.MobileHotstop();
-                                    Hotstop = true;
-                                }
+                                Startup.MobileHotstop();
+                                Hotstop = true;
                             }
                             else if(subLine[0] == "CLEANFILES")
                             {
                                 Startup.CleanFiles();
-                            }
-                            else if(subLine[0] == "FLUX")
-                            {
-                                UsingFlux = bool.Parse(subLine[1]);
-                            }
-                            else if(subLine[0] == "CONTRAST")
-                            {
-                                Contrast = Math.Max(0,Math.Min(120,int.Parse(subLine[1])));
                             }
                         }
                         catch{ }
@@ -730,14 +741,6 @@ namespace SynLight.Model
                 scannedArea = new Rectangle(0, 0, (int)System.Windows.SystemParameters.PrimaryScreenWidth, (int)System.Windows.SystemParameters.PrimaryScreenHeight);
                 Screen3Visible = false;
                 Screen2Visible = false;
-            }
-        }
-
-        public static void Close()
-        {
-            if(endPoint != null)
-            {
-                SendPayload(PayloadType.fixedColor, 0);
             }
         }
     }

@@ -8,7 +8,7 @@
 	xmlns:System="clr-namespace:System;assembly=mscorlib"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Closing="OnClose" StateChanged="OnStateChanged" IsVisibleChanged="OnIsVisibleChanged"
-	Width="440" Height="561" Topmost="True" MinWidth="440" MinHeight="561" MaxWidth="440" MaxHeight="561" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
+	Width="440" Height="541" Topmost="True" MinWidth="440" MinHeight="541" MaxWidth="440" MaxHeight="541" ResizeMode="NoResize" Icon="/SynLight;component/Images/SY.ico" Name="SynLightForm" BorderBrush="Black" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <local:Process_SynLight/>
     </Window.DataContext>
@@ -587,7 +587,7 @@
         <!--WindowChrome-->
         <Grid Grid.Row="0" Background="#FF101010">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MaxWidth="225"/>
+                <ColumnDefinition Width="auto" MaxWidth="285"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="12"/>
@@ -601,7 +601,7 @@
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFDD4444" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="Hot" Margin="2,0,1,0"/>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="13" Text="stop" Margin="0,0,2,0"/>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="15" Text=")"/>
-                </StackPanel>                 
+                </StackPanel>
             </Viewbox>
             <Button Grid.Column="4" Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
             <!--<Button Grid.Column="3" x:Name="RestoreButton" Visibility="Collapsed" Style="{StaticResource RestoreButtonStyle}" MinWidth="50" Width="50" Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" />-->
@@ -658,7 +658,7 @@
                         <Label Style="{StaticResource Labels}" HorizontalAlignment="Right" Content="{DynamicResource contrast}"/>
                         <Slider VerticalAlignment="Center" Value="{Binding Contrast}" Width="80" HorizontalAlignment="Stretch" Maximum="120"/>
                         <Label VerticalAlignment="Center" Content="{Binding Contrast}" Foreground="{StaticResource EasyGrey}" FontWeight="Bold"/>
-                    </StackPanel>                       
+                    </StackPanel>
                 </Grid>
                 <Separator Grid.Row="1" Margin="8" Foreground="#BBDBDBDB" Height="5"/>
                 <Grid Grid.Row="2">
@@ -737,14 +737,13 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="5*"/>
                         <ColumnDefinition Width="4*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource LPF}" />
                     <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource BGF}" />
                     <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="Turbo :" />
-                    <Label Grid.Row="3" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="F.lux :" />
                     <Label Grid.Row="4" Grid.Column="1" Style="{StaticResource Labels}" HorizontalAlignment="Right" Height="28" Margin="1" Content="{DynamicResource KBL}" />
                     <Viewbox Grid.Row="0" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
                         <CheckBox Padding="3" IsChecked="{Binding LPF}"/>
@@ -754,9 +753,6 @@
                     </Viewbox>
                     <Viewbox Grid.Row="2" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
                         <CheckBox Padding="3" IsChecked="{Binding Turbo}"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="3" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
-                        <CheckBox Padding="3" IsChecked="{Binding UsingFlux}"/>
                     </Viewbox>
                     <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
                         <CheckBox Padding="3" IsChecked="{Binding KeyboardLight}"/>
