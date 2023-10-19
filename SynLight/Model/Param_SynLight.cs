@@ -600,19 +600,18 @@ namespace SynLight.Model
                             else if(subLine[0] == "SCREEN1")
                             {
                                 screen1Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                //Is Min(24000) correct ?
                                 screen1Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                             }
                             else if(subLine[0] == "SCREEN2")
                             {
                                 screen2Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
+                                screen2Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                                 Screen2Visible = true;
                             }
                             else if(subLine[0] == "SCREEN3")
                             {
                                 screen3Size.Width = Math.Min(30720, Math.Max(800, int.Parse(subLine[1].Split(',')[0])));
-                                screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[0])));
+                                screen3Size.Height = Math.Min(17280, Math.Max(600, int.Parse(subLine[1].Split(',')[1])));
                                 Screen3Visible = true;
                             }
                             else if(subLine[0] == "IP")
@@ -623,11 +622,15 @@ namespace SynLight.Model
                                 StaticConnected = true;
                                 useComPort = false;
                             }
-                            else if (subLine[0] == "UDPPort")
+                            else if (subLine[0] == "UDPPORT")
                             {
                                 Arduino_UDP.UDPPort = int.Parse(subLine[1]);
-                                StaticConnected = true;
+                            }
+                            else if (subLine[0].StartsWith("COM"))
+                            {
+                                arduinoSerial.PortName = subLine[0];
                                 useComPort = true;
+                                staticConnected = true;
                             }
                             else if(subLine[0] == "X")
                             {

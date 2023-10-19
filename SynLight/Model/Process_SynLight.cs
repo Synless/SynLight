@@ -137,7 +137,7 @@ namespace SynLight.Model
             Send();
         }
 
-        private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Pasted from stackoverflow
+        private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Paste from stackoverflow
         {
             Value = (100.0f + Value) / 100.0f;
             Value *= Value;
@@ -543,6 +543,7 @@ namespace SynLight.Model
             SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
 
         }
+
         //Difference
         private int difference = 0;
         private const int minDif = 100;

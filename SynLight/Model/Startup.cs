@@ -57,7 +57,6 @@ namespace SynLight.Model
                     {
                     }
                 }
-
             }
 
             string procName = Process.GetCurrentProcess().ProcessName;
