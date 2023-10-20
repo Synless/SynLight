@@ -350,7 +350,13 @@ namespace SynLight.Model
                     else
                     {
                         StaticConnected = false;
-                        processFindArduino.Start();
+                        try
+                        {
+                            processFindArduino.Start();
+                        }
+                        catch
+                        {
+                        }
                     }
                     debug = true;
                 }
@@ -553,7 +559,7 @@ namespace SynLight.Model
 
         protected static Arduino_Serial arduinoSerial = new Arduino_Serial();
         protected static Arduino_UDP arduinoUDP = new Arduino_UDP();
-        protected static bool useComPort = true;
+        protected static bool useComPort = false;
         #endregion
 
         public Param_SynLight()

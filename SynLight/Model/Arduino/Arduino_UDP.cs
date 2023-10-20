@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 
 namespace SynLight.Model.Arduino
 {
@@ -64,28 +65,80 @@ namespace SynLight.Model.Arduino
             {
             }
         }
+
+        const int ipRange = 8;
+
+        static UdpClient udpClient = new UdpClient(UDPPort);
+        static int waitTime = 1;
         public override bool Setup()
         {
             byte[] ping = Encoding.ASCII.GetBytes(querry);
 
+            List<byte> ips = new List<byte>();
+
             byte[] currentIP = GetLocalIPAddress().GetAddressBytes();
 
-            Client.BeginReceive(new AsyncCallback(Recv), null);
+            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+            foreach (NetworkInterface networkInterface in networkInterfaces)
+            {
+                if (networkInterface.OperationalStatus == OperationalStatus.Up)
+                {
+                    IPInterfaceProperties ipProps = networkInterface.GetIPProperties();
+                    UnicastIPAddressInformationCollection ipAddresses = ipProps.UnicastAddresses;
+
+                    Console.Write($"IP addresses for {networkInterface.Name}:");
+                    foreach (UnicastIPAddressInformation ipAddress in ipAddresses)
+                    {
+                        ips.Add(ipAddress.Address.GetAddressBytes()[3]);
+                        Console.WriteLine(ipAddress.Address);
+                    }
+                }
+            }
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, UDPPort);
+                        byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
+
+                        string message = Encoding.ASCII.GetString(receiveBytes);
+
+                        Console.WriteLine($"Received from {remoteEndPoint.Address}:{remoteEndPoint.Port}: {message}");
+
+                        if(message.Contains(answer))
+                        {
+                            IPAddress = remoteEndPoint.Address;
+                            EndPoint = new IPEndPoint(IPAddress, UDPPort);
+                            setupSuccessful = true;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            });
 
             for (byte n = 2; n < 255; n++)
             {
-                if(n == currentIP[3])
+                if(ips.Contains(n))
                     continue;
 
-                endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], currentIP[2], n }), UDPPort);
-
+                endPoint = new IPEndPoint(new IPAddress(new byte[4] { currentIP[0], currentIP[1], ipRange, n }), UDPPort);
                 Send(PayloadType.ping, new List<byte>(ping));
 
-                System.Threading.Thread.Sleep(10);
+                System.Threading.Thread.Sleep(waitTime);
 
                 if(setupSuccessful)
                     break;
             }
+
+            if (!setupSuccessful)
+                waitTime = Math.Min(50, waitTime + 1);
 
             return setupSuccessful;
         }
@@ -99,17 +152,6 @@ namespace SynLight.Model.Arduino
             }
             catch
             {
-            }
-        }
-        private void Recv(IAsyncResult res)
-        {
-            endPoint = new IPEndPoint(IPAddress.Any, UDPPort);
-            byte[] received = Client.EndReceive(res, ref endPoint);
-            if (Encoding.UTF8.GetString(received).Contains(answer))
-            {
-                Client.BeginReceive(new AsyncCallback(Recv), null);
-                ipAddress = endPoint.Address;
-                setupSuccessful = true;
             }
         }
         public static IPAddress GetLocalIPAddress()
