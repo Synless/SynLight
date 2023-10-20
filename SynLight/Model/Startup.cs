@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management.Automation;
 using System.Threading;
 
 namespace SynLight.Model
@@ -15,26 +14,7 @@ namespace SynLight.Model
         /// </summary>
         public static void MobileHotstop()
         {
-            new Thread((ThreadStart)delegate
-            {
-                while(true)
-                {
-                    using (PowerShell PowerShellInstance = PowerShell.Create())
-                    {
-                        string psScript = "$connectionProfile = [Windows.Networking.Connectivity.NetworkInformation,Windows.Networking.Connectivity,ContentType=WindowsRuntime]::GetInternetConnectionProfile()\n$tetheringManager = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager,Windows.Networking.NetworkOperators,ContentType=WindowsRuntime]::CreateFromConnectionProfile($connectionProfile)\n$v1 = 25\n$v2 = 0\nwhile($tetheringManager.TetheringOperationalState -eq \"Off\")\n{\n$a = [\nWindows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()\nStart-Sleep -Seconds 0.5\necho $v2\n    $v2 = $v2 + 1\nif($v2 -le $v1)\n{\nbreak\n}\n}";
-                        //PowerShellInstance.AddScript("$a = [Windows.Networking.NetworkOperators.NetworkOperatorTetheringManager, Windows.Networking.NetworkOperators, ContentType = WindowsRuntime]::CreateFromConnectionProfile([Windows.Networking.Connectivity.NetworkInformation, Windows.Networking.Connectivity, ContentType = WindowsRuntime]::GetInternetConnectionProfile())\n$a.StartTetheringAsync()");
-                        PowerShellInstance.AddScript(psScript);
-                        IAsyncResult result = PowerShellInstance.BeginInvoke();
-                        while (result.IsCompleted == false)
-                        {
-                            Console.WriteLine("Waiting for pipeline to finish...");
-                            Thread.Sleep(5);
-                        }
-                        Console.WriteLine("Modile Hotstop started!");
-                    }
-                    Thread.Sleep(8000);
-                }
-            }).Start();
+            
         }
 
 

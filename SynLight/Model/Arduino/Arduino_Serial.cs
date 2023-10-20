@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -56,16 +57,29 @@ namespace SynLight.Model.Arduino
 
             if (allPorts.Length > 0)
             {
-                try
+                foreach(string portname in allPorts)
                 {
-                    //More code to be written here
-                    //Free pass for now
-                    PortName = allPorts[0];
-                    //Arduino.Open();
-                    setupSuccessful = true;
-                }
-                catch
-                {
+                    try
+                    {
+                        PortName = portname;
+
+                        Arduino.Open();
+
+                        Arduino.Write(querry);
+                        //Thread.Sleep(500);
+                        string tmp_answer = Arduino.ReadLine();
+
+                        Arduino.Close();
+
+                        if (tmp_answer.Contains(answer))
+                        {
+                            setupSuccessful = true;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 

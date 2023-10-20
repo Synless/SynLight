@@ -11,7 +11,7 @@ namespace SynLight.Model
     public class Param_SynLight : ModelBase
     {
         #region variables
-        public static readonly string param = "param.txt";
+        public const string param = "param.txt";
 
         #region getset
         private string tittle = "SynLight - Disconnected";
