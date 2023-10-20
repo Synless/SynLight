@@ -157,7 +157,7 @@ namespace SynLight.Model
             }
         }
 
-        private int width = 18;
+        private int width = 35;
         public int Width
         {
             get
@@ -176,7 +176,7 @@ namespace SynLight.Model
             }
         }
 
-        private int height = 12;
+        private int height = 22;
         public int Height
         {
             get
@@ -369,7 +369,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool lpf = false;
+        private bool lpf = true;
         public bool LPF
         {
             get
@@ -383,7 +383,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool bgf = false;
+        private bool bgf = true;
         public bool BGF
         {
             get
@@ -438,7 +438,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Blue));
             }
         }
-        private int contrast = 0;
+        private int contrast = 7;
         public int Contrast
         {
             get
@@ -461,13 +461,14 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(UsingFlux));
             }
         }
-        private bool turbo = false;
+        private bool turbo = true;
         public bool Turbo
         {
             get { return turbo; }
             set
             {
                 turbo = value;
+                arduinoSerial.isTurboEnabled = value;
                 OnPropertyChanged(nameof(Turbo));
             }
         }

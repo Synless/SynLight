@@ -34,11 +34,15 @@ namespace SynLight.Model
                     if (found)
                     {
                         StaticConnected = true;
-                        return;
+                        break;
                     }
                 }
 
-                if (!found)
+                if (found)
+                {
+                    break;
+                }
+                else
                 {
                     //MessageBox.Show("Could not find any Arduino on any " + (useComPort ? "COM port" : "IP address"));
                     useComPort = !useComPort;
@@ -569,7 +573,7 @@ namespace SynLight.Model
                 difference += (int)Math.Round(cpuCounter.NextValue());
 
             if (Turbo)
-                difference /= 20;
+                difference /= 5;
         }
         private double Map(double s, double a1, double a2, double b1, double b2)
         {

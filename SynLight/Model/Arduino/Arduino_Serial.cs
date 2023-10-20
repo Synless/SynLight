@@ -34,7 +34,7 @@ namespace SynLight.Model.Arduino
                 Arduino.BaudRate = value;
             }
         }
-
+        public bool isTurboEnabled = false;
 
         public Arduino_Serial() { }
 
@@ -81,7 +81,7 @@ namespace SynLight.Model.Arduino
                 Arduino.Write(data.ToArray(), 0, data.Count);
 
                 //To comment?
-                if (Arduino.IsOpen) { Arduino.Close(); }
+                if (Arduino.IsOpen && !isTurboEnabled) { Arduino.Close(); }
             }
             catch
             {
