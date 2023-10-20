@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace SynLight.Model.Arduino
 {
@@ -35,7 +29,7 @@ namespace SynLight.Model.Arduino
                 Arduino.BaudRate = value;
             }
         }
-        public bool isTurboEnabled = false;
+        public bool isTurboEnabled = true;
 
         public Arduino_Serial() { }
 
@@ -66,7 +60,7 @@ namespace SynLight.Model.Arduino
                         Arduino.Open();
 
                         Arduino.Write(querry);
-                        //Thread.Sleep(500);
+                        Thread.Sleep(100);
                         string tmp_answer = Arduino.ReadLine();
 
                         Arduino.Close();
@@ -94,7 +88,6 @@ namespace SynLight.Model.Arduino
 
                 Arduino.Write(data.ToArray(), 0, data.Count);
 
-                //To comment?
                 if (Arduino.IsOpen && !isTurboEnabled) { Arduino.Close(); }
             }
             catch
