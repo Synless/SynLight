@@ -17,8 +17,16 @@ namespace SynLight.Model
             processMainLoop = new Thread(CheckMethodProcess);
             processFindArduino.Start();
         }
+        ~Process_SynLight()
+        {
+            //Immediately turns of the LEDS after pressing the Stop button
+            for (int i = 0; i < newByteToSend.Count; i++)
+                newByteToSend[i] = 0;
 
-        const int numberOfTries = 10;
+            SendPayload(PayloadType.terminalPayload, newByteToSend);
+        }
+
+        const int numberOfTries = 2;
         private void FindArduinoProcess()
         {
             while (!StaticConnected)
@@ -101,10 +109,14 @@ namespace SynLight.Model
             }
 
             //Immediately turns of the LEDS after pressing the Stop button
-            SendPayload(PayloadType.fixedColor, 0);
-            processMainLoop = new Thread(CheckMethodProcess);
+            for (int i = 0; i < newByteToSend.Count; i++)
+                newByteToSend[i] = 0;
+            
+            SendPayload(PayloadType.terminalPayload, newByteToSend);
 
-            Tittle = "Synlight - Paused";
+
+            processMainLoop = new Thread(CheckMethodProcess);
+            Tittle = "Synlight - " + (useComPort ? arduinoSerial.PortName : arduinoUDP.IPAddress.ToString()) + " - Paused";
         }
 
         private int _Height;
@@ -481,7 +493,7 @@ namespace SynLight.Model
         }
         private void Send()
         {
-            newByteToSend = new List<byte>(0);
+            newByteToSend = new List<byte>(0);            
 
             if (LPF) //Low-pass filtering
             {
@@ -582,19 +594,6 @@ namespace SynLight.Model
         #endregion
         protected static void SendPayload(PayloadType plt, List<byte> payload)
         {
-            if (useComPort)
-            {
-                arduinoSerial.Send(plt, payload);
-            }
-            else
-            {
-                arduinoUDP.Send(plt, payload);
-            }
-        }
-        protected static void SendPayload(PayloadType plt, byte r = 0)
-        {
-            List<byte> payload = new List<byte> { r };
-
             if (useComPort)
             {
                 arduinoSerial.Send(plt, payload);

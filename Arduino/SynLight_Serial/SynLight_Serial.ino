@@ -33,8 +33,11 @@ void loop()
     Serial.readBytes(buffer, sizeof(buffer));
     Serial.read();
     
-    if(!serial_found && buffer[0] == 'p' && buffer[1] == 'i' && buffer[2] == 'n' && buffer[3] == 'g')        
+    if(buffer[0] == 'p' && buffer[1] == 'i' && buffer[2] == 'n' && buffer[3] == 'g')
+    {
         Serial.println("pong");
+        return;
+    }     
             
     found = false;
 
@@ -67,8 +70,8 @@ void loop()
         t3 = millis();
         if(found)
         {
-            br = max(0,min(maxBrightness,br+12));
-            setBrightness(br);
+            //br = max(0,min(maxBrightness,br+12));
+            setBrightness(maxBrightness);
         }
         else if(start_fade)
         {

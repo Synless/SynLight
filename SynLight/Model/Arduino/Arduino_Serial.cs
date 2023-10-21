@@ -31,7 +31,7 @@ namespace SynLight.Model.Arduino
         }
         public bool isTurboEnabled = true;
 
-        public Arduino_Serial() { }
+        public Arduino_Serial() { Arduino.BaudRate = 115200; }
 
         ~Arduino_Serial()
         {

@@ -69,7 +69,7 @@ namespace SynLight.Model.Arduino
         const int ipRange = 8;
 
         static UdpClient udpClient = new UdpClient(UDPPort);
-        static int waitTime = 1;
+        int waitTime = 1;
         public override bool Setup()
         {
             byte[] ping = Encoding.ASCII.GetBytes(querry);

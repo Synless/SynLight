@@ -256,7 +256,7 @@ namespace SynLight.Model
         {
             get
             {
-                return ratio;
+                return ratio; 
             }
             set
             {
@@ -266,8 +266,9 @@ namespace SynLight.Model
                 }
                 if(!ratio)
                 {
-                    double tmp = Height / A;
-                    Shifting = (int)(((double)Height / 2) - (tmp / 2) + B);
+                    double tmp = Height / AShift;
+                    double tmp_Height = (double)Height / 2;
+                    Shifting = (int)(tmp_Height - (tmp / 2) + BShift);
                 }
                 else
                 {
@@ -343,21 +344,7 @@ namespace SynLight.Model
                 System.Threading.Thread.Sleep(1);
                 if(playPause && !processMainLoop.IsAlive && !processFindArduino.IsAlive)
                 {
-                    if(useComPort)
-                    {
-                        processMainLoop.Start();
-                    }
-                    else
-                    {
-                        StaticConnected = false;
-                        try
-                        {
-                            processFindArduino.Start();
-                        }
-                        catch
-                        {
-                        }
-                    }
+                    processMainLoop.Start();
                     debug = true;
                 }
 
@@ -375,7 +362,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool lpf = true;
+        private bool lpf = false;
         public bool LPF
         {
             get
@@ -389,7 +376,7 @@ namespace SynLight.Model
             }
         }
 
-        private bool bgf = true;
+        private bool bgf = false;
         public bool BGF
         {
             get
@@ -444,7 +431,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Blue));
             }
         }
-        private int contrast = 7;
+        private int contrast = 0;
         public int Contrast
         {
             get
@@ -457,7 +444,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(Contrast));
             }
         }
-        private bool usingFlux = true;
+        private bool usingFlux = false;
         public bool UsingFlux
         {
             get { return usingFlux; }
@@ -467,7 +454,7 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(UsingFlux));
             }
         }
-        private bool turbo = true;
+        private bool turbo = false;
         public bool Turbo
         {
             get { return turbo; }
@@ -494,7 +481,7 @@ namespace SynLight.Model
             get { return mix; }
             set
             {
-                mix = value;
+                mix = Math.Max(0,Math.Min(100,value));
                 staticColorChanged = true;
                 OnPropertyChanged(nameof(Mix));
             }
@@ -514,8 +501,8 @@ namespace SynLight.Model
         }
         #endregion
 
-        protected double A = 1.32;
-        protected double B = 1;
+        protected double AShift = 1.32;
+        protected double BShift = 1;
         protected bool staticColorChanged = false;
         protected const int packetSize = 1200;
 
@@ -559,7 +546,7 @@ namespace SynLight.Model
 
         protected static Arduino_Serial arduinoSerial = new Arduino_Serial();
         protected static Arduino_UDP arduinoUDP = new Arduino_UDP();
-        protected static bool useComPort = false;
+        protected static bool useComPort = true;
         #endregion
 
         public Param_SynLight()
@@ -635,9 +622,19 @@ namespace SynLight.Model
                             }
                             else if (subLine[0].StartsWith("COM"))
                             {
-                                arduinoSerial.PortName = subLine[0];
-                                useComPort = true;
-                                staticConnected = true;
+                                try
+                                {
+                                    if(int.TryParse(subLine[0].Replace("COM",String.Empty), out int tmp))
+                                    {
+                                        arduinoSerial.PortName = subLine[0];
+                                        useComPort = true;
+                                        StaticConnected = true;
+                                    }
+                                }
+                                catch
+                                {
+
+                                }
                             }
                             else if(subLine[0] == "X")
                             {
@@ -647,9 +644,25 @@ namespace SynLight.Model
                             {
                                 Height = int.Parse(subLine[1]);
                             }
-                            else if(subLine[0] == "S")
+                            else if (subLine[0] == "S")
                             {
                                 Shifting = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "MIX")
+                            {
+                                Mix = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "RED")
+                            {
+                                Red = byte.Parse(Math.Max(0,Math.Min(255,(int.Parse(subLine[1])))).ToString());
+                            }
+                            else if (subLine[0] == "GREEN")
+                            {
+                                Green = byte.Parse(Math.Max(0, Math.Min(255, (int.Parse(subLine[1])))).ToString());
+                            }
+                            else if (subLine[0] == "BLUE")
+                            {
+                                Blue = byte.Parse(Math.Max(0, Math.Min(255, (int.Parse(subLine[1])))).ToString());
                             }
                             else if(subLine[0] == "TL")
                             {
@@ -689,11 +702,11 @@ namespace SynLight.Model
                             }
                             else if(subLine[0] == "A")
                             {
-                                A = Convert.ToDouble(subLine[1]);
+                                AShift = Convert.ToDouble(subLine[1].Replace(",", "."));
                             }
                             else if(subLine[0] == "B")
                             {
-                                B = Convert.ToDouble(subLine[1]);
+                                BShift = Convert.ToDouble(subLine[1].Replace(",","."));
                             }
                             else if(subLine[0] == "LPF")
                             {
