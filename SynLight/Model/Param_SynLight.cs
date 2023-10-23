@@ -702,11 +702,11 @@ namespace SynLight.Model
                             }
                             else if(subLine[0] == "A")
                             {
-                                AShift = Convert.ToDouble(subLine[1].Replace(",", "."));
+                                AShift = Convert.ToDouble(subLine[1].Replace(",", "."), CultureInfo.InvariantCulture);
                             }
                             else if(subLine[0] == "B")
                             {
-                                BShift = Convert.ToDouble(subLine[1].Replace(",","."));
+                                BShift = Convert.ToDouble(subLine[1].Replace(",","."), CultureInfo.InvariantCulture);
                             }
                             else if(subLine[0] == "LPF")
                             {
