@@ -96,6 +96,7 @@
     <Compile Include="Model\Arduino\Arduino.cs" />
     <Compile Include="Model\Arduino\Arduino_Serial.cs" />
     <Compile Include="Model\Arduino\Arduino_UDP.cs" />
+    <Compile Include="Model\Arduino\Arduino_UDP_manual.cs" />
     <Compile Include="Model\PayloadType.cs" />
     <Compile Include="Model\Startup.cs" />
     <Compile Include="Model\ModelBase.cs" />
@@ -154,9 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\SY.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\mobileHotspot.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">

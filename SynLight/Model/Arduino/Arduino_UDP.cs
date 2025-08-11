@@ -154,6 +154,21 @@ namespace SynLight.Model.Arduino
             {
             }
         }
+        
+        public static List<List<byte>> SplitBytes(List<byte> input, int splitNumber)
+        {
+            int chunkSize = 3 * splitNumber;
+            var result = new List<List<byte>>();
+
+            for (int i = 0; i < input.Count; i += chunkSize)
+            {
+                int currentChunkSize = Math.Min(chunkSize, input.Count - i);
+                List<byte> chunk = input.GetRange(i, currentChunkSize);
+                result.Add(chunk);
+            }
+
+            return result;
+        }
         public static IPAddress GetLocalIPAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());

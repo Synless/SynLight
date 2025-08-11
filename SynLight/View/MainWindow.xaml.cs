@@ -42,6 +42,8 @@ namespace SynLight.View
             return;
         }
 
+
+
         #region System tray
         void OnClose(object sender, CancelEventArgs args)
         {

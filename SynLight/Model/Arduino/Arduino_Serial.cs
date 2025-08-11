@@ -93,6 +93,5 @@ namespace SynLight.Model.Arduino
             catch
             {
             }
-        }
     }
 }

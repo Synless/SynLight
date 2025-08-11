@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net;
 
@@ -39,6 +40,20 @@ namespace SynLight.Model
             {
                 hotstop = value;
                 OnPropertyChanged(nameof(Hotstop));
+            }
+        }
+
+        private bool lantern = false;
+        public bool Lantern
+        {
+            get
+            {
+                return lantern;
+            }
+            set
+            {
+                lantern = value;
+                OnPropertyChanged(nameof(Lantern));
             }
         }
 
@@ -475,6 +490,16 @@ namespace SynLight.Model
                 OnPropertyChanged(nameof(KeyboardLight));
             }
         }
+        private bool neighborFilter = false;
+        public bool NeighborFilter
+        {
+            get { return neighborFilter; }
+            set
+            {
+                neighborFilter = value;
+                OnPropertyChanged(nameof(NeighborFilter));
+            }
+        }
         private int mix = 0;
         public int Mix
         {
@@ -546,6 +571,7 @@ namespace SynLight.Model
 
         protected static Arduino_Serial arduinoSerial = new Arduino_Serial();
         protected static Arduino_UDP arduinoUDP = new Arduino_UDP();
+        protected static Arduino_UDP_manual arduinoUDPManual = new Arduino_UDP_manual();
         protected static bool useComPort = true;
         #endregion
 
@@ -612,7 +638,6 @@ namespace SynLight.Model
                             {
                                 arduinoUDP.IPAddress = IPAddress.Parse(subLine[1]);
                                 arduinoUDP.EndPoint = new IPEndPoint(arduinoUDP.IPAddress, Arduino_UDP.UDPPort);
-                                Tittle = "Synlight - " + arduinoUDP.IPAddress.ToString() + " - " + subLine[1];
                                 StaticConnected = true;
                                 useComPort = false;
                             }
@@ -622,18 +647,11 @@ namespace SynLight.Model
                             }
                             else if (subLine[0].StartsWith("COM"))
                             {
-                                try
+                                if(int.TryParse(subLine[0].Replace("COM",String.Empty), out int tmp))
                                 {
-                                    if(int.TryParse(subLine[0].Replace("COM",String.Empty), out int tmp))
-                                    {
-                                        arduinoSerial.PortName = subLine[0];
-                                        useComPort = true;
-                                        StaticConnected = true;
-                                    }
-                                }
-                                catch
-                                {
-
+                                    arduinoSerial.PortName = subLine[0];
+                                    useComPort = true;
+                                    StaticConnected = true;
                                 }
                             }
                             else if(subLine[0] == "X")
@@ -699,6 +717,10 @@ namespace SynLight.Model
                             else if (subLine[0] == "CONTRAST")
                             {
                                 Contrast = int.Parse(subLine[1]);
+                            }
+                            else if (subLine[0] == "NEIGHBOUR")
+                            {
+                                NeighborFilter = true;
                             }
                             else if(subLine[0] == "A")
                             {
