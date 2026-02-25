@@ -51,7 +51,7 @@ namespace SynLight.Model.Arduino
 
             if (allPorts.Length > 0)
             {
-                foreach(string portname in allPorts)
+                foreach (string portname in allPorts)
                 {
                     try
                     {
@@ -79,12 +79,16 @@ namespace SynLight.Model.Arduino
 
             return setupSuccessful;
         }
+        public override void Send(List<byte> data)
+        {
+            Send(PayloadType.terminalPayload, data);
+        }
 
         public override void Send(PayloadType plt, List<byte> data)
         {
             try
             {
-                if(!Arduino.IsOpen) { Arduino.Open(); }
+                if (!Arduino.IsOpen) { Arduino.Open(); }
 
                 Arduino.Write(data.ToArray(), 0, data.Count);
 
@@ -93,5 +97,6 @@ namespace SynLight.Model.Arduino
             catch
             {
             }
+        }
     }
 }

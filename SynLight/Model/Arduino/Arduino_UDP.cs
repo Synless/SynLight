@@ -14,7 +14,6 @@ namespace SynLight.Model.Arduino
         protected static Socket sock = new Socket(SocketType.Dgram, ProtocolType.Udp);
         protected static List<Socket> sockList;
         protected static UdpClient Client = new UdpClient(udpPort);
-
         private IPAddress ipAddress = null;
         public IPAddress IPAddress
         {
@@ -39,7 +38,6 @@ namespace SynLight.Model.Arduino
                 udpPort = value;
             }
         }
-
         private IPEndPoint endPoint = null;
         public IPEndPoint EndPoint
         {
@@ -52,6 +50,7 @@ namespace SynLight.Model.Arduino
                 endPoint = value;
             }
         }
+        
         public Arduino_UDP()
         {
         }
@@ -67,7 +66,6 @@ namespace SynLight.Model.Arduino
         }
 
         const int ipRange = 8;
-
         static UdpClient udpClient = new UdpClient(UDPPort);
         int waitTime = 1;
         public override bool Setup()
@@ -142,7 +140,10 @@ namespace SynLight.Model.Arduino
 
             return setupSuccessful;
         }
-
+        public override void Send(List<byte> data)
+        {
+            Send(PayloadType.terminalPayload, data);
+        }
         public override void Send(PayloadType plt, List<byte> data)
         {
             try
@@ -153,8 +154,7 @@ namespace SynLight.Model.Arduino
             catch
             {
             }
-        }
-        
+        }        
         public static List<List<byte>> SplitBytes(List<byte> input, int splitNumber)
         {
             int chunkSize = 3 * splitNumber;

@@ -1,46 +1,73 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Drawing;
 using System.Threading;
 using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SynLight.Model
 {
     public class Process_SynLight : Param_SynLight
     {
+        private Bitmap captureBitmap;
+
+        private readonly List<byte> byteBuffer = new List<byte>(4096);
+        private readonly List<byte> newByteBuffer = new List<byte>(4096);
+        private readonly List<byte> tempByteBuffer = new List<byte>(4096);
+
+        private readonly Queue<float> rrHistory = new Queue<float>(8);
+        private readonly Queue<float> ggHistory = new Queue<float>(8);
+        private readonly Queue<float> bbHistory = new Queue<float>(8);
+
+        private readonly Stopwatch uiUpdateWatch = Stopwatch.StartNew();
+
+        private const int numberOfTries = 2;
+
+        private const int delayMin = 0;
+        private const int delayMax = 1000;
+        private const int delayThrs = 300;
+        private const int delayListSize = 50;
+
+        private readonly int[] delayList = new int[delayListSize];
+        private readonly double[] delayListFlip = new double[delayListSize];
+        private bool delayInitialized = false;
+
+        private int _Height;
+        private int _Width;
+        private int _Corner;
+        private int _Shifting;
+
+        private Bitmap scaledBitmap;
+        private Graphics scaledGraphics;
+
         public Process_SynLight()
         {
             processFindArduino = new Thread(FindArduinoProcess);
             processMainLoop = new Thread(CheckMethodProcess);
             processFindArduino.Start();
         }
+
         ~Process_SynLight()
         {
-            //Immediately turns of the LEDS after pressing the Stop button
-            for (int i = 0; i < newByteToSend.Count; i++)
-                newByteToSend[i] = 0;
+            for (int i = 0; i < newByteBuffer.Count; i++)
+                newByteBuffer[i] = 0;
 
-            SendPayload(PayloadType.terminalPayload, newByteToSend);
+            SendPayload(PayloadType.terminalPayload, newByteBuffer);
         }
 
-        const int numberOfTries = 2;
         private void FindArduinoProcess()
         {
             while (!StaticConnected)
             {
                 Tittle = "SynLight - " + (useComPort ? "[COM]" : "[WIFI]") + " Trying to connect ...";
-                
+
                 bool found = false;
 
                 for (int i = 0; i < numberOfTries; i++)
                 {
                     found = useComPort ? arduinoSerial.Setup() : arduinoUDP.Setup();
-
                     if (found)
                     {
                         StaticConnected = true;
@@ -48,17 +75,12 @@ namespace SynLight.Model
                     }
                 }
 
-                if (found)
+                if (!found)
                 {
-                    break;
-                }
-                else
-                {
-                    //MessageBox.Show("Could not find any Arduino on any " + (useComPort ? "COM port" : "IP address"));
                     useComPort = !useComPort;
+                    Thread.Sleep(2000);
                 }
-                
-                Thread.Sleep(2000);
+                else break;
             }
 
             CanPlayPause = true;
@@ -66,83 +88,56 @@ namespace SynLight.Model
             processMainLoop.Start();
         }
 
-        #region Privates methodes
         private void CheckMethodProcess()
         {
-            Stopwatch watch;
+            Stopwatch watch = new Stopwatch();
 
             while (PlayPause)
             {
-                watch = Stopwatch.StartNew();
-
+                watch.Restart();
                 Tick();
-
-                Thread.Sleep(difference);
-
-                if (Mix == 100)
-                    Thread.Sleep(500);
-
-                GC.Collect();
-
                 watch.Stop();
 
-                int Hz = (int)(1000.0 / watch.ElapsedMilliseconds);
+                int Hz = (int)(1000.0 / Math.Max(1, watch.ElapsedMilliseconds));
 
-                try
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (useComPort)
+                    try
                     {
-                        if (StaticConnected)
+                        if (useComPort && StaticConnected)
                         {
-                            Tittle = "Synlight - " + arduinoSerial.PortName + " - " + Hz.ToString() + "Hz";
+                            Tittle = $"Synlight - {arduinoSerial.PortName} - {Hz}Hz";
+                        }
+                        else if (!useComPort && arduinoUDP.EndPoint != null)
+                        {
+                            Tittle = $"Synlight - {arduinoUDP.IPAddress} - {Hz}Hz";
                         }
                     }
-                    else
-                    {
-                        if (arduinoUDP.EndPoint != null)
-                        {
-                            Tittle = "Synlight - " + arduinoUDP.IPAddress.ToString() + " - " + Hz.ToString() + "Hz";
-                        }
-                    }
-                }
-                catch
-                {
-                }
+                    catch { }
+                }));
+            }
+            
+            for (int i = 0; i < newByteBuffer.Count; i++)
+            {
+                newByteBuffer[i] = 0;
             }
 
-            //Immediately turns of the LEDS after pressing the Stop button
-            for (int i = 0; i < newByteToSend.Count; i++)
-                newByteToSend[i] = 0;
-            
-            SendPayload(PayloadType.terminalPayload, newByteToSend);
-
+            SendPayload(PayloadType.terminalPayload, newByteBuffer);
 
             processMainLoop = new Thread(CheckMethodProcess);
-            Tittle = "Synlight - " + (useComPort ? arduinoSerial.PortName : arduinoUDP.IPAddress.ToString()) + " - Paused";
         }
 
-        private int _Height;
-        private int _Width;
-        private int _Corner;
-        private int _Shifting;
-
-        private Queue<float> rrHistory = new Queue<float>(8);
-        private Queue<float> ggHistory = new Queue<float>(8);
-        private Queue<float> bbHistory = new Queue<float>(8);
-
-        private float CalculateAverage(Queue<float> history, float newValue)
+        private float CalculateAverage(Queue<float> history, float newValue)//LOAD BEARING CODE
         {
             if (history.Count >= 3)
-            {
-                history.Dequeue(); // Remove the oldest value if we already have 3 values
-            }
-            history.Enqueue(newValue); // Add the new value
+                history.Dequeue();
 
-            return history.Average(); // Return the average of the current values
+            history.Enqueue(newValue);
+            return history.Average();
         }
+
         private void Tick()
         {
-            //Freezing the values for this loop
             _Height = Height;
             _Width = Width;
             _Corner = Corner;
@@ -150,59 +145,14 @@ namespace SynLight.Model
 
             GetScreenShotedges();
 
-            if (Contrast > 0) { scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, Contrast); }
+            if (Contrast > 0)
+                scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, Contrast);
 
             ProcessScreenShot();
-
-            if (Mix > 0)
-            {
-                int bl = Mix;
-                List<byte> bts = new List<byte>(byteToSend);
-                for (int n = 0; n < byteToSend.Count - 2; n += 3)
-                {
-                    bts[n] = (byte)(byteToSend[n] * ((100.0 - bl) / 100.0) + Red * (bl / 100.0));
-                    bts[n + 1] = (byte)(byteToSend[n + 1] * ((100.0 - bl) / 100.0) + Green * (bl / 100.0));
-                    bts[n + 2] = (byte)(byteToSend[n + 2] * ((100.0 - bl) / 100.0) + Blue * (bl / 100.0));
-                }
-                byteToSend = new List<byte>(bts);
-            }
-
             Send();
-
-            if (Lantern)
-            {
-                try
-                {
-                    List<byte> lbts = new List<byte>();
-
-                    Bitmap lanternSizeBitmap = CaptureAndResizeScreenshot();
-
-                    // Extract the RGB values from the resized bitmap (3x1)
-                    float rr = (lanternSizeBitmap.GetPixel(0, 0).R);
-                    float gg = (lanternSizeBitmap.GetPixel(0, 0).G);
-                    float bb = (lanternSizeBitmap.GetPixel(0, 0).B);
-
-                    // Apply the low-pass filter (average of the last 3 values)
-                    rr = CalculateAverage(rrHistory, rr);
-                    gg = CalculateAverage(ggHistory, gg);
-                    bb = CalculateAverage(bbHistory, bb);
-
-                    // Add the filtered values to the list
-                    lbts.Add((byte)rr);
-                    lbts.Add((byte)gg);
-                    lbts.Add((byte)bb);
-
-                    // Send the payload
-                    arduinoUDPManual.Send(System.Net.IPAddress.Parse("192.168.8.138"), PayloadType.fixedColor, lbts);
-                }
-                catch
-                {
-                    // Handle any exceptions
-                }
-            }
         }
 
-        private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Paste from stackoverflow
+        private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Paste from stackoverflow //LOAD BEARING CODE
         {
             Value = (100.0f + Value) / 100.0f;
             Value *= Value;
@@ -253,265 +203,49 @@ namespace SynLight.Model
 
             return NewBitmap;
         }
-        private Bitmap CaptureAndResizeScreenshot()
-        {
-            // Define the size you want to resize the screenshot to
-            System.Drawing.Size newSize = new System.Drawing.Size(1, 1);
-
-            // Capture the screenshot of the entire screen or a specific area
-            Rectangle screenRect = new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
-            Bitmap screenshot = new Bitmap(screenRect.Width, screenRect.Height, PixelFormat.Format32bppRgb);
-            using (Graphics g = Graphics.FromImage(screenshot))
-            {
-                g.CopyFromScreen(screenRect.Left, screenRect.Top, 0, 0, screenRect.Size);
-            }
-
-            // Resize the captured screenshot
-            return RescaleImage(screenshot, newSize);
-        }
-
-        private Bitmap reusableLeftBmp;
-        private Bitmap reusableRightBmp;
-        private Bitmap reusableTopBmp;
-        private Bitmap reusableBotBmp;
-
-        private void InitReusableEdgeBitmaps()
-        {
-            int edgeW = hX / _Width;
-            int edgeH = hY / _Height;
-
-            reusableLeftBmp?.Dispose();
-            reusableRightBmp?.Dispose();
-            reusableTopBmp?.Dispose();
-            reusableBotBmp?.Dispose();
-
-            reusableLeftBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
-            reusableRightBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
-            reusableTopBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
-            reusableBotBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
-        }
-
-
-        private readonly byte BrightnessForKeyboard = 15;
-        private int frameCounter = 0;
-
         private void GetScreenShotedges()
         {
             try
             {
-                frameCounter++;
-
                 startX = scannedArea.X;
                 startY = scannedArea.Y;
                 endX = scannedArea.Width;
                 endY = scannedArea.Height;
+
                 hX = endX - startX;
                 hY = endY - startY;
 
                 startY += ((_Shifting * hY) / _Height) / 2;
                 endY -= ((_Shifting * hY) / _Height) / 2;
 
-                int edgeW = hX / _Width;
-                int edgeH = hY / _Height;
-
-                // Check if we need to recreate reusable bitmaps
-                if (reusableLeftBmp == null || reusableLeftBmp.Width != edgeW || reusableLeftBmp.Height != hY)
+                if (captureBitmap == null ||
+                    captureBitmap.Width != hX ||
+                    captureBitmap.Height != hY)
                 {
-                    reusableLeftBmp?.Dispose();
-                    reusableRightBmp?.Dispose();
-                    reusableTopBmp?.Dispose();
-                    reusableBotBmp?.Dispose();
-
-                    reusableLeftBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
-                    reusableRightBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
-                    reusableTopBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
-                    reusableBotBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
+                    captureBitmap?.Dispose();
+                    captureBitmap = new Bitmap(hX, hY, PixelFormat.Format32bppArgb);
                 }
 
-                // Only left/right OR top/bottom depending on frame parity
-                List<Task> tasks = new List<Task>();
+                using (Graphics g = Graphics.FromImage(captureBitmap))
+                    g.CopyFromScreen(startX, startY, 0, 0, captureBitmap.Size);
 
-                if (frameCounter % 2 == 0)
+                if (scaledBitmap == null || scaledBitmap.Width != _Width || scaledBitmap.Height != _Height)
                 {
-                    // LEFT
-                    tasks.Add(Task.Run(() =>
-                    {
-                        Rectangle rectLeft = new Rectangle(startX, startY, edgeW, endY - startY);
-                        using (Graphics gfx = Graphics.FromImage(reusableLeftBmp))
-                        {
-                            gfx.CopyFromScreen(rectLeft.Left, rectLeft.Top, 0, 0, reusableLeftBmp.Size);
-                        }
-                        scalededgeLeft = RescaleImage(reusableLeftBmp, new System.Drawing.Size(1, _Height));
-                    }));
+                    scaledBitmap?.Dispose();
+                    scaledGraphics?.Dispose();
 
-                    // RIGHT
-                    tasks.Add(Task.Run(() =>
-                    {
-                        Rectangle rectRight = new Rectangle(endX - edgeW, startY, edgeW, endY - startY);
-                        using (Graphics gfx = Graphics.FromImage(reusableRightBmp))
-                        {
-                            gfx.CopyFromScreen(rectRight.Left, rectRight.Top, 0, 0, reusableRightBmp.Size);
-                        }
-                        scalededgeRight = RescaleImage(reusableRightBmp, new System.Drawing.Size(1, _Height));
-                    }));
-                }
-                else
-                {
-                    // TOP
-                    tasks.Add(Task.Run(() =>
-                    {
-                        Rectangle rectTop = new Rectangle(startX, startY, hX, edgeH);
-                        using (Graphics gfx = Graphics.FromImage(reusableTopBmp))
-                        {
-                            gfx.CopyFromScreen(rectTop.Left, rectTop.Top, 0, 0, reusableTopBmp.Size);
-                        }
-                        scalededgeTop = RescaleImage(reusableTopBmp, new System.Drawing.Size(_Width, 1));
-                    }));
-
-                    // BOTTOM
-                    tasks.Add(Task.Run(() =>
-                    {
-                        Rectangle rectBot = new Rectangle(startX, endY - edgeH, hX, edgeH);
-                        using (Graphics gfx = Graphics.FromImage(reusableBotBmp))
-                        {
-                            gfx.CopyFromScreen(rectBot.Left, rectBot.Top, 0, 0, reusableBotBmp.Size);
-                        }
-                        scalededgeBot = RescaleImage(reusableBotBmp, new System.Drawing.Size(_Width, 1));
-                    }));
-                    //frameCounter = 0;
+                    scaledBitmap = new Bitmap(_Width, _Height, PixelFormat.Format32bppArgb);
+                    scaledGraphics = Graphics.FromImage(scaledBitmap);
                 }
 
-                Task.WaitAll(tasks.ToArray());
+                scaledGraphics.DrawImage(captureBitmap, new Rectangle(0, 0, _Width, _Height));
 
-                // Compose full frame
-                ComposeFullBitmap();
-
-                if (debug)
-                {
-                    try
-                    {
-                        debug = false;
-                        ResizeLeftRight(scalededgeLeft).Save("1Left.png", ImageFormat.Png);
-                        ResizeLeftRight(scalededgeRight).Save("3Right.png", ImageFormat.Png);
-                        ResizeTopBot(scalededgeTop).Save("2Top.png", ImageFormat.Png);
-                        ResizeTopBot(scalededgeBot).Save("4Bot.png", ImageFormat.Png);
-                        Resize(scaledBmpScreenshot).Save("5full.png", ImageFormat.Png);
-                    }
-                    catch { }
-                }
+                scaledBmpScreenshot = scaledBitmap;
             }
             catch { }
         }
-        private void ComposeFullBitmap()
-        {
-            scaledBmpScreenshot?.Dispose();
-            scaledBmpScreenshot = new Bitmap(_Width, _Height, PixelFormat.Format32bppArgb);
 
-            BitmapData bmpData = scaledBmpScreenshot.LockBits(
-                new Rectangle(0, 0, _Width, _Height),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppArgb);
-
-            int stride = bmpData.Stride;
-
-            unsafe
-            {
-                byte* ptr = (byte*)bmpData.Scan0;
-
-                void SetPixel(int x, int y, Color color)
-                {
-                    byte* pixel = ptr + y * stride + x * 4;
-                    pixel[0] = color.B;
-                    pixel[1] = color.G;
-                    pixel[2] = color.R;
-                    pixel[3] = 255;
-                }
-
-                for (int y = 0; y < _Height; y++)
-                {
-                    if (scalededgeLeft != null)
-                        SetPixel(0, y, scalededgeLeft.GetPixel(0, y));
-
-                    if (scalededgeRight != null)
-                        SetPixel(_Width - 1, y, scalededgeRight.GetPixel(0, y));
-                }
-
-                for (int x = 1; x < _Width - 1; x++)
-                {
-                    if (scalededgeTop != null)
-                        SetPixel(x, 0, scalededgeTop.GetPixel(x, 0));
-
-                    if (scalededgeBot != null)
-                    {
-                        Color bot = scalededgeBot.GetPixel(x, 0);
-                        if (KeyboardLight)
-                        {
-                            SetPixel(x, _Height - 1, Color.FromArgb(255,
-                                Math.Min(bot.R + BrightnessForKeyboard, 255),
-                                Math.Min(bot.G + BrightnessForKeyboard, 255),
-                                Math.Min(bot.B + BrightnessForKeyboard, 255)));
-                        }
-                        else
-                        {
-                            SetPixel(x, _Height - 1, bot);
-                        }
-                    }
-                }
-            }
-
-            scaledBmpScreenshot.UnlockBits(bmpData);
-        }
-
-
-        private Bitmap Resize(Bitmap srcImage)
-        {
-            Bitmap newImage = new Bitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
-            using (Graphics gr = Graphics.FromImage(newImage))
-            {
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.NearestNeighbor;
-                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                gr.DrawImage(srcImage, new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
-            }
-            return newImage;
-        }
-        public static Bitmap RescaleImage(Image source, System.Drawing.Size size)
-        {
-            var bmp = new Bitmap(size.Width, size.Height, source.PixelFormat);
-            bmp.SetResolution(source.HorizontalResolution, source.VerticalResolution);
-            using (var gr = Graphics.FromImage(bmp))
-            {
-                gr.Clear(Color.Transparent);
-                gr.InterpolationMode = InterpolationMode.Bilinear;
-                gr.DrawImage(source, new Rectangle(0, 0, size.Width, size.Height));
-            }
-            return bmp;
-        }
-        private Bitmap ResizeLeftRight(Bitmap srcImage)
-        {
-            Bitmap newImage = new Bitmap((int)SystemParameters.PrimaryScreenWidth / Width, (int)SystemParameters.PrimaryScreenHeight);
-            using (Graphics gr = Graphics.FromImage(newImage))
-            {
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.Bilinear;
-                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                gr.DrawImage(srcImage, new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth / Width, (int)SystemParameters.PrimaryScreenHeight));
-            }
-            return newImage;
-        }
-        private Bitmap ResizeTopBot(Bitmap srcImage)
-        {
-            Bitmap newImage = new Bitmap((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight / Height);
-            using (Graphics gr = Graphics.FromImage(newImage))
-            {
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.InterpolationMode = InterpolationMode.Bilinear;
-                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                gr.DrawImage(srcImage, new Rectangle(0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight / Height));
-            }
-            return newImage;
-        }
-        private void ProcessScreenShot()
+        private void ProcessScreenShot() //LOAD BEARING CODE
         {
             byteToSend = new List<byte>();
             int subCorner = Math.Max(0, _Corner - 1);
@@ -692,188 +426,87 @@ namespace SynLight.Model
             }
         }
 
-        private void Send()
+        private void Send()//LOAD BEARING CODE
         {
-            newByteToSend = new List<byte>(0);            
+            newByteBuffer.Clear();
 
-            if (LPF) //Low-pass filtering
+            if (LPF)
             {
-                while (lastByteToSend.Count < byteToSend.Count) { lastByteToSend.Add(0); }
+                while (lastByteToSend.Count < byteBuffer.Count)
+                    lastByteToSend.Add(0);
 
-                int odd; //To correct the -1 error rounding
-                for (int n = 0; n < byteToSend.Count; n++)
+                for (int i = 0; i < byteBuffer.Count; i++)
                 {
-                    odd = (2*byteToSend[n]) + lastByteToSend[n];
-                    if (odd % 2 != 0) { odd++; }
-                    odd /= 3;
-                    newByteToSend.Add((byte)odd);
+                    int val = (2 * byteBuffer[i] + lastByteToSend[i] + 1) / 3;
+                    newByteBuffer.Add((byte)val);
                 }
-                lastByteToSend = new List<byte>(newByteToSend);
+
+                lastByteToSend.Clear();
+                lastByteToSend.AddRange(newByteBuffer);
             }
             else
             {
-                lastByteToSend = newByteToSend = byteToSend;
+                newByteBuffer.AddRange(byteBuffer);
+                lastByteToSend = new List<byte>(newByteBuffer);
             }
 
-            if (UpDown != 0)
-            {
-                List<byte> rotatedByteToSend = new List<byte>(newByteToSend);
-                for (int n = 0; n < newByteToSend.Count; n++) { rotatedByteToSend[n] = newByteToSend[(n + UpDown * 3) % (byteToSend.Count)]; }
-                newByteToSend = new List<byte>(rotatedByteToSend);
-            }
+            CalculateFrameDelay();
 
-            if (BGF)
-            {
-                long meanR = 0;
-                long meanG = 0;
-                long meanB = 0;
+            const int packetSize = 489;
 
-                int p = 8;
-                int q = p + 1;
+            for (int n = 0; n + packetSize <= newByteBuffer.Count; n += packetSize)
+                SendPayload(PayloadType.multiplePayload, newByteBuffer.GetRange(n, packetSize));
 
-                for (int n = 0; n < newByteToSend.Count; n += 3)
-                {
-                    meanR += newByteToSend[n];
-                    meanG += newByteToSend[n + 1];
-                    meanB += newByteToSend[n + 2];
-                }
+            int index = newByteBuffer.Count - (newByteBuffer.Count % packetSize);
 
-                meanR = 3 * meanR / newByteToSend.Count;
-                meanG = 3 * meanG / newByteToSend.Count;
-                meanB = 3 * meanB / newByteToSend.Count;
-
-                for (int n = 0; n < newByteToSend.Count; n += 3)
-                {
-                    newByteToSend[n] = (byte)(p * (newByteToSend[n] / q) + (meanR / p));
-                    newByteToSend[n + 1] = (byte)(p * (newByteToSend[n + 1] / q) + (meanG / p));
-                    newByteToSend[n + 2] = (byte)(p * (newByteToSend[n + 2] / q) + (meanB / p));
-                }
-            }
-
-            if(NeighborFilter)
-            {
-                List<byte> veryNewByteToSend = new List<byte>(newByteToSend);
-                List<byte> veryOldByteToSend = new List<byte>(newByteToSend);
-
-                double mainRatio = 0.65;
-                double neighborRatio = (1 - mainRatio) / 4;
-
-                int j = veryNewByteToSend.Count;
-                for (int i = 0; i <= j - 3; i += 3)
-                {
-                    double r = newByteToSend[i] * mainRatio;
-                    double g = newByteToSend[i + 1] * mainRatio;
-                    double b = newByteToSend[i + 2] * mainRatio;
-
-                    // Add previous 2 neighbors if they exist
-                    if (i - 3 >= 0)
-                    {
-                        r += newByteToSend[i - 3] * neighborRatio;
-                        g += newByteToSend[i - 2] * neighborRatio;
-                        b += newByteToSend[i - 1] * neighborRatio;
-                    }
-                    if (i - 6 >= 0)
-                    {
-                        r += newByteToSend[i - 6] * neighborRatio;
-                        g += newByteToSend[i - 5] * neighborRatio;
-                        b += newByteToSend[i - 4] * neighborRatio;
-                    }
-
-                    // Add next 2 neighbors if they exist
-                    if (i + 3 < j)
-                    {
-                        r += newByteToSend[i + 3] * neighborRatio;
-                        g += newByteToSend[i + 4] * neighborRatio;
-                        b += newByteToSend[i + 5] * neighborRatio;
-                    }
-                    if (i + 6 < j)
-                    {
-                        r += newByteToSend[i + 6] * neighborRatio;
-                        g += newByteToSend[i + 7] * neighborRatio;
-                        b += newByteToSend[i + 8] * neighborRatio;
-                    }
-
-                    veryNewByteToSend[i] = (byte)Math.Min(255,Math.Max(0,Math.Round(r)));
-                    veryNewByteToSend[i + 1] = (byte)Math.Min(255, Math.Max(0, Math.Round(g)));
-                    veryNewByteToSend[i + 2] = (byte)Math.Min(255, Math.Max(0, Math.Round(b)));
-                }
-
-                newByteToSend = new List<byte>(veryNewByteToSend);
-
-
-                int sumVeryOldByteToSend = veryOldByteToSend.Sum(b => b);
-                int sumVeryNewByteToSend = newByteToSend.Sum(b => b);
-
-            }
-
-            CalculateSleepTime();
-
-            //SendPayload(newByteToSend);
-            //return;
-
-            //Send standard packets if needed, then send the terminal payload
-            int packetSize = 489;
-            for (int n = 0; n + packetSize <= byteToSend.Count; n += packetSize)
-            {
-                SendPayload(PayloadType.multiplePayload, newByteToSend.GetRange(n, packetSize));
-            }
-
-            int index = newByteToSend.Count - (newByteToSend.Count % packetSize);
-            SendPayload(PayloadType.terminalPayload, newByteToSend.GetRange(index, newByteToSend.Count % packetSize));
-
+            SendPayload(
+                PayloadType.terminalPayload,
+                newByteBuffer.GetRange(index, newByteBuffer.Count % packetSize));
         }
 
-        //Difference
-        private int difference = 0;
-        private const int minDif = 100;
-        private const int maxDif = 3600;
-        private void CalculateSleepTime()
+        private void CalculateFrameDelay()//LOAD BEARING CODE
         {
-            if (lastByteToSend.Count != byteToSend.Count)
+            if (!delayInitialized)
             {
-                difference = maxDif;
-            }
-            else
-            {
-                difference = 0;
-                for (int n = 0; n < byteToSend.Count; n++)
-                    difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
+                for (int i = 0; i < delayListSize; i++)
+                {
+                    delayList[i] = delayMax;
+                    delayListFlip[i] = 0;
+                }
+                delayInitialized = true;
             }
 
-            difference = Math.Min(difference, maxDif);
-            difference = Math.Max(difference, minDif);
-            difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
-            if (usePerformanceCounter)
-                difference += (int)Math.Round(cpuCounter.NextValue());
+            int totalDelta = 0;
 
-            //if (Turbo)
-            //    difference /= 5;
+            for (int i = 0; i < byteBuffer.Count && i < lastByteToSend.Count; i++)
+                totalDelta += Math.Abs(byteBuffer[i] - lastByteToSend[i]);
 
-            if (Turbo)
-            {
-                difference = 0;
-            }
-            else
-            {
-                difference = difference / 5;
-            }
+            int currentDelay = Math.Max(0, Math.Min(totalDelta, 1000));
+
+            for (int i = delayListSize - 1; i > 0; i--)
+                delayList[i] = delayList[i - 1];
+
+            delayList[0] = currentDelay;
+
+            if (currentDelay > delayThrs)
+                for (int i = 1; i < delayListSize; i++)
+                    delayList[i] = Math.Min(delayList[i] + 300, 1000);
+
+            double sum = 0;
+
+            for (int i = 0; i < delayListSize; i++)
+                sum += (1000.0 - delayList[i]) / 1000.0;
+
+            if(!Turbo)
+                Thread.Sleep((int)(sum * 10));
         }
-        private double Map(double s, double a1, double a2, double b1, double b2)
-        {
-            return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-        }
-        #endregion
-        protected static void SendPayload(PayloadType plt, List<byte> payload)
+
+        protected static void SendPayload(PayloadType plt, List<byte> payload)//LOAD BEARING CODE
         {
             if (useComPort)
-            {
                 arduinoSerial.Send(plt, payload);
-            }
             else
-            {
                 arduinoUDP.Send(plt, payload);
-            }
         }
     }
 }

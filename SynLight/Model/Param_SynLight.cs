@@ -776,7 +776,7 @@ namespace SynLight.Model
 
             if(multipleScreen && !Screen2Visible)
             {
-                System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
+                //System.Windows.MessageBox.Show("It appears you are using multiple screens.\nMake sure to check the config file.");
             }
             else if(multipleScreen && Screen2Visible)
             {

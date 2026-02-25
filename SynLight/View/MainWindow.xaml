@@ -743,7 +743,7 @@
                     <Viewbox Grid.Row="2" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
                         <CheckBox Padding="3" IsChecked="{Binding Turbo}"/>
                     </Viewbox>
-                    <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
+                    <Viewbox Grid.Row="4" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left" Visibility="Collapsed">
                         <CheckBox Padding="3" IsChecked="{Binding KeyboardLight}"/>
                     </Viewbox>
                     <Viewbox Grid.Row="5" Grid.Column="2" Height="25" Margin="1" HorizontalAlignment="Left">
