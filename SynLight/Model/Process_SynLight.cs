@@ -77,8 +77,6 @@ namespace SynLight.Model
 
                 Tick();
 
-                Thread.Sleep(difference);
-
                 if (Mix == 100)
                     Thread.Sleep(500);
 
@@ -699,7 +697,7 @@ namespace SynLight.Model
 
         private void Send()
         {
-            newByteToSend = new List<byte>(0);            
+            newByteToSend = new List<byte>(0);
 
             if (LPF) //Low-pass filtering
             {
@@ -829,44 +827,60 @@ namespace SynLight.Model
         }
 
         //Difference
-        private int difference = 0;
-        private const int minDif = 50;
-        private const int maxDif = 3600;
-        private int lastDiff = 200;
+
+        private const int delayMin = 0;
+        private const int delayMax = 5000;
+        private const int delayThrs = 1000;
+        private const int delayListSize = 50;
+
+        private readonly int[] delayList = new int[delayListSize];
+        private readonly double[] delayListFlip = new double[delayListSize];
+        private bool delayInitialized = false;
         private void CalculateSleepTime()
         {
-            if (lastByteToSend.Count != byteToSend.Count)
+            if (!delayInitialized)
             {
-                difference = maxDif;
+                for (int i = 0; i < delayListSize; i++)
+                {
+                    delayList[i] = delayMin;
+                    delayListFlip[i] = 0;
+                }
+                delayInitialized = true;
             }
-            else
-            {                difference = 0;
-                for (int n = 0; n < byteToSend.Count; n++)
-                    difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
-            }
 
-            difference = Math.Max(difference - 300, minDif);
+            int totalDelta = 0;
 
-            difference = Math.Min(difference, maxDif);
-            difference = Math.Max(difference, minDif);
-            difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
-            if (usePerformanceCounter)
-                difference += (int)Math.Round(cpuCounter.NextValue());
+            for (int i = 0; i < byteToSend.Count && i < lastByteToSend.Count; i++)
+                totalDelta += Math.Abs(byteToSend[i] - lastByteToSend[i]);
 
-            //if (Turbo)
-            //    difference /= 5;
+            int currentDelay = Math.Max(0, Math.Min(totalDelta, delayMax));
 
-            if (Turbo)
+            for (int i = delayListSize - 1; i > 0; i--)
+                delayList[i] = delayList[i - 1];
+
+            delayList[0] = currentDelay;
+
+            if (currentDelay > delayThrs)
+                for (int i = 1; i < delayListSize; i++)
+                    delayList[i] = Math.Min(delayList[i] + 2000, delayMax);
+
+            for (int i = delayListSize - 1; i > 0; i--)
+                delayListFlip[i] = (float)(((float)delayMax - delayList[i]) / (float)delayMax);
+
+            double sum = 0;
+
+            for (int i = 0; i < delayListSize; i++)
+                sum += delayListFlip[i];
+
+            sum = sum * 5;
+            sum = Math.Max(0,sum-20);
+            //sum += (int)Math.Round(cpuCounter.NextValue());
+
+            if (!Turbo)
             {
-                difference = 0;
+                Thread.Sleep((int)(sum));
             }
-            else
-            {
-                difference = difference / 5;
-                difference = (difference + lastDiff) / 2;
-                lastDiff = difference;
-            }
+
         }
         private double Map(double s, double a1, double a2, double b1, double b2)
         {
