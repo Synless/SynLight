@@ -65,7 +65,7 @@ namespace SynLight.Model
             PlayPause = true;
             processMainLoop.Start();
         }
-
+        int GCCounter = 100;
         #region Privates methodes
         private void CheckMethodProcess()
         {
@@ -82,7 +82,12 @@ namespace SynLight.Model
                 if (Mix == 100)
                     Thread.Sleep(500);
 
-                GC.Collect();
+                GCCounter--;
+                if(GCCounter < 0)
+                {
+                    GCCounter = 100;
+                    GC.Collect();
+                }
 
                 watch.Stop();
 
@@ -825,8 +830,9 @@ namespace SynLight.Model
 
         //Difference
         private int difference = 0;
-        private const int minDif = 100;
+        private const int minDif = 50;
         private const int maxDif = 3600;
+        private int lastDiff = 200;
         private void CalculateSleepTime()
         {
             if (lastByteToSend.Count != byteToSend.Count)
@@ -834,11 +840,12 @@ namespace SynLight.Model
                 difference = maxDif;
             }
             else
-            {
-                difference = 0;
+            {                difference = 0;
                 for (int n = 0; n < byteToSend.Count; n++)
                     difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
             }
+
+            difference = Math.Max(difference - 300, minDif);
 
             difference = Math.Min(difference, maxDif);
             difference = Math.Max(difference, minDif);
@@ -857,6 +864,8 @@ namespace SynLight.Model
             else
             {
                 difference = difference / 5;
+                difference = (difference + lastDiff) / 2;
+                lastDiff = difference;
             }
         }
         private double Map(double s, double a1, double a2, double b1, double b2)

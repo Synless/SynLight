@@ -51,7 +51,7 @@ namespace SynLight.Model.Arduino
 
             if (allPorts.Length > 0)
             {
-                foreach(string portname in allPorts)
+                foreach (string portname in allPorts)
                 {
                     try
                     {
@@ -84,7 +84,7 @@ namespace SynLight.Model.Arduino
         {
             try
             {
-                if(!Arduino.IsOpen) { Arduino.Open(); }
+                if (!Arduino.IsOpen) { Arduino.Open(); }
 
                 Arduino.Write(data.ToArray(), 0, data.Count);
 
@@ -93,5 +93,6 @@ namespace SynLight.Model.Arduino
             catch
             {
             }
+        }
     }
 }

@@ -566,9 +566,6 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="34" />
-    </WindowChrome.WindowChrome>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height ="35"/>
