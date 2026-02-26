@@ -566,13 +566,16 @@
             </Setter>
         </Style>
     </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="34" />
+    </WindowChrome.WindowChrome>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height ="35"/>
             <RowDefinition Height ="0.5"/>
             <RowDefinition Height ="20*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="#FF101010" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+        <Grid Grid.Row="0" Background="#FF101010">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" MaxWidth="285"/>
                 <ColumnDefinition Width="*"/>

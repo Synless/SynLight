@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 
 namespace SynLight.Model.Arduino
 {
@@ -68,7 +72,7 @@ namespace SynLight.Model.Arduino
             {
             }
         }
-        /*public override void Send(List<byte> data)
+        public override void Send(List<byte> data)
         {
             try
             {
@@ -106,7 +110,7 @@ namespace SynLight.Model.Arduino
             {
                 Console.WriteLine($"Error sending data to WLED: {ex.Message}");
             }
-        }*/
+        }
 
         public void Send(IPAddress _IPAddress, PayloadType plt, List<byte> data)
         {

@@ -12,6 +12,7 @@ namespace SynLight.Model.Arduino
         protected const string answer = "pong";
         protected static bool setupSuccessful = false;
         public abstract bool Setup();
+        public abstract void Send(List<byte> data);
         public abstract void Send(PayloadType plt, List<byte> data);
     }
 }

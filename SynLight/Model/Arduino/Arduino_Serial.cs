@@ -79,6 +79,10 @@ namespace SynLight.Model.Arduino
 
             return setupSuccessful;
         }
+        public override void Send(List<byte> data)
+        {
+            Send(PayloadType.terminalPayload, data);
+        }
 
         public override void Send(PayloadType plt, List<byte> data)
         {
