@@ -42,7 +42,11 @@ namespace SynLight.View
             return;
         }
 
-
+        private void TopBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+                this.DragMove();
+        }
 
         #region System tray
         void OnClose(object sender, CancelEventArgs args)
