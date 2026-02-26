@@ -830,12 +830,18 @@ namespace SynLight.Model
 
         private const int delayMin = 0;
         private const int delayMax = 5000;
-        private const int delayThrs = 1000;
+        private double delayThrs = 40;
         private const int delayListSize = 50;
 
         private readonly int[] delayList = new int[delayListSize];
         private readonly double[] delayListFlip = new double[delayListSize];
         private bool delayInitialized = false;
+        private bool ThrsInitialized = false;
+        int totalDelta;
+        int currentDelay;
+        double sum;
+        double sqrt;
+
         private void CalculateSleepTime()
         {
             if (!delayInitialized)
@@ -848,32 +854,57 @@ namespace SynLight.Model
                 delayInitialized = true;
             }
 
-            int totalDelta = 0;
+            totalDelta = 0;
 
+            //DELTA
             for (int i = 0; i < byteToSend.Count && i < lastByteToSend.Count; i++)
+            {
                 totalDelta += Math.Abs(byteToSend[i] - lastByteToSend[i]);
+            }
 
-            int currentDelay = Math.Max(0, Math.Min(totalDelta, delayMax));
+            //THE FIRST TOTALDELTA IS THE BASE FOR THE THRESHOLD
+            if (!ThrsInitialized)
+            {
+                ThrsInitialized = true;
+                delayThrs = Math.Sqrt(totalDelta)/2;
+            }
 
+            //SHIFTING THE ARRAY
             for (int i = delayListSize - 1; i > 0; i--)
+            {
                 delayList[i] = delayList[i - 1];
+            }
 
+            //[0] = CURRENT DELTA
+            currentDelay = Math.Max(delayMin, Math.Min(totalDelta, delayMax));
             delayList[0] = currentDelay;
 
-            if (currentDelay > delayThrs)
+            //CHECK IF THINGS HAVE MOVED ENOUGH TO DECREASE THE DELAY]
+            //USING SQRT SINCE IT MINIMIZES THE VARIANCE BETWEEN CONFIGURATIONS
+            sqrt = Math.Sqrt(currentDelay);
+
+            if (sqrt > delayThrs)
+            {
                 for (int i = 1; i < delayListSize; i++)
+                {
                     delayList[i] = Math.Min(delayList[i] + 2000, delayMax);
+                }
+            }
 
             for (int i = delayListSize - 1; i > 0; i--)
+            {
                 delayListFlip[i] = (float)(((float)delayMax - delayList[i]) / (float)delayMax);
+            }
 
-            double sum = 0;
+            sum = 0;
 
             for (int i = 0; i < delayListSize; i++)
+            {
                 sum += delayListFlip[i];
+            }
 
-            sum = sum * 5;
-            sum = Math.Max(0,sum-20);
+            sum = sum * 6;
+            sum = Math.Max(0,sum-30);
             //sum += (int)Math.Round(cpuCounter.NextValue());
 
             if (!Turbo)
