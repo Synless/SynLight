@@ -78,7 +78,7 @@ namespace SynLight.Model
 
                 Tick();
 
-                Thread.Sleep(difference);
+                Thread.Sleep(sleepDelayMs);
 
                 if (Mix == 100)
                     Thread.Sleep(500);
@@ -828,41 +828,72 @@ namespace SynLight.Model
 
         }
 
-        //Difference
-        private int difference = 0;
-        private const int minDif = 100;
-        private const int maxDif = 3600;
+        private int sleepDelayMs = 0;
+        private const int minDifference = 100;
+        private const int maxDifference = 10000;
+
+        private int idleStretchAdditionalMs = 0;
+        private const int idleStretchCapMs = 400;
+        private const int idleStretchIncrementMs = 10;
+        private const int stabilityThreshold = 18;
+
+        private int stabilityConsecutiveCount = 0;
+        private const int stabilityRequiredCount = 30;
+        private bool stabilityRequiredCountTriggered = false;
+        private int lastSleepDelayMs = 0;
+
         private void CalculateSleepTime()
         {
             if (lastByteToSend.Count != byteToSend.Count)
             {
-                difference = maxDif;
+                idleStretchAdditionalMs = 0;
+                sleepDelayMs = maxDifference;
+                return;
+            }
+
+            int totalChange = 0;
+            for (int i = 0; i < byteToSend.Count; i++)
+                totalChange += Math.Abs(byteToSend[i] - lastByteToSend[i]);
+
+            int mapped = Math.Min(totalChange, maxDifference);
+            mapped = Math.Max(mapped, minDifference);
+            mapped -= minDifference;
+            mapped = (int)Math.Sqrt(mapped);
+
+            if (usePerformanceCounter)
+                mapped += (int)Math.Round(cpuCounter.NextValue());
+
+            if (Math.Sqrt(totalChange) <= stabilityThreshold)
+            {
+                stabilityConsecutiveCount++;
+                if (stabilityConsecutiveCount >= stabilityRequiredCount || stabilityRequiredCountTriggered)
+                {
+                    stabilityRequiredCountTriggered = true;
+                    idleStretchAdditionalMs = Math.Min(idleStretchAdditionalMs + idleStretchIncrementMs, idleStretchCapMs);
+                }
             }
             else
             {
-                difference = 0;
-                for (int n = 0; n < byteToSend.Count; n++)
-                    difference += Math.Abs(byteToSend[n] - lastByteToSend[n]);
+                stabilityRequiredCountTriggered = false;
+                stabilityConsecutiveCount = 0;
+                idleStretchAdditionalMs = 0;
             }
 
-            difference = Math.Min(difference, maxDif);
-            difference = Math.Max(difference, minDif);
-            difference -= minDif;
-            difference = (int)Math.Round(Map(difference, 0, maxDif - minDif, minDif, 0));
-            if (usePerformanceCounter)
-                difference += (int)Math.Round(cpuCounter.NextValue());
-
-            //if (Turbo)
-            //    difference /= 5;
+            int combined = Math.Min(mapped + idleStretchAdditionalMs, maxDifference);
 
             if (Turbo)
             {
-                difference = 0;
+                sleepDelayMs = 0;
             }
-            else
+
+            sleepDelayMs = combined;
+
+            if (sleepDelayMs > lastSleepDelayMs)
             {
-                difference = difference / 5;
+                sleepDelayMs = (lastSleepDelayMs + sleepDelayMs) / 2;
             }
+
+            lastSleepDelayMs = sleepDelayMs;
         }
         private double Map(double s, double a1, double a2, double b1, double b2)
         {
