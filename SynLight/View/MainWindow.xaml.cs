@@ -14,8 +14,6 @@ namespace SynLight.View
 {
     public partial class MainWindow : Window
     {
-        private BrightnessWatcher _brightnessWatcher;
-
         private const int WM_POWERBROADCAST = 0x0218;
         private const int PBT_POWERSETTINGCHANGE = 0x8013;
 
@@ -74,21 +72,6 @@ namespace SynLight.View
             source.AddHook(WndProc);
 
             RegisterPowerSettingNotification(source.Handle, ref GUID_CONSOLE_DISPLAY_STATE, DEVICE_NOTIFY_WINDOW_HANDLE);
-
-            _brightnessWatcher = new BrightnessWatcher();
-
-            _brightnessWatcher.BrightnessChanged += (value) =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    var process = DataContext as Process_SynLight;
-
-                    if (process != null)
-                        process.SetBrightness(value);
-                });
-            };
-
-            _brightnessWatcher.Start();
         }
 
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
@@ -173,9 +156,6 @@ namespace SynLight.View
         }
         protected override void OnClosed(EventArgs e)
         {
-            //Param_SynLight.Close();
-            //base.OnClosed(e);
-            _brightnessWatcher?.Dispose();
             Environment.Exit(0);
         }
         private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
