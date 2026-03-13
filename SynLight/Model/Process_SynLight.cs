@@ -29,11 +29,6 @@ namespace SynLight.Model
             }
         }
 
-        public void SetBrightness(int br)
-        {
-            Console.WriteLine(br);
-        }
-
         public Process_SynLight()
         {
             processFindArduino = new Thread(FindArduinoProcess);
