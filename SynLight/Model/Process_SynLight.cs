@@ -13,6 +13,27 @@ namespace SynLight.Model
 {
     public class Process_SynLight : Param_SynLight
     {
+        private volatile bool monitorIsOn = true;
+
+        public void SetMonitorState(bool isOn)
+        {
+            monitorIsOn = isOn;
+
+            if (!isOn)
+            {
+                // turn LEDs off immediately
+                for (int i = 0; i < newByteToSend.Count; i++)
+                    newByteToSend[i] = 0;
+
+                SendPayload(PayloadType.terminalPayload, newByteToSend);
+            }
+        }
+
+        public void SetBrightness(int br)
+        {
+            Console.WriteLine(br);
+        }
+
         public Process_SynLight()
         {
             processFindArduino = new Thread(FindArduinoProcess);
@@ -34,7 +55,7 @@ namespace SynLight.Model
             while (!StaticConnected)
             {
                 Tittle = "SynLight - " + (useComPort ? "[COM]" : "[WIFI]") + " Trying to connect ...";
-                
+
                 bool found = false;
 
                 for (int i = 0; i < numberOfTries; i++)
@@ -57,7 +78,7 @@ namespace SynLight.Model
                     //MessageBox.Show("Could not find any Arduino on any " + (useComPort ? "COM port" : "IP address"));
                     useComPort = !useComPort;
                 }
-                
+
                 Thread.Sleep(2000);
             }
 
@@ -74,6 +95,12 @@ namespace SynLight.Model
 
             while (PlayPause)
             {
+                if (!monitorIsOn)
+                {
+                    Thread.Sleep(200);
+                    continue;
+                }
+
                 watch = Stopwatch.StartNew();
 
                 Tick();
@@ -83,7 +110,7 @@ namespace SynLight.Model
                 if (Mix == 100)
                     Thread.Sleep(500);
 
-                if(GCCounter++ >= 100)
+                if (GCCounter++ >= 100)
                 {
                     GC.Collect();
                     GCCounter = 0;
@@ -118,7 +145,7 @@ namespace SynLight.Model
             //Immediately turns of the LEDS after pressing the Stop button
             for (int i = 0; i < newByteToSend.Count; i++)
                 newByteToSend[i] = 0;
-            
+
             SendPayload(PayloadType.terminalPayload, newByteToSend);
 
 
@@ -699,7 +726,7 @@ namespace SynLight.Model
 
         private void Send()
         {
-            newByteToSend = new List<byte>(0);            
+            newByteToSend = new List<byte>(0);
 
             if (LPF) //Low-pass filtering
             {
@@ -708,7 +735,7 @@ namespace SynLight.Model
                 int odd; //To correct the -1 error rounding
                 for (int n = 0; n < byteToSend.Count; n++)
                 {
-                    odd = (2*byteToSend[n]) + lastByteToSend[n];
+                    odd = (2 * byteToSend[n]) + lastByteToSend[n];
                     if (odd % 2 != 0) { odd++; }
                     odd /= 3;
                     newByteToSend.Add((byte)odd);
@@ -755,7 +782,7 @@ namespace SynLight.Model
                 }
             }
 
-            if(NeighborFilter)
+            if (NeighborFilter)
             {
                 List<byte> veryNewByteToSend = new List<byte>(newByteToSend);
                 List<byte> veryOldByteToSend = new List<byte>(newByteToSend);
@@ -798,7 +825,7 @@ namespace SynLight.Model
                         b += newByteToSend[i + 8] * neighborRatio;
                     }
 
-                    veryNewByteToSend[i] = (byte)Math.Min(255,Math.Max(0,Math.Round(r)));
+                    veryNewByteToSend[i] = (byte)Math.Min(255, Math.Max(0, Math.Round(r)));
                     veryNewByteToSend[i + 1] = (byte)Math.Min(255, Math.Max(0, Math.Round(g)));
                     veryNewByteToSend[i + 2] = (byte)Math.Min(255, Math.Max(0, Math.Round(b)));
                 }
@@ -812,9 +839,6 @@ namespace SynLight.Model
             }
 
             CalculateSleepTime();
-
-            //SendPayload(newByteToSend);
-            //return;
 
             //Send standard packets if needed, then send the terminal payload
             int packetSize = 489;
@@ -862,6 +886,8 @@ namespace SynLight.Model
 
             if (usePerformanceCounter)
                 mapped += (int)Math.Round(cpuCounter.NextValue());
+
+            mapped = mapped / 2;
 
             if (Math.Sqrt(totalChange) <= stabilityThreshold)
             {
@@ -912,4 +938,5 @@ namespace SynLight.Model
             }
         }
     }
+
 }
