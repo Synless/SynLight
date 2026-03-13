@@ -7,13 +7,89 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace SynLight.View
 {
     public partial class MainWindow : Window
     {
+        private BrightnessWatcher _brightnessWatcher;
 
+        private const int WM_POWERBROADCAST = 0x0218;
+        private const int PBT_POWERSETTINGCHANGE = 0x8013;
 
+        private static Guid GUID_CONSOLE_DISPLAY_STATE =
+            new Guid("6FE69556-704A-47A0-8F24-C28D936FDA47");
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr RegisterPowerSettingNotification(
+            IntPtr hRecipient,
+            ref Guid PowerSettingGuid,
+            int Flags);
+
+        private const int DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POWERBROADCAST_SETTING
+        {
+            public Guid PowerSetting;
+            public int DataLength;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+            public byte[] Data;
+        }
+        private IntPtr WndProc(IntPtr hwnd,int msg,IntPtr wParam,IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_POWERBROADCAST &&
+                wParam.ToInt32() == PBT_POWERSETTINGCHANGE)
+            {
+                POWERBROADCAST_SETTING ps =
+                    Marshal.PtrToStructure<POWERBROADCAST_SETTING>(lParam);
+
+                if (ps.PowerSetting == GUID_CONSOLE_DISPLAY_STATE)
+                {
+                    int state = ps.Data[0];
+
+                    var process = DataContext as Process_SynLight;
+
+                    if (process != null)
+                    {
+                        if (state == 0) // monitor OFF
+                            process.SetMonitorState(false);
+
+                        if (state == 1) // monitor ON
+                            process.SetMonitorState(true);
+                    }
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            var source = (HwndSource)PresentationSource.FromVisual(this);
+            source.AddHook(WndProc);
+
+            RegisterPowerSettingNotification(source.Handle, ref GUID_CONSOLE_DISPLAY_STATE, DEVICE_NOTIFY_WINDOW_HANDLE);
+
+            _brightnessWatcher = new BrightnessWatcher();
+
+            _brightnessWatcher.BrightnessChanged += (value) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    var process = DataContext as Process_SynLight;
+
+                    if (process != null)
+                        process.SetBrightness(value);
+                });
+            };
+
+            _brightnessWatcher.Start();
+        }
 
         private System.Windows.Forms.NotifyIcon m_notifyIcon;
 
@@ -99,6 +175,7 @@ namespace SynLight.View
         {
             //Param_SynLight.Close();
             //base.OnClosed(e);
+            _brightnessWatcher?.Dispose();
             Environment.Exit(0);
         }
         private void PositiveNumberValidationTextBox(object sender, TextCompositionEventArgs e)
