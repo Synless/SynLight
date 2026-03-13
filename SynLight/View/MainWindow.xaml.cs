@@ -55,8 +55,7 @@ namespace SynLight.View
                     {
                         if (state == 0) // monitor OFF
                             process.SetMonitorState(false);
-
-                        if (state == 1) // monitor ON
+                        else
                             process.SetMonitorState(true);
                     }
                 }
@@ -195,3 +194,4 @@ namespace SynLight.View
         }
     }
 }
+
