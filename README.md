@@ -1,15 +1,11 @@
 # SynLight
 
-**[Ambient lighting system](https://en.wikipedia.org/wiki/Ambilight) for Windows**
+**Ambient lighting system for Windows**
 
-![](https://raw.githubusercontent.com/Synless/SynLight/master/SynLight/Images/demo2.png)
+![synligh_core](https://github.com/user-attachments/assets/aef4ad1f-1c1c-4ab1-8b0e-2ef94ff2319f)
 
 
 
-This software on the computer side processes screenshots and sends data to a ESP8266/NodeMCU microcontroller via Wifi (UDP). The microcontroller then drive individually addressable RGB LEDs on the rear of the screen, to match the color of its edges. This allows for a nice experience while watching movies, but also while working on a daily basis, by limiting visual fatigue.
+Processes screenshots and sends data to an Arduino compatible NodeMCU microcontroller via Wifi (UDP). The microcontroller then drive individually addressable RGB LEDs on the rear of the screen, to match the color of its edges.
 
 **See the [Wiki](https://github.com/Synless/SynLight/wiki) for more informations.**
-
-This software can account for the absence of LEDs in the corners, the first LED not being in a corner, and the black bars in 21:9 content :
-
-![](https://raw.githubusercontent.com/Synless/SynLight/master/SynLight/Images/small_Explanation.png)
