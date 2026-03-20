@@ -20,55 +20,74 @@ namespace SynLight
 
         private void StartOrKill()
         {
-            Process[] xaml = Process.GetProcesses().OrderBy(m => m.ProcessName).ToArray();
-
-            foreach (Process p in xaml)
+            try
             {
-                if (p.ProcessName.Contains("XAML Designer") || p.ProcessName.Contains("XDesProc"))
+                Process[] xaml = Process.GetProcesses().OrderBy(m => m.ProcessName).ToArray();
+
+                foreach (Process p in xaml)
                 {
-                    try
+                    if (p.ProcessName.Contains("XAML Designer") || p.ProcessName.Contains("XDesProc"))
                     {
-                        p.Kill();
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            p.Kill();
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }
-
-            string procName = Process.GetCurrentProcess().ProcessName;
-            List<Process> processes = Process.GetProcessesByName(procName).ToList();
-
-            foreach (Process p in processes)
+            catch
             {
-                if (p.Id != Process.GetCurrentProcess().Id)
+            }
+
+            try
+            {
+                string procName = Process.GetCurrentProcess().ProcessName;
+                List<Process> processes = Process.GetProcessesByName(procName).ToList();
+
+                foreach (Process p in processes)
                 {
-                    p.Kill();
+                    if (p.Id != Process.GetCurrentProcess().Id)
+                    {
+                        p.Kill();
+                    }
                 }
+            }
+            catch
+            {
             }
         }
 
         private const string param = "param.txt";
         private void ShowOrHide()
         {
-            using (StreamReader sr = new StreamReader(param))
+            if (File.Exists(param))
             {
-                string[] lines = sr.ReadToEnd().Split('\n');
-
-                foreach (string line in lines)
+                using (StreamReader sr = new StreamReader(param))
                 {
-                    try
-                    {
-                        string[] subLine = line.ToUpper().Trim('\r').Split('=');
+                    string[] lines = sr.ReadToEnd().Split('\n');
 
-                        if (subLine[0] == "HIDE" && subLine[0] != "//HIDE")
+                    foreach (string line in lines)
+                    {
+                        try
                         {
-                            Hide();
-                            return;
+                            string[] subLine = line.ToUpper().Trim('\r').Split('=');
+
+                            if (subLine[0] == "HIDE" && subLine[0] != "//HIDE")
+                            {
+                                Hide();
+                                return;
+                            }
                         }
+                        catch { }
                     }
-                    catch { }
                 }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("The file 'param.txt' was not found. Please create it in the same directory as the executable and add 'HIDE=true' to hide the window on startup.", "SynLight", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -95,7 +114,8 @@ namespace SynLight
             m_notifyIcon.BalloonTipText = "SynLight has been minimised. Click the tray icon to show.";
             m_notifyIcon.BalloonTipTitle = "SynLight";
             m_notifyIcon.Text = "SynLight";
-            m_notifyIcon.Icon = new Icon("SY.ico");
+            var iconPath = Path.Combine(AppContext.BaseDirectory, "SY.ico");
+            m_notifyIcon.Icon = new Icon(iconPath);
             m_notifyIcon.Visible = true;
             m_notifyIcon.Click += m_notifyIcon_Click;
         }

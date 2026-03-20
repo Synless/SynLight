@@ -166,7 +166,7 @@
         </Style>
         <conv:BoolToVisibilityConverter x:Key="b2v"/>
         <conv:NotConverter x:Key="Not"/>
-        <conv:PurcentInvertConverter x:Key="percentInv"/>
+        <conv:PercentInvertConverter x:Key="percentInv"/>
         <System:Double  x:Key="ToggleSwitchCarageWidth">35</System:Double>
         <System:Double  x:Key="ToggleSwitchWidth">70</System:Double>
         <System:Double  x:Key="ToggleSwitchHeight">28</System:Double>
