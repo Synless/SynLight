@@ -26,7 +26,7 @@ namespace SynLight
             }
         }
 
-        private bool screenFull;
+        private bool screenFull = true;
         public bool ScreenFull
         {
             get => screenFull;
@@ -40,7 +40,7 @@ namespace SynLight
             }
         }
 
-        private bool screen1;
+        private bool screen1 = false;
         public bool Screen1
         {
             get => screen1;
@@ -54,7 +54,7 @@ namespace SynLight
             }
         }
 
-        private bool screen2;
+        private bool screen2 = false;
         public bool Screen2
         {
             get => screen2;
@@ -68,7 +68,7 @@ namespace SynLight
             }
         }
 
-        private bool screen3 = true;
+        private bool screen3 = false;
         public bool Screen3
         {
             get => screen3;
@@ -287,6 +287,9 @@ namespace SynLight
         private int contrast = 4;
         public int Contrast { get => contrast; set { contrast = value; OnPropertyChanged(nameof(Contrast)); } }
 
+        private bool frameCounterEnabled = false;
+        public bool FrameCounterEnabled { get => frameCounterEnabled; set { frameCounterEnabled = value; OnPropertyChanged(nameof(FrameCounterEnabled)); } }
+
         private bool turbo = false;
         public bool Turbo
         {
@@ -497,6 +500,17 @@ namespace SynLight
 
             try
             {
+                gfxLeft?.Dispose();
+                gfxRight?.Dispose();
+                gfxTop?.Dispose();
+                gfxBot?.Dispose();
+            }
+            catch
+            {
+            }
+
+            try
+            {
                 arduinoSerial?.Dispose();
             }
             catch
@@ -555,7 +569,7 @@ namespace SynLight
         {
             try
             {
-                if(File.Exists(param))
+                if (File.Exists(param))
                 {
                     using (StreamReader sr = new StreamReader(param))
                     {
@@ -746,7 +760,7 @@ namespace SynLight
 
                 Tick();
 
-                if(!Turbo)
+                if (!Turbo)
                 {
                     for (int i = 0; i < sleepDelayMs; i++)
                     {
@@ -807,16 +821,6 @@ namespace SynLight
             Title = "Synlight - " + (useComPort ? arduinoSerial.PortName : arduinoUDP.DeviceAddress?.ToString()) + " - Paused";
         }
 
-        private float CalculateAverage(Queue<float> history, float newValue)
-        {
-            if (history.Count >= 3)
-            {
-                history.Dequeue();
-            }
-            history.Enqueue(newValue);
-            return history.Average();
-        }
-
         private void Tick()
         {
             _Height = Height;
@@ -828,64 +832,56 @@ namespace SynLight
 
             if (Contrast > 0)
             {
-                scaledBmpScreenshot = AdjustContrast(scaledBmpScreenshot, Contrast);
+                AdjustContrastInPlace(scaledBmpScreenshot, Contrast); // no return value, no clone
             }
 
             ProcessScreenShot();
             Send();
         }
 
-        private static Bitmap AdjustContrast(Bitmap Image, float Value) //Copy/Paste from stackoverflow
+        private static void AdjustContrastInPlace(Bitmap image, float value)
         {
-            Value = (100.0f + Value) / 100.0f;
-            Value *= Value;
-            Bitmap NewBitmap = (Bitmap)Image.Clone();
-            BitmapData data = NewBitmap.LockBits(new Rectangle(0, 0, NewBitmap.Width, NewBitmap.Height), ImageLockMode.ReadWrite, NewBitmap.PixelFormat);
-            int Height = NewBitmap.Height;
-            int Width = NewBitmap.Width;
+            value = (100.0f + value) / 100.0f;
+            value *= value;
+
+            BitmapData data = image.LockBits(
+                new Rectangle(0, 0, image.Width, image.Height),
+                ImageLockMode.ReadWrite,
+                image.PixelFormat);
+
+            int height = image.Height;
+            int width = image.Width;
 
             unsafe
             {
-                for (int y = 0; y < Height; ++y)
+                for (int y = 0; y < height; y++)
                 {
-                    byte* row = (byte*)data.Scan0 + (y * data.Stride);
+                    byte* row = (byte*)data.Scan0 + y * data.Stride;
                     int columnOffset = 0;
-                    for (int x = 0; x < Width; ++x)
+                    for (int x = 0; x < width; x++)
                     {
-                        byte B = row[columnOffset];
-                        byte G = row[columnOffset + 1];
-                        byte R = row[columnOffset + 2];
+                        float B = row[columnOffset] / 255.0f;
+                        float G = row[columnOffset + 1] / 255.0f;
+                        float R = row[columnOffset + 2] / 255.0f;
 
-                        float Red = R / 255.0f;
-                        float Green = G / 255.0f;
-                        float Blue = B / 255.0f;
-                        Red = (((Red - 0.5f) * Value) + 0.5f) * 255.0f;
-                        Green = (((Green - 0.5f) * Value) + 0.5f) * 255.0f;
-                        Blue = (((Blue - 0.5f) * Value) + 0.5f) * 255.0f;
+                        int iR = (int)(((R - 0.5f) * value + 0.5f) * 255.0f);
+                        int iG = (int)(((G - 0.5f) * value + 0.5f) * 255.0f);
+                        int iB = (int)(((B - 0.5f) * value + 0.5f) * 255.0f);
 
-                        int iR = (int)Red;
-                        iR = iR > 255 ? 255 : iR;
-                        iR = iR < 0 ? 0 : iR;
-                        int iG = (int)Green;
-                        iG = iG > 255 ? 255 : iG;
-                        iG = iG < 0 ? 0 : iG;
-                        int iB = (int)Blue;
-                        iB = iB > 255 ? 255 : iB;
-                        iB = iB < 0 ? 0 : iB;
-
-                        row[columnOffset] = (byte)iB;
-                        row[columnOffset + 1] = (byte)iG;
-                        row[columnOffset + 2] = (byte)iR;
+                        row[columnOffset] = (byte)(iB < 0 ? 0 : iB > 255 ? 255 : iB);
+                        row[columnOffset + 1] = (byte)(iG < 0 ? 0 : iG > 255 ? 255 : iG);
+                        row[columnOffset + 2] = (byte)(iR < 0 ? 0 : iR > 255 ? 255 : iR);
 
                         columnOffset += 4;
                     }
                 }
             }
 
-            NewBitmap.UnlockBits(data);
-
-            return NewBitmap;
+            image.UnlockBits(data);
         }
+
+        private Graphics gfxLeft, gfxRight, gfxTop, gfxBot;
+        private int _lastEdgeW = -1, _lastEdgeH = -1, _lastHX = -1, _lastHY = -1;
 
         private void GetScreenShotedges()
         {
@@ -913,59 +909,86 @@ namespace SynLight
                     reusableTopBmp?.Dispose();
                     reusableBotBmp?.Dispose();
 
+                    gfxLeft?.Dispose();
+                    gfxRight?.Dispose();
+                    gfxTop?.Dispose();
+                    gfxBot?.Dispose();
+
                     reusableLeftBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
                     reusableRightBmp = new Bitmap(edgeW, hY, PixelFormat.Format32bppRgb);
                     reusableTopBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
                     reusableBotBmp = new Bitmap(hX, edgeH, PixelFormat.Format32bppRgb);
+
+                    gfxLeft = Graphics.FromImage(reusableLeftBmp);
+                    gfxRight = Graphics.FromImage(reusableRightBmp);
+                    gfxTop = Graphics.FromImage(reusableTopBmp);
+                    gfxBot = Graphics.FromImage(reusableBotBmp);
                 }
 
                 List<Task> tasks = new List<Task>();
 
-                if (frameCounter % 2 == 0)
+                if (frameCounterEnabled)
                 {
-                    // LEFT
-                    tasks.Add(Task.Run(() =>
+                    if (frameCounter % 2 == 0)
                     {
-                        Rectangle rectLeft = new Rectangle(startX, startY, edgeW, endY - startY);
-                        using (Graphics gfx = Graphics.FromImage(reusableLeftBmp))
+                        tasks.Add(Task.Run(() =>
                         {
-                            gfx.CopyFromScreen(rectLeft.Left, rectLeft.Top, 0, 0, reusableLeftBmp.Size);
-                        }
-                        scalededgeLeft = RescaleImage(reusableLeftBmp, new System.Drawing.Size(1, _Height));
-                    }));
+                            Rectangle rectLeft = new Rectangle(startX, startY, edgeW, endY - startY);
+                            lock (gfxLeft) gfxLeft.CopyFromScreen(rectLeft.Left, rectLeft.Top, 0, 0, reusableLeftBmp.Size);
+                            scalededgeLeft = RescaleImage(reusableLeftBmp, new System.Drawing.Size(1, _Height));
+                        }));
 
-                    // RIGHT
-                    tasks.Add(Task.Run(() =>
-                    {
-                        Rectangle rectRight = new Rectangle(endX - edgeW, startY, edgeW, endY - startY);
-                        using (Graphics gfx = Graphics.FromImage(reusableRightBmp))
+                        tasks.Add(Task.Run(() =>
                         {
-                            gfx.CopyFromScreen(rectRight.Left, rectRight.Top, 0, 0, reusableRightBmp.Size);
-                        }
-                        scalededgeRight = RescaleImage(reusableRightBmp, new System.Drawing.Size(1, _Height));
-                    }));
+                            Rectangle rectRight = new Rectangle(endX - edgeW, startY, edgeW, endY - startY);
+                            lock (gfxRight) gfxRight.CopyFromScreen(rectRight.Left, rectRight.Top, 0, 0, reusableRightBmp.Size);
+                            scalededgeRight = RescaleImage(reusableRightBmp, new System.Drawing.Size(1, _Height));
+                        }));
+                    }
+                    else
+                    {
+                        tasks.Add(Task.Run(() =>
+                        {
+                            Rectangle rectTop = new Rectangle(startX, startY, hX, edgeH);
+                            lock (gfxTop) gfxTop.CopyFromScreen(rectTop.Left, rectTop.Top, 0, 0, reusableTopBmp.Size);
+                            scalededgeTop = RescaleImage(reusableTopBmp, new System.Drawing.Size(_Width, 1));
+                        }));
+
+                        tasks.Add(Task.Run(() =>
+                        {
+                            Rectangle rectBot = new Rectangle(startX, endY - edgeH, hX, edgeH);
+                            lock (gfxBot) gfxBot.CopyFromScreen(rectBot.Left, rectBot.Top, 0, 0, reusableBotBmp.Size);
+                            scalededgeBot = RescaleImage(reusableBotBmp, new System.Drawing.Size(_Width, 1));
+                        }));
+                    }
                 }
                 else
                 {
-                    // TOP
+                    tasks.Add(Task.Run(() =>
+                    {
+                        Rectangle rectLeft = new Rectangle(startX, startY, edgeW, endY - startY);
+                        lock (gfxLeft) gfxLeft.CopyFromScreen(rectLeft.Left, rectLeft.Top, 0, 0, reusableLeftBmp.Size);
+                        scalededgeLeft = RescaleImage(reusableLeftBmp, new System.Drawing.Size(1, _Height));
+                    }));
+
+                    tasks.Add(Task.Run(() =>
+                    {
+                        Rectangle rectRight = new Rectangle(endX - edgeW, startY, edgeW, endY - startY);
+                        lock (gfxRight) gfxRight.CopyFromScreen(rectRight.Left, rectRight.Top, 0, 0, reusableRightBmp.Size);
+                        scalededgeRight = RescaleImage(reusableRightBmp, new System.Drawing.Size(1, _Height));
+                    }));
+
                     tasks.Add(Task.Run(() =>
                     {
                         Rectangle rectTop = new Rectangle(startX, startY, hX, edgeH);
-                        using (Graphics gfx = Graphics.FromImage(reusableTopBmp))
-                        {
-                            gfx.CopyFromScreen(rectTop.Left, rectTop.Top, 0, 0, reusableTopBmp.Size);
-                        }
+                        lock (gfxTop) gfxTop.CopyFromScreen(rectTop.Left, rectTop.Top, 0, 0, reusableTopBmp.Size);
                         scalededgeTop = RescaleImage(reusableTopBmp, new System.Drawing.Size(_Width, 1));
                     }));
 
-                    // BOTTOM
                     tasks.Add(Task.Run(() =>
                     {
                         Rectangle rectBot = new Rectangle(startX, endY - edgeH, hX, edgeH);
-                        using (Graphics gfx = Graphics.FromImage(reusableBotBmp))
-                        {
-                            gfx.CopyFromScreen(rectBot.Left, rectBot.Top, 0, 0, reusableBotBmp.Size);
-                        }
+                        lock (gfxBot) gfxBot.CopyFromScreen(rectBot.Left, rectBot.Top, 0, 0, reusableBotBmp.Size);
                         scalededgeBot = RescaleImage(reusableBotBmp, new System.Drawing.Size(_Width, 1));
                     }));
                 }
@@ -985,73 +1008,107 @@ namespace SynLight
                         ResizeTopBot(scalededgeBot).Save("4Bot.png", ImageFormat.Png);
                         Resize(scaledBmpScreenshot).Save("5full.png", ImageFormat.Png);
                     }
-                    catch
-                    {
-                    }
+                    catch { }
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
         private void ComposeFullBitmap()
         {
-            scaledBmpScreenshot?.Dispose();
-            scaledBmpScreenshot = new Bitmap(_Width, _Height, PixelFormat.Format32bppArgb);
+            // Reallocate only if size changed
+            if (scaledBmpScreenshot == null || scaledBmpScreenshot.Width != _Width || scaledBmpScreenshot.Height != _Height)
+            {
+                scaledBmpScreenshot?.Dispose();
+                scaledBmpScreenshot = new Bitmap(_Width, _Height, PixelFormat.Format32bppArgb);
+            }
 
-            BitmapData bmpData = scaledBmpScreenshot.LockBits(new Rectangle(0, 0, _Width, _Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            BitmapData bmpData = scaledBmpScreenshot.LockBits(
+                new Rectangle(0, 0, _Width, _Height),
+                ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppArgb);
 
             int stride = bmpData.Stride;
 
+            // Lock all edge bitmaps for reading
+            BitmapData leftData = scalededgeLeft?.LockBits(new Rectangle(0, 0, scalededgeLeft.Width, scalededgeLeft.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData rightData = scalededgeRight?.LockBits(new Rectangle(0, 0, scalededgeRight.Width, scalededgeRight.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData topData = scalededgeTop?.LockBits(new Rectangle(0, 0, scalededgeTop.Width, scalededgeTop.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData botData = scalededgeBot?.LockBits(new Rectangle(0, 0, scalededgeBot.Width, scalededgeBot.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
             unsafe
             {
-                byte* ptr = (byte*)bmpData.Scan0;
+                byte* dst = (byte*)bmpData.Scan0;
 
-                void SetPixel(int x, int y, Color color)
-                {
-                    byte* pixel = ptr + y * stride + x * 4;
-                    pixel[0] = color.B;
-                    pixel[1] = color.G;
-                    pixel[2] = color.R;
-                    pixel[3] = 255;
-                }
+                byte* srcLeft = leftData != null ? (byte*)leftData.Scan0 : null;
+                byte* srcRight = rightData != null ? (byte*)rightData.Scan0 : null;
+                byte* srcTop = topData != null ? (byte*)topData.Scan0 : null;
+                byte* srcBot = botData != null ? (byte*)botData.Scan0 : null;
 
+                // Left and right columns
                 for (int y = 0; y < _Height; y++)
                 {
-                    if (scalededgeLeft != null)
+                    if (srcLeft != null)
                     {
-                        SetPixel(0, y, scalededgeLeft.GetPixel(0, y));
+                        byte* src = srcLeft + y * leftData.Stride;        // x=0, so no x offset
+                        byte* pixel = dst + y * stride;                    // x=0
+                        pixel[0] = src[0];
+                        pixel[1] = src[1];
+                        pixel[2] = src[2];
+                        pixel[3] = 255;
                     }
 
-                    if (scalededgeRight != null)
+                    if (srcRight != null)
                     {
-                        SetPixel(_Width - 1, y, scalededgeRight.GetPixel(0, y));
+                        byte* src = srcRight + y * rightData.Stride;
+                        byte* pixel = dst + y * stride + (_Width - 1) * 4;
+                        pixel[0] = src[0];
+                        pixel[1] = src[1];
+                        pixel[2] = src[2];
+                        pixel[3] = 255;
                     }
                 }
 
+                // Top and bottom rows
                 for (int x = 1; x < _Width - 1; x++)
                 {
-                    if (scalededgeTop != null)
+                    if (srcTop != null)
                     {
-                        SetPixel(x, 0, scalededgeTop.GetPixel(x, 0));
+                        byte* src = srcTop + x * 4;                      // y=0, stride offset = 0
+                        byte* pixel = dst + x * 4;                         // y=0
+                        pixel[0] = src[0];
+                        pixel[1] = src[1];
+                        pixel[2] = src[2];
+                        pixel[3] = 255;
                     }
 
-                    if (scalededgeBot != null)
+                    if (srcBot != null)
                     {
-                        Color bot = scalededgeBot.GetPixel(x, 0);
+                        byte* src = srcBot + x * 4;
+                        byte* pixel = dst + (_Height - 1) * stride + x * 4;
+
                         if (KeyboardLight && monitorIsOn)
                         {
-                            SetPixel(x, _Height - 1, Color.FromArgb(255,Math.Min(bot.R + BrightnessForKeyboard, 255),Math.Min(bot.G + BrightnessForKeyboard, 255),Math.Min(bot.B + BrightnessForKeyboard, 255)));
+                            pixel[0] = (byte)Math.Min(src[0] + BrightnessForKeyboard, 255);
+                            pixel[1] = (byte)Math.Min(src[1] + BrightnessForKeyboard, 255);
+                            pixel[2] = (byte)Math.Min(src[2] + BrightnessForKeyboard, 255);
                         }
                         else
                         {
-                            SetPixel(x, _Height - 1, bot);
+                            pixel[0] = src[0];
+                            pixel[1] = src[1];
+                            pixel[2] = src[2];
                         }
+                        pixel[3] = 255;
                     }
                 }
             }
 
             scaledBmpScreenshot.UnlockBits(bmpData);
+
+            scalededgeLeft?.UnlockBits(leftData);
+            scalededgeRight?.UnlockBits(rightData);
+            scalededgeTop?.UnlockBits(topData);
+            scalededgeBot?.UnlockBits(botData);
         }
 
 
@@ -1109,7 +1166,7 @@ namespace SynLight
             int subCorner = Math.Max(0, _Corner - 1);
             bool processedHeight = false;
 
-            BitmapData bmpData = scaledBmpScreenshot.LockBits(new Rectangle(0, 0, scaledBmpScreenshot.Width, scaledBmpScreenshot.Height),ImageLockMode.ReadOnly,PixelFormat.Format32bppArgb);
+            BitmapData bmpData = scaledBmpScreenshot.LockBits(new Rectangle(0, 0, scaledBmpScreenshot.Width, scaledBmpScreenshot.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             int stride = bmpData.Stride;
             int width = scaledBmpScreenshot.Width;

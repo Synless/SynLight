@@ -576,12 +576,44 @@
         <Grid Grid.Row="0" Background="#171D21">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
             <TextBlock Margin="12,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Foreground="LightGray" FontWeight="SemiBold" FontFamily="Sherif" FontSize="14"/>
-            <Button Grid.Column="1" Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
-            <Button Grid.Column="2" Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+            <CheckBox Grid.Column="1" Margin="0,0,0,4"
+          x:Name="alpha_label" 
+          Content="α" 
+          HorizontalAlignment="Center" 
+          VerticalAlignment="Center"
+          WindowChrome.IsHitTestVisibleInChrome="True"
+          IsChecked="{Binding FrameCounterEnabled}"
+          >
+                <CheckBox.Style>
+                    <Style TargetType="CheckBox">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CheckBox">
+                                    <TextBlock Text="{TemplateBinding Content}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </CheckBox.Style>
+            </CheckBox>
+            <Button Grid.Column="2" Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+            <Button Grid.Column="3" Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
         </Grid>
         <Grid Grid.Row="1" Background="White"/>
         <Grid Grid.Row="2" x:Name="AppArea" Background="#1E272A">
@@ -648,7 +680,7 @@
                             <TextBox Grid.Column="1" Grid.Row="1" Width="50" TextAlignment="Center" Template="{StaticResource TextBoxBaseControlTemplate}" Margin="2" Padding="0,3,1,0" Height="25" FontWeight="Bold" TextWrapping="Wrap" Text="{Binding Shifting,    UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="PositiveNumberValidationTextBox"/>
                         </Grid>
                     </Grid>
-                    <Grid Grid.Row="5" Grid.ColumnSpan="7">
+                    <Grid Grid.Row="2" Grid.ColumnSpan="7">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="*"/>
@@ -772,7 +804,7 @@
                 </Grid>
             </Grid>
         </Grid>
-        <Grid Grid.Row="2" Background="#B4000000" Visibility="{Binding StaticConnected, Converter={StaticResource b2v}, ConverterParameter=false}">
+        <Grid Grid.Row="2" Background="#B4000000" Visibility="Collapsed">
             <Viewbox Margin="100">
                 <Control Style="{StaticResource BusyAnimationStyle}" Margin="3,0,-3,0"/>
             </Viewbox>
